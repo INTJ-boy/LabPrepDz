@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   LabPrep DZ — Application Logic
+   LabPrep DZ - Application Logic
    All rights reserved to Zekraoui Rabah Allaa Eddine 🦑
    ═══════════════════════════════════════════════════════════════ */
 
@@ -14,11 +14,11 @@ const LANG_CYCLE = ['fr','ar','en'];
 let recentlyViewed = [];
 try { recentlyViewed = JSON.parse(localStorage.getItem('labprepdz_recent') || '[]'); } catch(e) {}
 
-/* Favorites — persisted in localStorage */
+/* Favorites - persisted in localStorage */
 let favorites = [];
 try { favorites = JSON.parse(localStorage.getItem('labprepdz_favs') || '[]'); } catch(e) { favorites = []; }
 
-/* Checklist ("my prescribed tests") — session-only by default, but
+/* Checklist ("my prescribed tests") -session-only by default, but
    persisted too so a half-built list survives an accidental refresh. */
 let checklistItems = [];
 try { checklistItems = JSON.parse(localStorage.getItem('labprepdz_checklist') || '[]'); } catch(e) { checklistItems = []; }
@@ -33,7 +33,7 @@ try {
 } catch(e) {}
 
 /* ═══════════════════════════════════════════════════════════════
-   DATASET — 200+ Medical Analyses (Algeria protocols)
+   DATASET - 200+ Medical Analyses (Algeria protocols)
    Each entry:
    id, cat, fasting (hours or 0), tubes[], name_fr, name_ar,
    summary_fr, summary_ar, prep_fr[], prep_ar[], sampling_fr[],
@@ -57,8 +57,8 @@ const DB = [
 
 { id:2, cat:'biochimie', fasting:12, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Bilan lipidique complet (EAL)', name_ar:'الفحص الشامل للدهون',
-  summary_fr:"Cholestérol total, HDL, LDL et triglycérides — nécessite 12h de jeûne.",
-  summary_ar:"الكوليسترول الكلي، HDL، LDL والدهون الثلاثية — يتطلب صيام 12 ساعة.",
+  summary_fr:"Cholestérol total, HDL, LDL et triglycérides - nécessite 12h de jeûne.",
+  summary_ar:"الكوليسترول الكلي، HDL، LDL والدهون الثلاثية - يتطلب صيام 12 ساعة.",
   prep_fr:["Jeûne strict de 12 heures.","Pas d'alcool durant les 72h précédentes.","Alimentation habituelle les 3 jours avant (ne pas changer de régime)."],
   prep_ar:["صيام صارم لمدة 12 ساعة.","عدم شرب الكحول خلال 72 ساعة السابقة.","نظام غذائي معتاد خلال 3 أيام قبل الفحص (عدم تغيير النظام الغذائي)."],
   sampling_fr:["Prélèvement veineux le matin.","Position assise 15 minutes avant le prélèvement."],
@@ -4700,9 +4700,9 @@ function showUpdateToast() {
   const toast = document.createElement('div');
   toast.id = 'update-toast';
   toast.className = 'update-toast';
-  const label = currentLang === 'ar' ? 'تتوفر نسخة جديدة — اضغط للتحديث'
-              : currentLang === 'en' ? 'New version available — tap to update'
-              : 'Nouvelle version disponible — appuyez pour mettre à jour';
+  const label = currentLang === 'ar' ? 'تتوفر نسخة جديدة - اضغط للتحديث'
+              : currentLang === 'en' ? 'New version available - tap to update'
+              : 'Nouvelle version disponible - appuyez pour mettre à jour';
   toast.innerHTML = `<i class="fa-solid fa-rotate"></i> <span>${label}</span>`;
   toast.addEventListener('click', () => window.location.reload());
   document.body.appendChild(toast);
