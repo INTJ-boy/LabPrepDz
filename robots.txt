@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Sitemap Location
+Sitemap: https://intj-boy.github.io/LabPrepDz/sitemap.xml
