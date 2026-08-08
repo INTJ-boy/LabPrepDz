@@ -4316,7 +4316,7 @@ function resetFastingTimer() {
    ═══════════════════════════════════════════════════════════════ */
 
 const SOCIAL_LINKS = {
-  linkedin:  'www.linkedin.com/in/zekraouirabahallaaeddine',   // e.g. 'https://www.linkedin.com/in/your-profile'
+  linkedin:  'https://www.linkedin.com/in/zekraouirabahallaaeddine',   // e.g. 'https://www.linkedin.com/in/your-profile'
   instagram: 'https://www.instagram.com/thismf3ya?igsh=OG1vYTNzOXNwanBq',   // e.g. 'https://www.instagram.com/your-handle'
   telegram:  'https://t.me/Itzjust_me'    // e.g. 'https://t.me/your-channel'
 };
