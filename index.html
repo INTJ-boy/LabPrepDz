@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="LabPrep DZ — Guide de préparation aux analyses médicales pour patients algériens. Trilingue Français/Arabe/Anglais. Projet caritatif gratuit."/>
+  <meta name="keywords" content="analyse médicale, laboratoire, Algérie, préparation, bilan sanguin, ECBU, glycémie"/>
+  <meta name="author" content="Zekraoui Rabah Allaa Eddine"/>
+    <title>LabPrep DZ — Guide Analyses Médicales</title>
+  
+  <!-- Favicons for Browsers & Mobile -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png"/>
+
+  <!-- Open Graph / Facebook / WhatsApp Preview -->
+  <meta property="og:type" content="website"/>
+  <meta property="og:site_name" content="LabPrep DZ"/>
+  <meta property="og:title" content="LabPrep DZ — Guide Analyses Médicales"/>
+  <meta property="og:description" content="Guide de préparation aux analyses médicales pour patients algériens. Consignes de jeûne et prélèvements en Français, Arabe et Anglais."/>
+  <meta property="og:image" content="https://yourdomain.com/og-image.png"/>
+  <meta property="og:image:width" content="1280"/>
+  <meta property="og:image:height" content="630"/>
+  <meta property="og:image:alt" content="LabPrep DZ Medical Test Patient Guide Logo"/>
+
+  <!-- Twitter / X Cards -->
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="LabPrep DZ — Guide Analyses Médicales"/>
+  <meta name="twitter:description" content="Guide de préparation aux analyses médicales pour patients algériens (+200 examens)."/>
+  <meta name="twitter:image" content="https://yourdomain.com/og-image.png"/>
+
+  <!-- Web App & Theme Settings -->
+  <link rel="stylesheet" href="styles.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous"/>
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="theme-color" content="#0d9488"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="LabPrep DZ"/>
+
+</head>
+<body class="lang-fr">
+
+  <!-- ══ HEADER ══════════════════════════════════════════════════ -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="fa-solid fa-flask-vial"></i>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">LabPrep <span class="brand-dz">DZ</span></span>
+          <span class="brand-tagline" id="brand-tagline">Guide de Préparation aux Analyses</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="stat-badge">
+          <i class="fa-solid fa-vials"></i>
+          <span id="total-count">0</span>
+          <span id="lbl-analyses">analyses</span>
+        </div>
+        <button class="fav-btn" id="fav-btn" onclick="openFavorites()" aria-label="Mes favoris">
+          <i class="fa-solid fa-star"></i>
+          <span class="fav-count-badge" id="fav-count-badge" style="display:none">0</span>
+        </button>
+        <button class="dark-btn" id="dark-btn" onclick="toggleDarkMode()" aria-label="Mode sombre">
+  <i class="fa-solid fa-moon" id="dark-icon"></i>
+</button>
+        <div class="text-size-control" id="text-size-control" aria-label="Taille du texte">
+          <button class="text-size-btn" id="text-size-minus" onclick="changeTextSize(-1)" aria-label="Réduire le texte">A-</button>
+          <button class="text-size-btn" id="text-size-plus" onclick="changeTextSize(1)" aria-label="Agrandir le texte">A+</button>
+        </div>
+        <button class="lang-btn" id="lang-btn" onclick="cycleLang()" aria-label="Changer la langue">
+          <i class="fa-solid fa-language"></i>
+          <span id="lang-btn-text">AR</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══ HERO / SEARCH ═══════════════════════════════════════════ -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <h1 class="hero-title" id="hero-title">
+          Préparez-vous<br/><em>correctement</em> avant<br/>votre analyse
+        </h1>
+        <p class="hero-sub" id="hero-sub">
+          Tapez le nom d'une analyse — obtenez immédiatement les instructions de préparation exactes pour votre laboratoire en Algérie.
+        </p>
+      </div>
+
+      <div class="search-box">
+        <div class="search-input-wrap">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <input
+            type="text"
+            id="search-input"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="Ex: Glycémie, ECBU, NFS, Bilan lipidique..."
+            aria-label="Rechercher une analyse médicale"
+          />
+          <button class="search-clear" id="search-clear" onclick="clearSearch()" aria-label="Effacer" style="display:none">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          <kbd class="search-kbd-hint" id="search-kbd-hint">Ctrl+K</kbd>
+        </div>
+        <div class="search-meta" id="search-meta"></div>
+      </div>
+
+      <!-- Fasting Timer Quick Access -->
+      <button class="fasting-timer-btn" id="fasting-timer-btn" onclick="openFastingTimer()">
+        <i class="fa-solid fa-hourglass-start"></i>
+        <span id="fasting-timer-btn-lbl">Démarrer un chronomètre de jeûne</span>
+      </button>
+
+      <!-- Category Filter Pills -->
+      <div class="filter-pills" id="filter-pills" role="group" aria-label="Filtrer par catégorie">
+        <button class="pill active" data-cat="all" id="pill-all">
+          <i class="fa-solid fa-border-all"></i>
+          <span id="pill-all-lbl">Tout</span>
+        </button>
+        <button class="pill" data-cat="biochimie">
+          <i class="fa-solid fa-atom"></i>
+          <span>Biochimie</span>
+        </button>
+        <button class="pill" data-cat="hematologie">
+          <i class="fa-solid fa-droplet"></i>
+          <span>Hématologie</span>
+        </button>
+        <button class="pill" data-cat="bacteriologie">
+          <i class="fa-solid fa-bacteria"></i>
+          <span>Bactériologie</span>
+        </button>
+        <button class="pill" data-cat="hormonologie">
+          <i class="fa-solid fa-circle-nodes"></i>
+          <span>Hormonologie</span>
+        </button>
+        <button class="pill" data-cat="immunologie">
+          <i class="fa-solid fa-shield-virus"></i>
+          <span>Immunologie</span>
+        </button>
+        <button class="pill" data-cat="parasitologie">
+          <i class="fa-solid fa-viruses"></i>
+          <span>Parasitologie</span>
+        </button>
+        <button class="pill" data-cat="urologie">
+          <i class="fa-solid fa-kidneys"></i>
+          <span>Urologie</span>
+        </button>
+        <button class="pill" data-cat="serologie">
+          <i class="fa-solid fa-syringe"></i>
+          <span>Sérologie</span>
+        </button>
+        <button class="pill" data-cat="coagulation">
+          <i class="fa-solid fa-heart-pulse"></i>
+          <span>Coagulation</span>
+        </button>
+      </div>
+    </div>
+    <div class="recent-strip" id="recent-strip" style="display:none"></div>
+  </section>
+
+  <!-- ══ CHARITY BANNER ══════════════════════════════════════════ -->
+  <div class="charity-banner" id="charity-banner">
+    <i class="fa-solid fa-hand-holding-heart"></i>
+    <span id="charity-text">Ce projet est une œuvre caritative gratuite. Merci de prier pour la santé et la longévité de mes parents.</span>
+  </div>
+
+  <!-- ══ RESULTS GRID ════════════════════════════════════════════ -->
+  <main class="results-section">
+    <div class="results-inner">
+      <div class="results-grid" id="results-grid" role="list"></div>
+      <div class="empty-state" id="empty-state" style="display:none">
+        <i class="fa-solid fa-flask"></i>
+        <p id="empty-title">Aucune analyse trouvée</p>
+        <p id="empty-sub">Essayez un autre terme de recherche</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- ══ DETAIL MODAL ════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="modal-overlay" onclick="closeModal()" role="dialog" aria-modal="true" aria-labelledby="modal-title" style="display:none">
+    <div class="modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal()" aria-label="Fermer">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- ══ FOOTER ══════════════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <i class="fa-solid fa-flask-vial"></i> LabPrep DZ
+      </div>
+
+      <p class="footer-disclaimer" id="footer-disclaimer">
+        Ces informations sont fournies à titre indicatif. Consultez toujours votre médecin ou le personnel de votre laboratoire pour des instructions personnalisées.
+      </p>
+
+      <!-- Charity Dedication — trilingual, always all 3 shown -->
+      <div class="footer-dedication">
+        <i class="fa-solid fa-hands-praying"></i>
+        <div class="dedication-texts">
+          <p class="dedication-line" lang="fr">Ce site est une œuvre caritative que j'ai créée bénévolement. Si vous en tirez profit, j'espère sincèrement que vous prierez pour la santé et la longue vie de mes parents.</p>
+          <p class="dedication-line" lang="ar" dir="rtl">هذا الموقع عمل خيري قمت به من عندي مجاناً. أتمنى من كل من استفاد منه أن يدعو لأمي و أبي بالصحة وطول العمر .</p>
+          <p class="dedication-line" lang="en">This website is a charitable project I built voluntarily. If it helps you, I sincerely hope you'll pray for my parent's health and long life.</p>
+        </div>
+      </div>
+
+      <!-- Social Links -->
+      <div class="footer-social">
+        <a href="#" class="social-link" id="social-linkedin" data-platform="linkedin" aria-label="LinkedIn" target="_blank" rel="noopener">
+          <i class="fa-brands fa-linkedin"></i>
+        </a>
+        <a href="#" class="social-link" id="social-instagram" data-platform="instagram" aria-label="Instagram" target="_blank" rel="noopener">
+          <i class="fa-brands fa-instagram"></i>
+        </a>
+        <a href="#" class="social-link" id="social-telegram" data-platform="telegram" aria-label="Telegram" target="_blank" rel="noopener">
+          <i class="fa-brands fa-telegram"></i>
+        </a>
+      </div>
+
+      <!-- Support / Donation -->
+      <button class="support-btn" id="support-btn" onclick="openSupportModal()">
+        <i class="fa-solid fa-heart"></i>
+        <span id="support-btn-text">Soutenir ce projet</span>
+      </button>
+
+      <p class="footer-rights">
+        © <span id="footer-year">2025</span> LabPrep DZ - All rights reserved to Zekraoui Rabah Allaa Eddine 🦑
+      </p>
+    </div>
+  </footer>
+
+  <!-- ══ FAVORITES MODAL ═════════════════════════════════════════ -->
+  <div class="modal-overlay" id="fav-overlay" onclick="closeFavorites()" role="dialog" aria-modal="true" style="display:none">
+    <div class="modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeFavorites()" aria-label="Fermer">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="modal-body">
+        <h2 class="modal-title" id="fav-modal-title" style="margin-bottom:16px">
+          <i class="fa-solid fa-star" style="color:#d97706"></i> Mes analyses favorites
+        </h2>
+        <div id="fav-list-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ FASTING TIMER MODAL ═════════════════════════════════════ -->
+  <div class="modal-overlay" id="timer-overlay" onclick="closeFastingTimer()" role="dialog" aria-modal="true" style="display:none">
+    <div class="modal timer-modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeFastingTimer()" aria-label="Fermer">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="modal-body" id="timer-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- ══ SUPPORT / DONATION MODAL ════════════════════════════════ -->
+  <div class="modal-overlay" id="support-overlay" onclick="closeSupportModal()" role="dialog" aria-modal="true" style="display:none">
+    <div class="modal support-modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeSupportModal()" aria-label="Fermer">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="modal-body" id="support-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- ══ CHECKLIST FLOATING BAR ══════════════════════════════════ -->
+  <div class="checklist-bar" id="checklist-bar" style="display:none">
+    <button class="checklist-bar-inner" onclick="openChecklistModal()">
+      <i class="fa-solid fa-clipboard-check"></i>
+      <span id="checklist-bar-count">0</span>
+      <span id="checklist-bar-label">analyses sélectionnées</span>
+      <i class="fa-solid fa-chevron-up checklist-bar-arrow"></i>
+    </button>
+  </div>
+
+  <!-- ══ CHECKLIST MODAL ═════════════════════════════════════════ -->
+  <div class="modal-overlay" id="checklist-overlay" onclick="closeChecklistModal()" role="dialog" aria-modal="true" style="display:none">
+    <div class="modal checklist-modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeChecklistModal()" aria-label="Fermer">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="modal-body" id="checklist-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- ══ REMINDER MODAL ══════════════════════════════════════════ -->
+  <div class="modal-overlay" id="reminder-overlay" onclick="closeReminderModal()" role="dialog" aria-modal="true" style="display:none">
+    <div class="modal reminder-modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeReminderModal()" aria-label="Fermer">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="modal-body" id="reminder-modal-body"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
