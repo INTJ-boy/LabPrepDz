@@ -2219,7 +2219,7 @@ const DB = [
 
 /* ── BACTÉRIOLOGIE — DIVERS COMPLÉMENTAIRES ─────────────────── */
 { id:166, cat:'bacteriologie', fasting:0, tubes:[{c:'#4ade80',n_fr:'Écouvillon stérile',n_ar:'مسحة معقمة'}],
-  name_fr:'Prélèvement de gorge — Recherche de Candida', name_ar:'مسحة الحلق — البحث عن المبيضات',
+  name_fr:'Prélèvement de gorge - Recherche de Candida', name_ar:'مسحة الحلق - البحث عن المبيضات',
   summary_fr:"Recherche de candidose buccale (muguet), fréquente chez le nourrisson.",
   summary_ar:"البحث عن داء المبيضات الفموي، شائع عند الرضع.",
   prep_fr:["Ne pas manger ni boire 1h avant le prélèvement.","Ne pas utiliser de bain de bouche antifongique avant."],
@@ -2254,8 +2254,8 @@ const DB = [
   sampling_ar:["بزل المفصل المعني (الركبة غالباً) من قبل الطبيب."],
   meds_fr:["Signaler impérativement anticoagulants et anti-inflammatoires."],
   meds_ar:["إبلاغ إلزامياً عن مضادات التخثر ومضادات الالتهاب."],
-  note_fr:"Urgence en cas de suspicion d'arthrite septique — diagnostic et traitement rapides nécessaires.",
-  note_ar:"حالة طارئة عند الاشتباه بالتهاب المفصل الجرثومي — يلزم تشخيص وعلاج سريعان." },
+  note_fr:"Urgence en cas de suspicion d'arthrite septique - diagnostic et traitement rapides nécessaires.",
+  note_ar:"حالة طارئة عند الاشتباه بالتهاب المفصل الجرثومي - يلزم تشخيص وعلاج سريعان." },
 
 /* ── BIOCHIMIE — SUITE FINALE ──────────────────────────────── */
 { id:169, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
@@ -2268,8 +2268,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية، تدوين وقت آخر جرعة بدقة."],
   meds_fr:["Signaler impérativement l'heure exacte de la dernière prise de digoxine."],
   meds_ar:["إبلاغ إلزامياً عن الوقت الدقيق لآخر جرعة ديجوكسين."],
-  note_fr:"Marge thérapeutique très étroite — le timing du prélèvement est critique.",
-  note_ar:"هامش علاجي ضيق جداً — توقيت أخذ العينة حاسم." },
+  note_fr:"Marge thérapeutique très étroite - le timing du prélèvement est critique.",
+  note_ar:"هامش علاجي ضيق جداً - توقيت أخذ العينة حاسم." },
 
 { id:170, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Lithiémie (dosage du lithium)', name_ar:'قياس الليثيوم',
@@ -2281,8 +2281,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية صباحاً، يفضل على الريق."],
   meds_fr:["Signaler impérativement l'heure exacte de la dernière prise de lithium."],
   meds_ar:["إبلاغ إلزامياً عن الوقت الدقيق لآخر جرعة ليثيوم."],
-  note_fr:"Marge thérapeutique étroite — surveillance régulière indispensable (risque de toxicité).",
-  note_ar:"هامش علاجي ضيق — المراقبة المنتظمة ضرورية." },
+  note_fr:"Marge thérapeutique étroite - surveillance régulière indispensable (risque de toxicité).",
+  note_ar:"هامش علاجي ضيق - المراقبة المنتظمة ضرورية." },
 
 { id:171, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Dosage de la carbamazépine', name_ar:'قياس الكاربامازيبين',
@@ -2346,8 +2346,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية دون رباط ضاغط طويل، التحليل خلال 15-20 دقيقة."],
   meds_fr:["Signaler tout traitement pour maladie hépatique."],
   meds_ar:["إبلاغ عن أي علاج لمرض الكبد."],
-  note_fr:"Test très sensible aux conditions de prélèvement — délai d'analyse extrêmement court requis.",
-  note_ar:"فحص حساس جداً لظروف أخذ العينة — يتطلب مدة تحليل قصيرة جداً." },
+  note_fr:"Test très sensible aux conditions de prélèvement - délai d'analyse extrêmement court requis.",
+  note_ar:"فحص حساس جداً لظروف أخذ العينة - يتطلب مدة تحليل قصيرة جداً." },
 
 { id:176, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Bilan des porphyries', name_ar:'فحص البورفيريا',
@@ -2428,7 +2428,7 @@ const DB = [
   note_fr:"Résultat généralement disponible en 24-48h selon le laboratoire.",
   note_ar:"النتيجة متوفرة عادة خلال 24-48 ساعة حسب المخبر." },
 
-/* ── HORMONOLOGIE — SUITE FINALE ───────────────────────────── */
+/* ── HORMONOLOGIE - SUITE FINALE ───────────────────────────── */
 { id:182, cat:'hormonologie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Calcitonine', name_ar:'الكالسيتونين',
   summary_fr:"Marqueur du cancer médullaire de la thyroïde.",
@@ -2450,10 +2450,10 @@ const DB = [
   prep_ar:["أخذ العينة واقفاً بعد ساعتين من الوقوف (أو مستلقياً حسب البروتوكول).","التوقف عن بعض أدوية ضغط الدم قبل أسبوعين إن أمكن (يتطلب رأياً طبياً).","نظام غذائي طبيعي الملح في الأيام السابقة."],
   sampling_fr:["Prélèvement veineux selon protocole précis (position et horaire stricts)."],
   sampling_ar:["أخذ عينة وريدية حسب بروتوكول دقيق (وضعية وتوقيت صارمان)."],
-  meds_fr:["Signaler impérativement TOUS les antihypertenseurs — la plupart interfèrent avec ce test."],
-  meds_ar:["إبلاغ إلزامياً عن جميع أدوية ضغط الدم — معظمها يتداخل مع هذا الفحص."],
-  note_fr:"Test complexe nécessitant souvent un arrêt temporaire des traitements — toujours sous supervision médicale.",
-  note_ar:"فحص معقد يتطلب غالباً وقفاً مؤقتاً للعلاجات — دائماً تحت إشراف طبي." },
+  meds_fr:["Signaler impérativement TOUS les antihypertenseurs - la plupart interfèrent avec ce test."],
+  meds_ar:["إبلاغ إلزامياً عن جميع أدوية ضغط الدم - معظمها يتداخل مع هذا الفحص."],
+  note_fr:"Test complexe nécessitant souvent un arrêt temporaire des traitements - toujours sous supervision médicale.",
+  note_ar:"فحص معقد يتطلب غالباً وقفاً مؤقتاً للعلاجات - دائماً تحت إشراف طبي." },
 
 { id:184, cat:'hormonologie', fasting:8, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Métanéphrines urinaires/sanguines', name_ar:'الميتانفرين في البول/الدم',
@@ -2465,10 +2465,10 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بعد الراحة، أو جمع بول 24 ساعة حسب الوصفة."],
   meds_fr:["Signaler impérativement bêta-bloquants, antidépresseurs tricycliques, decongestionnants."],
   meds_ar:["إبلاغ إلزامياً عن حاصرات بيتا، مضادات الاكتئاب ثلاثية الحلقات، مزيلات الاحتقان."],
-  note_fr:"De nombreux aliments et médicaments interfèrent — respecter scrupuleusement les restrictions.",
-  note_ar:"العديد من الأطعمة والأدوية تتداخل — يجب احترام القيود بدقة." },
+  note_fr:"De nombreux aliments et médicaments interfèrent - respecter scrupuleusement les restrictions.",
+  note_ar:"العديد من الأطعمة والأدوية تتداخل - يجب احترام القيود بدقة." },
 
-/* ── BIOCHIMIE — FINAL BATCH POUR DÉPASSER 200 ─────────────── */
+/* ── BIOCHIMIE - FINAL BATCH POUR DÉPASSER 200 ─────────────── */
 { id:185, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Bilan lipidique chez l\'enfant', name_ar:'فحص الدهون عند الطفل',
   summary_fr:"Dépistage précoce des dyslipidémies familiales.",
@@ -2492,8 +2492,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بسيطة، تشمل الإنزيمات الكبدية وأحماض الصفراء."],
   meds_fr:["Signaler tout traitement en cours durant la grossesse."],
   meds_ar:["إبلاغ عن أي علاج جارٍ أثناء الحمل."],
-  note_fr:"Diagnostic important — la cholestase gravidique nécessite une surveillance fœtale rapprochée.",
-  note_ar:"تشخيص مهم — ركود صفراوي الحمل يتطلب مراقبة دقيقة للجنين." },
+  note_fr:"Diagnostic important - la cholestase gravidique nécessite une surveillance fœtale rapprochée.",
+  note_ar:"تشخيص مهم - ركود صفراوي الحمل يتطلب مراقبة دقيقة للجنين." },
 
 { id:187, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Acides biliaires (grossesse)', name_ar:'أحماض الصفراء (الحمل)',
@@ -2505,8 +2505,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بسيطة."],
   meds_fr:["Signaler traitement par acide ursodésoxycholique si déjà débuté."],
   meds_ar:["إبلاغ عن علاج حمض أورسوديوكسيكوليك إذا بدأ بالفعل."],
-  note_fr:"Taux élevé associé à un risque accru de complications fœtales — surveillance nécessaire.",
-  note_ar:"المعدل المرتفع مرتبط بزيادة خطر مضاعفات الجنين — تلزم المراقبة." },
+  note_fr:"Taux élevé associé à un risque accru de complications fœtales - surveillance nécessaire.",
+  note_ar:"المعدل المرتفع مرتبط بزيادة خطر مضاعفات الجنين - تلزم المراقبة." },
 
 { id:188, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Bilan martial chez le nourrisson', name_ar:'فحص الحديد عند الرضيع',
@@ -2570,8 +2570,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بسيطة."],
   meds_fr:["Signaler supplémentation en fer et acide folique en cours."],
   meds_ar:["إبلاغ عن تكميل الحديد وحمض الفوليك الجاري."],
-  note_fr:"L'anémie physiologique de dilution est normale en fin de grossesse — à ne pas confondre avec une vraie carence.",
-  note_ar:"فقر الدم الفيزيولوجي بالتخفيف طبيعي في نهاية الحمل — يجب عدم الخلط بينه وبين نقص حقيقي." },
+  note_fr:"L'anémie physiologique de dilution est normale en fin de grossesse - à ne pas confondre avec une vraie carence.",
+  note_ar:"فقر الدم الفيزيولوجي بالتخفيف طبيعي في نهاية الحمل - يجب عدم الخلط بينه وبين نقص حقيقي." },
 
 { id:193, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Dosage de la vitamine A', name_ar:'قياس فيتامين A',
@@ -2583,8 +2583,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية، أنبوب معتم أو محمي من الضوء."],
   meds_fr:["Signaler suppléments en vitamine A."],
   meds_ar:["إبلاغ عن مكملات فيتامين A."],
-  note_fr:"Vitamine sensible à la lumière — manipulation rapide requise après prélèvement.",
-  note_ar:"فيتامين حساس للضوء — يتطلب معالجة سريعة بعد أخذ العينة." },
+  note_fr:"Vitamine sensible à la lumière - manipulation rapide requise après prélèvement.",
+  note_ar:"فيتامين حساس للضوء - يتطلب معالجة سريعة بعد أخذ العينة." },
 
 { id:194, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Dosage de la vitamine E', name_ar:'قياس فيتامين E',
@@ -2635,8 +2635,8 @@ const DB = [
   sampling_ar:["جمع كل البول لمدة 24 ساعة، الحفظ في مكان بارد."],
   meds_fr:["Signaler impérativement bêta-bloquants et antidépresseurs."],
   meds_ar:["إبلاغ إلزامياً عن حاصرات بيتا ومضادات الاكتئاب."],
-  note_fr:"Le bidon de recueil contient un conservateur acide — ne pas le jeter ni le diluer.",
-  note_ar:"وعاء الجمع يحتوي على مادة حافظة حمضية — يجب عدم التخلص منها أو تخفيفها." },
+  note_fr:"Le bidon de recueil contient un conservateur acide - ne pas le jeter ni le diluer.",
+  note_ar:"وعاء الجمع يحتوي على مادة حافظة حمضية - يجب عدم التخلص منها أو تخفيفها." },
 
 { id:198, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Test de Zimmermann (17-cétostéroïdes urinaires)', name_ar:'اختبار زيمرمان',
@@ -2687,8 +2687,8 @@ const DB = [
   sampling_ar:["كيس معقم لاصق يضعه الوالد أو الطاقم الطبي."],
   meds_fr:["Signaler tout traitement antibiotique récent chez l'enfant."],
   meds_ar:["إبلاغ عن أي علاج حديث بالمضادات الحيوية عند الطفل."],
-  note_fr:"Technique délicate — un résultat positif doit être confirmé par sondage si doute.",
-  note_ar:"تقنية دقيقة — النتيجة الإيجابية يجب تأكيدها بالقسطرة عند الشك." },
+  note_fr:"Technique délicate - un résultat positif doit être confirmé par sondage si doute.",
+  note_ar:"تقنية دقيقة - النتيجة الإيجابية يجب تأكيدها بالقسطرة عند الشك." },
 
 ];
 window.LABPREP_DB_PART1 = DB;
@@ -2700,7 +2700,7 @@ const UI = {
   fr: {
     tagline: "Guide de Préparation aux Analyses",
     heroTitle: "Préparez-vous<br/><em>correctement</em> avant<br/>votre analyse",
-    heroSub: "Tapez le nom d'une analyse — obtenez immédiatement les instructions de préparation exactes pour votre laboratoire en Algérie.",
+    heroSub: "Tapez le nom d'une analyse - obtenez immédiatement les instructions de préparation exactes pour votre laboratoire en Algérie.",
     searchPlaceholder: "Ex: Glycémie, ECBU, NFS, Bilan lipidique...",
     langBtn: "العربية",
     pillAll: "Tout",
@@ -2728,7 +2728,7 @@ const UI = {
   ar: {
     tagline: "دليل التحضير للتحاليل الطبية",
     heroTitle: "استعد<br/><em>بشكل صحيح</em><br/>قبل تحليلك",
-    heroSub: "اكتب اسم أي تحليل طبي — واحصل فوراً على تعليمات التحضير الدقيقة لمخبرك في الجزائر.",
+    heroSub: "اكتب اسم أي تحليل طبي - واحصل فوراً على تعليمات التحضير الدقيقة لمخبرك في الجزائر.",
     searchPlaceholder: "مثال: سكر الدم، ECBU، تعداد الدم...",
     langBtn: "Français",
     pillAll: "الكل",
@@ -3105,35 +3105,35 @@ const RELATED_TESTS = {
    ═══════════════════════════════════════════════════════════════ */
 const CALM_MODE_CONTENT = {
   // Blood draws in general (very common anxiety trigger)
-  1:  { fr: "C'est juste une petite piqûre au bras, comme un pincement bref — ça dure quelques secondes et c'est fini. Le personnel du laboratoire fait ça toute la journée, en toute sécurité.",
-        ar: "الأمر مجرد وخزة صغيرة في الذراع، مثل قرصة خفيفة — تستغرق ثوانٍ معدودة وتنتهي بسرعة. طاقم المخبر يقوم بهذا يومياً وبأمان تام.",
-        en: "It's just a small pinch in your arm, like a brief poke — it lasts a few seconds and it's over. The lab staff does this safely, all day, every day." },
+  1:  { fr: "C'est juste une petite piqûre au bras, comme un pincement bref - ça dure quelques secondes et c'est fini. Le personnel du laboratoire fait ça toute la journée, en toute sécurité.",
+        ar: "الأمر مجرد وخزة صغيرة في الذراع، مثل قرصة خفيفة - تستغرق ثوانٍ معدودة وتنتهي بسرعة. طاقم المخبر يقوم بهذا يومياً وبأمان تام.",
+        en: "It's just a small pinch in your arm, like a brief poke - it lasts a few seconds and it's over. The lab staff does this safely, all day, every day." },
   // Lumbar puncture — one of the most feared procedures
   151:{ fr: "Cet examen fait souvent peur mais il est réalisé avec une anesthésie locale, donc vous ne sentirez qu'une légère pression, pas de douleur vive. Le médecin vous expliquera chaque étape avant de commencer, et vous pouvez toujours demander une pause.",
         ar: "هذا الفحص يخيف الكثيرين لكنه يُجرى بتخدير موضعي، لذا ستشعر فقط بضغط خفيف وليس ألماً حاداً. سيشرح لك الطبيب كل خطوة قبل البدء، ويمكنك دائماً طلب توقف مؤقت.",
-        en: "This test often sounds scary, but it's done with local anesthesia — you'll only feel light pressure, not sharp pain. The doctor will explain each step before starting, and you can always ask for a pause." },
+        en: "This test often sounds scary, but it's done with local anesthesia - you'll only feel light pressure, not sharp pain. The doctor will explain each step before starting, and you can always ask for a pause." },
   // Bone marrow aspiration
-  99: { fr: "Vous recevrez une anesthésie locale avant le geste, donc la douleur est très limitée — souvent juste une sensation de pression pendant quelques secondes. L'équipe médicale est habituée à accompagner les patients anxieux, n'hésitez pas à leur en parler.",
-        ar: "ستحصل على تخدير موضعي قبل الإجراء، لذا الألم محدود جداً — غالباً مجرد شعور بالضغط لثوانٍ معدودة. الطاقم الطبي معتاد على مرافقة المرضى القلقين، لا تتردد في إخبارهم.",
-        en: "You'll get local anesthesia before the procedure, so the pain is very limited — often just a feeling of pressure for a few seconds. The medical team is used to supporting anxious patients, so feel free to tell them how you're feeling." },
+  99: { fr: "Vous recevrez une anesthésie locale avant le geste, donc la douleur est très limitée - souvent juste une sensation de pression pendant quelques secondes. L'équipe médicale est habituée à accompagner les patients anxieux, n'hésitez pas à leur en parler.",
+        ar: "ستحصل على تخدير موضعي قبل الإجراء، لذا الألم محدود جداً - غالباً مجرد شعور بالضغط لثوانٍ معدودة. الطاقم الطبي معتاد على مرافقة المرضى القلقين، لا تتردد في إخبارهم.",
+        en: "You'll get local anesthesia before the procedure, so the pain is very limited - often just a feeling of pressure for a few seconds. The medical team is used to supporting anxious patients, so feel free to tell them how you're feeling." },
   // Arterial blood gas — known to be more uncomfortable than a regular draw
-  27: { fr: "Cette prise de sang est un peu plus sensible qu'une prise de sang classique, mais elle est très rapide — quelques secondes seulement. Respirer lentement pendant le geste aide beaucoup à se détendre.",
-        ar: "أخذ عينة الدم هذه أكثر حساسية قليلاً من أخذ الدم العادي، لكنها سريعة جداً — ثوانٍ معدودة فقط. التنفس ببطء أثناء الإجراء يساعد كثيراً على الاسترخاء.",
-        en: "This blood draw is a bit more sensitive than a regular one, but it's very quick — just a few seconds. Breathing slowly during the procedure really helps you relax." },
+  27: { fr: "Cette prise de sang est un peu plus sensible qu'une prise de sang classique, mais elle est très rapide - quelques secondes seulement. Respirer lentement pendant le geste aide beaucoup à se détendre.",
+        ar: "أخذ عينة الدم هذه أكثر حساسية قليلاً من أخذ الدم العادي، لكنها سريعة جداً - ثوانٍ معدودة فقط. التنفس ببطء أثناء الإجراء يساعد كثيراً على الاسترخاء.",
+        en: "This blood draw is a bit more sensitive than a regular one, but it's very quick - just a few seconds. Breathing slowly during the procedure really helps you relax." },
   // Joint aspiration
   168:{ fr: "Le médecin désinfecte et parfois anesthésie localement la zone avant de piquer, donc l'inconfort est généralement bref. Beaucoup de patients disent que l'appréhension est pire que la sensation réelle.",
         ar: "يقوم الطبيب بتعقيم المنطقة وأحياناً تخديرها موضعياً قبل الوخز، لذا الانزعاج يكون عادة قصيراً. يقول الكثير من المرضى إن القلق أسوأ من الشعور الفعلي.",
         en: "The doctor cleans and sometimes locally numbs the area before the needle, so the discomfort is usually brief. Many patients say the anticipation is worse than the actual sensation." },
   // Endoscopy-adjacent / breath tests (claustrophobia-adjacent anxiety)
-  138:{ fr: "Pas d'aiguille ni d'inconfort ici — il suffit de souffler dans un petit sachet, comme gonfler un ballon doucement. C'est l'un des tests les plus simples et les moins stressants du laboratoire.",
-        ar: "لا إبرة ولا انزعاج هنا — كل ما عليك فعله هو النفخ في كيس صغير، مثل نفخ بالون بلطف. إنه من أبسط وأقل الفحوصات إثارة للتوتر في المخبر.",
-        en: "No needle, no discomfort here — you just breathe into a small bag, like gently blowing up a balloon. It's one of the simplest, least stressful tests in the whole lab." },
+  138:{ fr: "Pas d'aiguille ni d'inconfort ici - il suffit de souffler dans un petit sachet, comme gonfler un ballon doucement. C'est l'un des tests les plus simples et les moins stressants du laboratoire.",
+        ar: "لا إبرة ولا انزعاج هنا - كل ما عليك فعله هو النفخ في كيس صغير، مثل نفخ بالون بلطف. إنه من أبسط وأقل الفحوصات إثارة للتوتر في المخبر.",
+        en: "No needle, no discomfort here - you just breathe into a small bag, like gently blowing up a balloon. It's one of the simplest, least stressful tests in the whole lab." },
 };
 
 const CALM_MODE_GENERIC = {
-  fr: "Cette analyse peut sembler impressionnante en la lisant, mais le personnel du laboratoire réalise ce geste très régulièrement, en toute sécurité. N'hésitez pas à leur poser vos questions ou à leur dire si vous êtes anxieux(se) — ils sont là pour vous rassurer.",
-  ar: "قد يبدو هذا التحليل مقلقاً عند قراءته، لكن طاقم المخبر يقوم بهذا الإجراء بانتظام وبأمان تام. لا تتردد في طرح أسئلتك أو إخبارهم إذا كنت قلقاً — فهم هنا لطمأنتك.",
-  en: "This test might sound intimidating when you read about it, but lab staff perform this procedure very routinely and safely. Don't hesitate to ask questions or tell them if you're feeling anxious — they're there to help put you at ease."
+  fr: "Cette analyse peut sembler impressionnante en la lisant, mais le personnel du laboratoire réalise ce geste très régulièrement, en toute sécurité. N'hésitez pas à leur poser vos questions ou à leur dire si vous êtes anxieux(se) - ils sont là pour vous rassurer.",
+  ar: "قد يبدو هذا التحليل مقلقاً عند قراءته، لكن طاقم المخبر يقوم بهذا الإجراء بانتظام وبأمان تام. لا تتردد في طرح أسئلتك أو إخبارهم إذا كنت قلقاً - فهم هنا لطمأنتك.",
+  en: "This test might sound intimidating when you read about it, but lab staff perform this procedure very routinely and safely. Don't hesitate to ask questions or tell them if you're feeling anxious - they're there to help put you at ease."
 };
 
 const CALM_TEXT = {
@@ -3166,7 +3166,7 @@ function toggleCalmMode(testId) {
 UI.en = {
   tagline: "Medical Test Preparation Guide",
   heroTitle: "Get<br/><em>properly</em> prepared<br/>for your test",
-  heroSub: "Type the name of any medical test — get instant, accurate preparation instructions for your lab in Algeria.",
+  heroSub: "Type the name of any medical test - get instant, accurate preparation instructions for your lab in Algeria.",
   searchPlaceholder: "E.g: Fasting glucose, Urine culture, CBC...",
   langBtn: "FR",
   pillAll: "All",
@@ -3542,7 +3542,7 @@ const REMINDER_TEXT = {
     copyBtn: 'Copier le message',
     copied: 'Copié !',
     msgReminder: (name, test, date, time) => `📋 Rappel de rendez-vous${name ? ' pour ' + name : ''}\n\n🧪 Analyse : ${test}\n📅 Date : ${date}\n🕐 Heure : ${time}`,
-    msgFasting: (fh, fdate, ftime) => `\n\n⏱ Jeûne de ${fh}h à respecter — commencer le jeûne le ${fdate} à ${ftime} au plus tard.`,
+    msgFasting: (fh, fdate, ftime) => `\n\n⏱ Jeûne de ${fh}h à respecter - commencer le jeûne le ${fdate} à ${ftime} au plus tard.`,
     msgNoFasting: `\n\n✅ Aucun jeûne requis pour cette analyse.`,
     msgFooter: `\n\n— Généré via LabPrep DZ`,
   },
@@ -3558,7 +3558,7 @@ const REMINDER_TEXT = {
     copyBtn: 'نسخ الرسالة',
     copied: 'تم النسخ!',
     msgReminder: (name, test, date, time) => `📋 تذكير بموعد${name ? ' لـ ' + name : ''}\n\n🧪 التحليل: ${test}\n📅 التاريخ: ${date}\n🕐 الوقت: ${time}`,
-    msgFasting: (fh, fdate, ftime) => `\n\n⏱ يجب الصيام ${fh} ساعات — ابدأ الصيام يوم ${fdate} الساعة ${ftime} على أبعد تقدير.`,
+    msgFasting: (fh, fdate, ftime) => `\n\n⏱ يجب الصيام ${fh} ساعات - ابدأ الصيام يوم ${fdate} الساعة ${ftime} على أبعد تقدير.`,
     msgNoFasting: `\n\n✅ لا يتطلب هذا التحليل الصيام.`,
     msgFooter: `\n\n— تم الإنشاء عبر LabPrep DZ`,
   },
@@ -3574,7 +3574,7 @@ const REMINDER_TEXT = {
     copyBtn: 'Copy message',
     copied: 'Copied!',
     msgReminder: (name, test, date, time) => `📋 Appointment reminder${name ? ' for ' + name : ''}\n\n🧪 Test: ${test}\n📅 Date: ${date}\n🕐 Time: ${time}`,
-    msgFasting: (fh, fdate, ftime) => `\n\n⏱ ${fh}h fasting required — start fasting by ${fdate} at ${ftime} at the latest.`,
+    msgFasting: (fh, fdate, ftime) => `\n\n⏱ ${fh}h fasting required - start fasting by ${fdate} at ${ftime} at the latest.`,
     msgNoFasting: `\n\n✅ No fasting required for this test.`,
     msgFooter: `\n\n— Generated via LabPrep DZ`,
   }
@@ -3685,7 +3685,7 @@ const LABFINDER_TEXT = {
   fr: {
     title: 'Laboratoires à proximité',
     intro: "Localise les laboratoires d'analyses et pharmacies proches de vous, à partir des données OpenStreetMap.",
-    coverageNote: "⚠️ Cette liste dépend des données publiques OpenStreetMap — elle peut être incomplète, surtout hors des grandes villes.",
+    coverageNote: "⚠️ Cette liste dépend des données publiques OpenStreetMap - elle peut être incomplète, surtout hors des grandes villes.",
     locateBtn: 'Me localiser et chercher',
     locating: 'Localisation en cours...',
     searching: 'Recherche des laboratoires...',
@@ -3702,7 +3702,7 @@ const LABFINDER_TEXT = {
   ar: {
     title: 'المخابر القريبة',
     intro: "حدد موقع مخابر التحاليل والصيدليات القريبة منك، بالاعتماد على بيانات OpenStreetMap.",
-    coverageNote: "⚠️ تعتمد هذه القائمة على بيانات OpenStreetMap العامة — قد تكون غير مكتملة، خاصة خارج المدن الكبرى.",
+    coverageNote: "⚠️ تعتمد هذه القائمة على بيانات OpenStreetMap العامة - قد تكون غير مكتملة، خاصة خارج المدن الكبرى.",
     locateBtn: 'تحديد موقعي والبحث',
     locating: 'جارٍ تحديد الموقع...',
     searching: 'جارٍ البحث عن المخابر...',
@@ -3719,7 +3719,7 @@ const LABFINDER_TEXT = {
   en: {
     title: 'Nearby Labs',
     intro: "Find medical labs and pharmacies near you, using OpenStreetMap data.",
-    coverageNote: "⚠️ This list depends on public OpenStreetMap data — it may be incomplete, especially outside major cities.",
+    coverageNote: "⚠️ This list depends on public OpenStreetMap data - it may be incomplete, especially outside major cities.",
     locateBtn: 'Locate me and search',
     locating: 'Locating you...',
     searching: 'Searching for labs...',
@@ -4139,9 +4139,9 @@ function closeFavorites() {
 
 /* ── FAVORITES EXPORT ─────────────────────────────────────────── */
 const EXPORT_TEXT = {
-  fr: { exportBtn: 'Télécharger ma liste (.txt)', header: 'MES ANALYSES FAVORITES — LabPrep DZ', fasting: 'Jeûne', noFasting: 'Aucun jeûne requis' },
-  ar: { exportBtn: 'تحميل قائمتي (.txt)', header: 'تحاليلي المفضلة — LabPrep DZ', fasting: 'الصيام', noFasting: 'لا يتطلب صيام' },
-  en: { exportBtn: 'Download my list (.txt)', header: 'MY FAVORITE TESTS — LabPrep DZ', fasting: 'Fasting', noFasting: 'No fasting required' }
+  fr: { exportBtn: 'Télécharger ma liste (.txt)', header: 'MES ANALYSES FAVORITES - LabPrep DZ', fasting: 'Jeûne', noFasting: 'Aucun jeûne requis' },
+  ar: { exportBtn: 'تحميل قائمتي (.txt)', header: 'تحاليلي المفضلة - LabPrep DZ', fasting: 'الصيام', noFasting: 'لا يتطلب صيام' },
+  en: { exportBtn: 'Download my list (.txt)', header: 'MY FAVORITE TESTS - LabPrep DZ', fasting: 'Fasting', noFasting: 'No fasting required' }
 };
 
 function exportFavorites() {
@@ -4166,7 +4166,7 @@ function exportFavorites() {
     out += `\n${divider}\n\n`;
   });
 
-  out += `LabPrep DZ — All rights reserved to Zekraoui Rabah Allaa Eddine 🦑\n`;
+  out += `LabPrep DZ - All rights reserved to Zekraoui Rabah Allaa Eddine 🦑\n`;
 
   const blob = new Blob([out], { type: 'text/plain;charset=utf-8' });
   const url = URL.createObjectURL(blob);
@@ -4196,7 +4196,7 @@ const CHECKLIST_TEXT = {
     fastingSummaryTitle: "TEMPS DE JEÛNE À RESPECTER",
     fastingSummaryText: (h) => `Jeûnez <strong>${h} heures</strong> avant votre prélèvement — cela couvre l'exigence la plus stricte parmi toutes les analyses sélectionnées.`,
     noFastingNeeded: "Aucune de vos analyses sélectionnées ne nécessite de jeûne.",
-    conflictTitle: "⚠️ ATTENTION — CONFLIT DÉTECTÉ",
+    conflictTitle: "⚠️ ATTENTION - CONFLIT DÉTECTÉ",
     conflictText: (names) => `Un jeûne prolongé peut altérer le résultat de : <strong>${names}</strong>. Parlez-en à votre médecin ou au laboratoire avant le prélèvement.`,
     listTitle: "ANALYSES DE CETTE LISTE",
     removeAll: "Tout effacer",
@@ -4213,7 +4213,7 @@ const CHECKLIST_TEXT = {
     fastingSummaryTitle: "مدة الصيام الواجب احترامها",
     fastingSummaryText: (h) => `صُم <strong>${h} ساعات</strong> قبل أخذ العينة — هذا يغطي أصرم شرط بين جميع التحاليل المحددة.`,
     noFastingNeeded: "لا يتطلب أي من التحاليل المحددة الصيام.",
-    conflictTitle: "⚠️ تنبيه — تعارض مكتشف",
+    conflictTitle: "⚠️ تنبيه - تعارض مكتشف",
     conflictText: (names) => `الصيام لفترة طويلة قد يؤثر على نتيجة: <strong>${names}</strong>. تحدث مع طبيبك أو المخبر قبل أخذ العينة.`,
     listTitle: "تحاليل هذه القائمة",
     removeAll: "مسح الكل",
@@ -4230,7 +4230,7 @@ const CHECKLIST_TEXT = {
     fastingSummaryTitle: "FASTING TIME TO FOLLOW",
     fastingSummaryText: (h) => `Fast for <strong>${h} hours</strong> before your sample collection — this covers the strictest requirement among all selected tests.`,
     noFastingNeeded: "None of your selected tests require fasting.",
-    conflictTitle: "⚠️ WARNING — CONFLICT DETECTED",
+    conflictTitle: "⚠️ WARNING - CONFLICT DETECTED",
     conflictText: (names) => `Prolonged fasting may alter the result of: <strong>${names}</strong>. Talk to your doctor or the lab before your sample is taken.`,
     listTitle: "TESTS IN THIS LIST",
     removeAll: "Clear all",
