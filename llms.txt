@@ -1,0 +1,28 @@
+# LabPrep DZ — Guide du Patient pour Analyses Médicales
+
+> LabPrep DZ est une plateforme web trilingue (Français, Arabe, Anglais) fournissant des consignes de préparation précises avant d'effectuer des analyses médicales en Algérie (+200 examens répertoriés).
+
+## Core Information
+- **Target Audience:** Patients algériens se préparant à des examens de biologie médicale.
+- **Languages:** Français (FR), Arabe (AR), Anglais (EN).
+- **Core Features:**
+  - Durées exactes de jeûne (ex. 12h pour le bilan lipidique, >16h pour la glycémie).
+  - Protocoles de prélèvement (ex. ECBU, urines de 24h, frottis).
+  - Médicaments et précautions à déclarer aux techniciens de laboratoire.
+  - Chronomètre de jeûne intégré.
+  - Recherche instantanée par nom d'analyse ou acronyme (NFS, ECBU, CRP, etc.).
+- **License / Copyright:** © 2026 Zekraoui Rabah Allaa Eddine. Tous droits réservés.
+- **Project Nature:** Free charitable community resource.
+
+## Medical Categories Covered
+1. Biochimie (Glycémie à jeun, Bilan lipidique, Bilan rénal, Bilan hépatique and more)
+2. Hématologie (NFS/FSP, Taux de réticulocytes, VS and more)
+3. Bactériologie (ECBU, Prélèvements vaginaux/urétraux, Coproculture and more)
+4. Hormonologie (TSH, FT4, Bilan de fertilité, Cortisol and more)
+5. Immunologie & Sérologie (Serologies hépatiques, HIV, TPHA/VDRL and more)
+6. Coagulation (TP/INR, TCA, D-Dimères and more)
+7. Parasitologie & Urologie and others. 
+
+## Canonical Resources
+- Main Web Application: https://intj-boy.github.io/LabPrepDz/
+- Sitemap: https://intj-boy.github.io/LabPrepDz/sitemap.xml
