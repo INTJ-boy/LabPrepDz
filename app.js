@@ -3673,6 +3673,214 @@ function closeReminderModal() {
   document.body.style.overflow = '';
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   NEARBY LAB FINDER (OpenStreetMap Overpass API)
+   Free, no API key required. Coverage depends entirely on how much
+   OpenStreetMap data exists for the user's area — dense in Algiers/
+   Oran, sparser elsewhere. This is stated honestly in the UI rather
+   than implying complete national coverage.
+   ═══════════════════════════════════════════════════════════════ */
+
+const LABFINDER_TEXT = {
+  fr: {
+    title: 'Laboratoires à proximité',
+    intro: "Localise les laboratoires d'analyses et pharmacies proches de vous, à partir des données OpenStreetMap.",
+    coverageNote: "⚠️ Cette liste dépend des données publiques OpenStreetMap — elle peut être incomplète, surtout hors des grandes villes.",
+    locateBtn: 'Me localiser et chercher',
+    locating: 'Localisation en cours...',
+    searching: 'Recherche des laboratoires...',
+    noResults: "Aucun laboratoire trouvé dans les données disponibles pour votre zone. Essayez d'élargir la recherche ou vérifiez directement auprès de votre municipalité.",
+    permissionDenied: "Accès à la position refusé. Autorisez la géolocalisation dans les paramètres de votre navigateur pour utiliser cette fonction.",
+    geoUnavailable: "La géolocalisation n'est pas disponible sur cet appareil ou navigateur.",
+    networkError: "Impossible de contacter le service de recherche. Vérifiez votre connexion internet.",
+    distanceAway: (km) => `à ${km} km`,
+    openInMaps: 'Ouvrir dans Maps',
+    typeLab: 'Laboratoire',
+    typePharmacy: 'Pharmacie',
+    typeHospital: 'Hôpital / Clinique',
+  },
+  ar: {
+    title: 'المخابر القريبة',
+    intro: "حدد موقع مخابر التحاليل والصيدليات القريبة منك، بالاعتماد على بيانات OpenStreetMap.",
+    coverageNote: "⚠️ تعتمد هذه القائمة على بيانات OpenStreetMap العامة — قد تكون غير مكتملة، خاصة خارج المدن الكبرى.",
+    locateBtn: 'تحديد موقعي والبحث',
+    locating: 'جارٍ تحديد الموقع...',
+    searching: 'جارٍ البحث عن المخابر...',
+    noResults: "لم يتم العثور على مخابر في البيانات المتوفرة لمنطقتك. حاول توسيع نطاق البحث أو تحقق مباشرة من بلديتك.",
+    permissionDenied: "تم رفض الوصول إلى الموقع. يرجى السماح بتحديد الموقع الجغرافي في إعدادات متصفحك لاستخدام هذه الميزة.",
+    geoUnavailable: "تحديد الموقع الجغرافي غير متوفر على هذا الجهاز أو المتصفح.",
+    networkError: "تعذر الاتصال بخدمة البحث. تحقق من اتصالك بالإنترنت.",
+    distanceAway: (km) => `على بعد ${km} كم`,
+    openInMaps: 'فتح في الخرائط',
+    typeLab: 'مخبر',
+    typePharmacy: 'صيدلية',
+    typeHospital: 'مستشفى / عيادة',
+  },
+  en: {
+    title: 'Nearby Labs',
+    intro: "Find medical labs and pharmacies near you, using OpenStreetMap data.",
+    coverageNote: "⚠️ This list depends on public OpenStreetMap data — it may be incomplete, especially outside major cities.",
+    locateBtn: 'Locate me and search',
+    locating: 'Locating you...',
+    searching: 'Searching for labs...',
+    noResults: "No labs found in the available data for your area. Try widening the search or check directly with your local municipality.",
+    permissionDenied: "Location access denied. Please allow geolocation in your browser settings to use this feature.",
+    geoUnavailable: "Geolocation isn't available on this device or browser.",
+    networkError: "Couldn't reach the search service. Check your internet connection.",
+    distanceAway: (km) => `${km} km away`,
+    openInMaps: 'Open in Maps',
+    typeLab: 'Lab',
+    typePharmacy: 'Pharmacy',
+    typeHospital: 'Hospital / Clinic',
+  }
+};
+
+function openLabFinder() {
+  const t = LABFINDER_TEXT[currentLang];
+  const body = document.getElementById('labfinder-modal-body');
+
+  body.innerHTML = `
+    <h2 class="modal-title" style="margin-bottom:6px"><i class="fa-solid fa-location-dot" style="color:var(--teal)"></i> ${t.title}</h2>
+    <p class="modal-text" style="margin-bottom:10px;opacity:0.75">${t.intro}</p>
+    <div class="labfinder-coverage-note">${t.coverageNote}</div>
+    <button class="timer-start-btn" id="labfinder-locate-btn" style="margin-top:16px">
+      <i class="fa-solid fa-crosshairs"></i> ${t.locateBtn}
+    </button>
+    <div id="labfinder-results"></div>
+  `;
+
+  document.getElementById('labfinder-locate-btn').addEventListener('click', runLabSearch);
+  document.getElementById('labfinder-overlay').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLabFinder() {
+  document.getElementById('labfinder-overlay').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function haversineDistanceKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function runLabSearch() {
+  const t = LABFINDER_TEXT[currentLang];
+  const resultsEl = document.getElementById('labfinder-results');
+  const locateBtn = document.getElementById('labfinder-locate-btn');
+
+  if (!navigator.geolocation) {
+    resultsEl.innerHTML = `<p class="labfinder-error">${t.geoUnavailable}</p>`;
+    return;
+  }
+
+  locateBtn.disabled = true;
+  resultsEl.innerHTML = `<p class="labfinder-status"><i class="fa-solid fa-spinner fa-spin"></i> ${t.locating}</p>`;
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const { latitude, longitude } = position.coords;
+      resultsEl.innerHTML = `<p class="labfinder-status"><i class="fa-solid fa-spinner fa-spin"></i> ${t.searching}</p>`;
+      fetchNearbyLabs(latitude, longitude);
+    },
+    (err) => {
+      locateBtn.disabled = false;
+      const msg = err.code === err.PERMISSION_DENIED ? t.permissionDenied : t.geoUnavailable;
+      resultsEl.innerHTML = `<p class="labfinder-error">${msg}</p>`;
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+  );
+}
+
+function fetchNearbyLabs(lat, lon) {
+  const t = LABFINDER_TEXT[currentLang];
+  const resultsEl = document.getElementById('labfinder-results');
+  const locateBtn = document.getElementById('labfinder-locate-btn');
+  const radiusMeters = 8000; // 8km search radius
+
+  // Overpass QL query: medical labs, pharmacies, hospitals/clinics within radius.
+  const query = `
+    [out:json][timeout:20];
+    (
+      node["healthcare"="laboratory"](around:${radiusMeters},${lat},${lon});
+      node["amenity"="pharmacy"](around:${radiusMeters},${lat},${lon});
+      node["amenity"="hospital"](around:${radiusMeters},${lat},${lon});
+      node["amenity"="clinic"](around:${radiusMeters},${lat},${lon});
+      way["healthcare"="laboratory"](around:${radiusMeters},${lat},${lon});
+      way["amenity"="pharmacy"](around:${radiusMeters},${lat},${lon});
+    );
+    out center;
+  `;
+
+  fetch('https://overpass-api.de/api/interpreter', {
+    method: 'POST',
+    body: 'data=' + encodeURIComponent(query)
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error('network');
+      return res.json();
+    })
+    .then((data) => {
+      locateBtn.disabled = false;
+      const elements = (data.elements || []).map((el) => {
+        const elLat = el.lat || (el.center && el.center.lat);
+        const elLon = el.lon || (el.center && el.center.lon);
+        if (!elLat || !elLon) return null;
+        const tags = el.tags || {};
+        const name = tags.name || (tags.healthcare === 'laboratory' ? t.typeLab : (tags.amenity === 'pharmacy' ? t.typePharmacy : t.typeHospital));
+        const type = tags.healthcare === 'laboratory' ? t.typeLab
+          : tags.amenity === 'pharmacy' ? t.typePharmacy
+          : t.typeHospital;
+        const distance = haversineDistanceKm(lat, lon, elLat, elLon);
+        return { name, type, lat: elLat, lon: elLon, distance };
+      }).filter(Boolean).sort((a, b) => a.distance - b.distance).slice(0, 20);
+
+      renderLabResults(elements);
+    })
+    .catch(() => {
+      locateBtn.disabled = false;
+      resultsEl.innerHTML = `<p class="labfinder-error">${t.networkError}</p>`;
+    });
+}
+
+function renderLabResults(results) {
+  const t = LABFINDER_TEXT[currentLang];
+  const resultsEl = document.getElementById('labfinder-results');
+
+  if (results.length === 0) {
+    resultsEl.innerHTML = `<p class="labfinder-error">${t.noResults}</p>`;
+    return;
+  }
+
+  const typeIcon = (type) => {
+    if (type === t.typeLab) return 'fa-flask-vial';
+    if (type === t.typePharmacy) return 'fa-prescription-bottle-medical';
+    return 'fa-hospital';
+  };
+
+  resultsEl.innerHTML = `
+    <div class="labfinder-list">
+      ${results.map((r) => `
+        <div class="labfinder-item">
+          <div class="labfinder-item-icon"><i class="fa-solid ${typeIcon(r.type)}"></i></div>
+          <div class="labfinder-item-info">
+            <span class="labfinder-item-name">${r.name}</span>
+            <span class="labfinder-item-meta">${r.type} · ${t.distanceAway(r.distance.toFixed(1))}</span>
+          </div>
+          <a class="labfinder-item-link" href="https://www.openstreetmap.org/?mlat=${r.lat}&mlon=${r.lon}#map=18/${r.lat}/${r.lon}" target="_blank" rel="noopener">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
 function renderRecentStrip() {
   const strip = document.getElementById('recent-strip');
   if (!strip) return;
@@ -3706,6 +3914,11 @@ const TIMER_BTN_LABEL = {
   ar: "ابدأ مؤقت الصيام",
   en: "Start a fasting timer"
 };
+const LAB_FINDER_HERO_LABEL = {
+  fr: "Trouver un laboratoire proche",
+  ar: "البحث عن مخبر قريب",
+  en: "Find a nearby lab"
+};
 // Language button always shows the NEXT language in the cycle
 const NEXT_LANG_LABEL = { fr: 'AR', ar: 'EN', en: 'FR' };
 
@@ -3730,6 +3943,8 @@ function applyLang() {
   document.getElementById('footer-disclaimer').textContent = ui.footerDisclaimer;
   document.getElementById('charity-text').textContent = CHARITY_BANNER_TEXT[currentLang];
   document.getElementById('fasting-timer-btn-lbl').textContent = TIMER_BTN_LABEL[currentLang];
+  const labFinderLbl = document.getElementById('lab-finder-btn-lbl');
+  if (labFinderLbl) labFinderLbl.textContent = LAB_FINDER_HERO_LABEL[currentLang];
   document.getElementById('fav-modal-title').innerHTML = `<i class="fa-solid fa-star" style="color:#d97706"></i> ${ui.favTitle}`;
   const supportBtnText = document.getElementById('support-btn-text');
   if (supportBtnText) supportBtnText.textContent = SUPPORT_TEXT[currentLang].btn;
@@ -3799,7 +4014,8 @@ function initModalEvents() {
     'timer-overlay': closeFastingTimer,
     'support-overlay': closeSupportModal,
     'checklist-overlay': closeChecklistModal,
-    'reminder-overlay': closeReminderModal
+    'reminder-overlay': closeReminderModal,
+    'labfinder-overlay': closeLabFinder
   };
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;

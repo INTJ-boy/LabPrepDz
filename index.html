@@ -114,11 +114,17 @@
         <div class="search-meta" id="search-meta"></div>
       </div>
 
-      <!-- Fasting Timer Quick Access -->
-      <button class="fasting-timer-btn" id="fasting-timer-btn" onclick="openFastingTimer()">
-        <i class="fa-solid fa-hourglass-start"></i>
-        <span id="fasting-timer-btn-lbl">Démarrer un chronomètre de jeûne</span>
-      </button>
+      <!-- Fasting Timer + Lab Finder Quick Access -->
+      <div class="hero-quick-actions">
+        <button class="fasting-timer-btn" id="fasting-timer-btn" onclick="openFastingTimer()">
+          <i class="fa-solid fa-hourglass-start"></i>
+          <span id="fasting-timer-btn-lbl">Démarrer un chronomètre de jeûne</span>
+        </button>
+        <button class="fasting-timer-btn" id="lab-finder-btn" onclick="openLabFinder()">
+          <i class="fa-solid fa-location-dot"></i>
+          <span id="lab-finder-btn-lbl">Trouver un laboratoire proche</span>
+        </button>
+      </div>
 
       <!-- Category Filter Pills -->
       <div class="filter-pills" id="filter-pills" role="group" aria-label="Filtrer par catégorie">
@@ -303,6 +309,16 @@
         <i class="fa-solid fa-xmark"></i>
       </button>
       <div class="modal-body" id="reminder-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- ══ LAB FINDER MODAL ════════════════════════════════════════ -->
+  <div class="modal-overlay" id="labfinder-overlay" onclick="closeLabFinder()" role="dialog" aria-modal="true" style="display:none">
+    <div class="modal labfinder-modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeLabFinder()" aria-label="Fermer">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="modal-body" id="labfinder-modal-body"></div>
     </div>
   </div>
 
