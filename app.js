@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   LabPrep DZ - Application Logic
+   LabPrep DZ — Application Logic
    All rights reserved to Zekraoui Rabah Allaa Eddine 🦑
    ═══════════════════════════════════════════════════════════════ */
 
@@ -14,14 +14,29 @@ const LANG_CYCLE = ['fr','ar','en'];
 let recentlyViewed = [];
 try { recentlyViewed = JSON.parse(localStorage.getItem('labprepdz_recent') || '[]'); } catch(e) {}
 
-/* Favorites - persisted in localStorage */
+/* Favorites — persisted in localStorage */
 let favorites = [];
 try { favorites = JSON.parse(localStorage.getItem('labprepdz_favs') || '[]'); } catch(e) { favorites = []; }
 
-/* Checklist ("my prescribed tests") -session-only by default, but
+/* Checklist ("my prescribed tests") — session-only by default, but
    persisted too so a half-built list survives an accidental refresh. */
 let checklistItems = [];
 try { checklistItems = JSON.parse(localStorage.getItem('labprepdz_checklist') || '[]'); } catch(e) { checklistItems = []; }
+
+/* ── LOCAL-ONLY ANALYTICS ──────────────────────────────────────
+   IMPORTANT: this data lives ONLY in each visitor's own browser
+   storage. There is no server, so nothing here is ever transmitted
+   or aggregated across different people's devices. It exists so
+   the site owner can inspect usage patterns on their OWN device
+   while testing, and so zero-result searches can be turned into a
+   one-tap anonymous report the visitor sends themselves (see the
+   "report missing test" feature below). */
+let searchAnalytics = { termCounts: {}, zeroResultTerms: {}, totalSearches: 0 };
+try {
+  const saved = JSON.parse(localStorage.getItem('labprepdz_analytics') || 'null');
+  if (saved) searchAnalytics = saved;
+} catch(e) {}
+let analyticsLogTimer = null;
 
 /* Fasting timer state */
 let fastingTimer = { active: false, hours: 0, endTime: null, intervalId: null };
@@ -33,7 +48,7 @@ try {
 } catch(e) {}
 
 /* ═══════════════════════════════════════════════════════════════
-   DATASET - 200+ Medical Analyses (Algeria protocols)
+   DATASET — 200+ Medical Analyses (Algeria protocols)
    Each entry:
    id, cat, fasting (hours or 0), tubes[], name_fr, name_ar,
    summary_fr, summary_ar, prep_fr[], prep_ar[], sampling_fr[],
@@ -57,8 +72,8 @@ const DB = [
 
 { id:2, cat:'biochimie', fasting:12, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Bilan lipidique complet (EAL)', name_ar:'الفحص الشامل للدهون',
-  summary_fr:"Cholestérol total, HDL, LDL et triglycérides - nécessite 12h de jeûne.",
-  summary_ar:"الكوليسترول الكلي، HDL، LDL والدهون الثلاثية - يتطلب صيام 12 ساعة.",
+  summary_fr:"Cholestérol total, HDL, LDL et triglycérides — nécessite 12h de jeûne.",
+  summary_ar:"الكوليسترول الكلي، HDL، LDL والدهون الثلاثية — يتطلب صيام 12 ساعة.",
   prep_fr:["Jeûne strict de 12 heures.","Pas d'alcool durant les 72h précédentes.","Alimentation habituelle les 3 jours avant (ne pas changer de régime)."],
   prep_ar:["صيام صارم لمدة 12 ساعة.","عدم شرب الكحول خلال 72 ساعة السابقة.","نظام غذائي معتاد خلال 3 أيام قبل الفحص (عدم تغيير النظام الغذائي)."],
   sampling_fr:["Prélèvement veineux le matin.","Position assise 15 minutes avant le prélèvement."],
@@ -2219,7 +2234,7 @@ const DB = [
 
 /* ── BACTÉRIOLOGIE — DIVERS COMPLÉMENTAIRES ─────────────────── */
 { id:166, cat:'bacteriologie', fasting:0, tubes:[{c:'#4ade80',n_fr:'Écouvillon stérile',n_ar:'مسحة معقمة'}],
-  name_fr:'Prélèvement de gorge - Recherche de Candida', name_ar:'مسحة الحلق - البحث عن المبيضات',
+  name_fr:'Prélèvement de gorge — Recherche de Candida', name_ar:'مسحة الحلق — البحث عن المبيضات',
   summary_fr:"Recherche de candidose buccale (muguet), fréquente chez le nourrisson.",
   summary_ar:"البحث عن داء المبيضات الفموي، شائع عند الرضع.",
   prep_fr:["Ne pas manger ni boire 1h avant le prélèvement.","Ne pas utiliser de bain de bouche antifongique avant."],
@@ -2254,8 +2269,8 @@ const DB = [
   sampling_ar:["بزل المفصل المعني (الركبة غالباً) من قبل الطبيب."],
   meds_fr:["Signaler impérativement anticoagulants et anti-inflammatoires."],
   meds_ar:["إبلاغ إلزامياً عن مضادات التخثر ومضادات الالتهاب."],
-  note_fr:"Urgence en cas de suspicion d'arthrite septique - diagnostic et traitement rapides nécessaires.",
-  note_ar:"حالة طارئة عند الاشتباه بالتهاب المفصل الجرثومي - يلزم تشخيص وعلاج سريعان." },
+  note_fr:"Urgence en cas de suspicion d'arthrite septique — diagnostic et traitement rapides nécessaires.",
+  note_ar:"حالة طارئة عند الاشتباه بالتهاب المفصل الجرثومي — يلزم تشخيص وعلاج سريعان." },
 
 /* ── BIOCHIMIE — SUITE FINALE ──────────────────────────────── */
 { id:169, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
@@ -2268,8 +2283,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية، تدوين وقت آخر جرعة بدقة."],
   meds_fr:["Signaler impérativement l'heure exacte de la dernière prise de digoxine."],
   meds_ar:["إبلاغ إلزامياً عن الوقت الدقيق لآخر جرعة ديجوكسين."],
-  note_fr:"Marge thérapeutique très étroite - le timing du prélèvement est critique.",
-  note_ar:"هامش علاجي ضيق جداً - توقيت أخذ العينة حاسم." },
+  note_fr:"Marge thérapeutique très étroite — le timing du prélèvement est critique.",
+  note_ar:"هامش علاجي ضيق جداً — توقيت أخذ العينة حاسم." },
 
 { id:170, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Lithiémie (dosage du lithium)', name_ar:'قياس الليثيوم',
@@ -2281,8 +2296,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية صباحاً، يفضل على الريق."],
   meds_fr:["Signaler impérativement l'heure exacte de la dernière prise de lithium."],
   meds_ar:["إبلاغ إلزامياً عن الوقت الدقيق لآخر جرعة ليثيوم."],
-  note_fr:"Marge thérapeutique étroite - surveillance régulière indispensable (risque de toxicité).",
-  note_ar:"هامش علاجي ضيق - المراقبة المنتظمة ضرورية." },
+  note_fr:"Marge thérapeutique étroite — surveillance régulière indispensable (risque de toxicité).",
+  note_ar:"هامش علاجي ضيق — المراقبة المنتظمة ضرورية." },
 
 { id:171, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Dosage de la carbamazépine', name_ar:'قياس الكاربامازيبين',
@@ -2346,8 +2361,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية دون رباط ضاغط طويل، التحليل خلال 15-20 دقيقة."],
   meds_fr:["Signaler tout traitement pour maladie hépatique."],
   meds_ar:["إبلاغ عن أي علاج لمرض الكبد."],
-  note_fr:"Test très sensible aux conditions de prélèvement - délai d'analyse extrêmement court requis.",
-  note_ar:"فحص حساس جداً لظروف أخذ العينة - يتطلب مدة تحليل قصيرة جداً." },
+  note_fr:"Test très sensible aux conditions de prélèvement — délai d'analyse extrêmement court requis.",
+  note_ar:"فحص حساس جداً لظروف أخذ العينة — يتطلب مدة تحليل قصيرة جداً." },
 
 { id:176, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Bilan des porphyries', name_ar:'فحص البورفيريا',
@@ -2428,7 +2443,7 @@ const DB = [
   note_fr:"Résultat généralement disponible en 24-48h selon le laboratoire.",
   note_ar:"النتيجة متوفرة عادة خلال 24-48 ساعة حسب المخبر." },
 
-/* ── HORMONOLOGIE - SUITE FINALE ───────────────────────────── */
+/* ── HORMONOLOGIE — SUITE FINALE ───────────────────────────── */
 { id:182, cat:'hormonologie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Calcitonine', name_ar:'الكالسيتونين',
   summary_fr:"Marqueur du cancer médullaire de la thyroïde.",
@@ -2450,10 +2465,10 @@ const DB = [
   prep_ar:["أخذ العينة واقفاً بعد ساعتين من الوقوف (أو مستلقياً حسب البروتوكول).","التوقف عن بعض أدوية ضغط الدم قبل أسبوعين إن أمكن (يتطلب رأياً طبياً).","نظام غذائي طبيعي الملح في الأيام السابقة."],
   sampling_fr:["Prélèvement veineux selon protocole précis (position et horaire stricts)."],
   sampling_ar:["أخذ عينة وريدية حسب بروتوكول دقيق (وضعية وتوقيت صارمان)."],
-  meds_fr:["Signaler impérativement TOUS les antihypertenseurs - la plupart interfèrent avec ce test."],
-  meds_ar:["إبلاغ إلزامياً عن جميع أدوية ضغط الدم - معظمها يتداخل مع هذا الفحص."],
-  note_fr:"Test complexe nécessitant souvent un arrêt temporaire des traitements - toujours sous supervision médicale.",
-  note_ar:"فحص معقد يتطلب غالباً وقفاً مؤقتاً للعلاجات - دائماً تحت إشراف طبي." },
+  meds_fr:["Signaler impérativement TOUS les antihypertenseurs — la plupart interfèrent avec ce test."],
+  meds_ar:["إبلاغ إلزامياً عن جميع أدوية ضغط الدم — معظمها يتداخل مع هذا الفحص."],
+  note_fr:"Test complexe nécessitant souvent un arrêt temporaire des traitements — toujours sous supervision médicale.",
+  note_ar:"فحص معقد يتطلب غالباً وقفاً مؤقتاً للعلاجات — دائماً تحت إشراف طبي." },
 
 { id:184, cat:'hormonologie', fasting:8, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Métanéphrines urinaires/sanguines', name_ar:'الميتانفرين في البول/الدم',
@@ -2465,10 +2480,10 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بعد الراحة، أو جمع بول 24 ساعة حسب الوصفة."],
   meds_fr:["Signaler impérativement bêta-bloquants, antidépresseurs tricycliques, decongestionnants."],
   meds_ar:["إبلاغ إلزامياً عن حاصرات بيتا، مضادات الاكتئاب ثلاثية الحلقات، مزيلات الاحتقان."],
-  note_fr:"De nombreux aliments et médicaments interfèrent - respecter scrupuleusement les restrictions.",
-  note_ar:"العديد من الأطعمة والأدوية تتداخل - يجب احترام القيود بدقة." },
+  note_fr:"De nombreux aliments et médicaments interfèrent — respecter scrupuleusement les restrictions.",
+  note_ar:"العديد من الأطعمة والأدوية تتداخل — يجب احترام القيود بدقة." },
 
-/* ── BIOCHIMIE - FINAL BATCH POUR DÉPASSER 200 ─────────────── */
+/* ── BIOCHIMIE — FINAL BATCH POUR DÉPASSER 200 ─────────────── */
 { id:185, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Bilan lipidique chez l\'enfant', name_ar:'فحص الدهون عند الطفل',
   summary_fr:"Dépistage précoce des dyslipidémies familiales.",
@@ -2492,8 +2507,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بسيطة، تشمل الإنزيمات الكبدية وأحماض الصفراء."],
   meds_fr:["Signaler tout traitement en cours durant la grossesse."],
   meds_ar:["إبلاغ عن أي علاج جارٍ أثناء الحمل."],
-  note_fr:"Diagnostic important - la cholestase gravidique nécessite une surveillance fœtale rapprochée.",
-  note_ar:"تشخيص مهم - ركود صفراوي الحمل يتطلب مراقبة دقيقة للجنين." },
+  note_fr:"Diagnostic important — la cholestase gravidique nécessite une surveillance fœtale rapprochée.",
+  note_ar:"تشخيص مهم — ركود صفراوي الحمل يتطلب مراقبة دقيقة للجنين." },
 
 { id:187, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Acides biliaires (grossesse)', name_ar:'أحماض الصفراء (الحمل)',
@@ -2505,8 +2520,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بسيطة."],
   meds_fr:["Signaler traitement par acide ursodésoxycholique si déjà débuté."],
   meds_ar:["إبلاغ عن علاج حمض أورسوديوكسيكوليك إذا بدأ بالفعل."],
-  note_fr:"Taux élevé associé à un risque accru de complications fœtales - surveillance nécessaire.",
-  note_ar:"المعدل المرتفع مرتبط بزيادة خطر مضاعفات الجنين - تلزم المراقبة." },
+  note_fr:"Taux élevé associé à un risque accru de complications fœtales — surveillance nécessaire.",
+  note_ar:"المعدل المرتفع مرتبط بزيادة خطر مضاعفات الجنين — تلزم المراقبة." },
 
 { id:188, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Bilan martial chez le nourrisson', name_ar:'فحص الحديد عند الرضيع',
@@ -2570,8 +2585,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بسيطة."],
   meds_fr:["Signaler supplémentation en fer et acide folique en cours."],
   meds_ar:["إبلاغ عن تكميل الحديد وحمض الفوليك الجاري."],
-  note_fr:"L'anémie physiologique de dilution est normale en fin de grossesse - à ne pas confondre avec une vraie carence.",
-  note_ar:"فقر الدم الفيزيولوجي بالتخفيف طبيعي في نهاية الحمل - يجب عدم الخلط بينه وبين نقص حقيقي." },
+  note_fr:"L'anémie physiologique de dilution est normale en fin de grossesse — à ne pas confondre avec une vraie carence.",
+  note_ar:"فقر الدم الفيزيولوجي بالتخفيف طبيعي في نهاية الحمل — يجب عدم الخلط بينه وبين نقص حقيقي." },
 
 { id:193, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Dosage de la vitamine A', name_ar:'قياس فيتامين A',
@@ -2583,8 +2598,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية، أنبوب معتم أو محمي من الضوء."],
   meds_fr:["Signaler suppléments en vitamine A."],
   meds_ar:["إبلاغ عن مكملات فيتامين A."],
-  note_fr:"Vitamine sensible à la lumière - manipulation rapide requise après prélèvement.",
-  note_ar:"فيتامين حساس للضوء - يتطلب معالجة سريعة بعد أخذ العينة." },
+  note_fr:"Vitamine sensible à la lumière — manipulation rapide requise après prélèvement.",
+  note_ar:"فيتامين حساس للضوء — يتطلب معالجة سريعة بعد أخذ العينة." },
 
 { id:194, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Dosage de la vitamine E', name_ar:'قياس فيتامين E',
@@ -2635,8 +2650,8 @@ const DB = [
   sampling_ar:["جمع كل البول لمدة 24 ساعة، الحفظ في مكان بارد."],
   meds_fr:["Signaler impérativement bêta-bloquants et antidépresseurs."],
   meds_ar:["إبلاغ إلزامياً عن حاصرات بيتا ومضادات الاكتئاب."],
-  note_fr:"Le bidon de recueil contient un conservateur acide - ne pas le jeter ni le diluer.",
-  note_ar:"وعاء الجمع يحتوي على مادة حافظة حمضية - يجب عدم التخلص منها أو تخفيفها." },
+  note_fr:"Le bidon de recueil contient un conservateur acide — ne pas le jeter ni le diluer.",
+  note_ar:"وعاء الجمع يحتوي على مادة حافظة حمضية — يجب عدم التخلص منها أو تخفيفها." },
 
 { id:198, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Test de Zimmermann (17-cétostéroïdes urinaires)', name_ar:'اختبار زيمرمان',
@@ -2687,8 +2702,8 @@ const DB = [
   sampling_ar:["كيس معقم لاصق يضعه الوالد أو الطاقم الطبي."],
   meds_fr:["Signaler tout traitement antibiotique récent chez l'enfant."],
   meds_ar:["إبلاغ عن أي علاج حديث بالمضادات الحيوية عند الطفل."],
-  note_fr:"Technique délicate - un résultat positif doit être confirmé par sondage si doute.",
-  note_ar:"تقنية دقيقة - النتيجة الإيجابية يجب تأكيدها بالقسطرة عند الشك." },
+  note_fr:"Technique délicate — un résultat positif doit être confirmé par sondage si doute.",
+  note_ar:"تقنية دقيقة — النتيجة الإيجابية يجب تأكيدها بالقسطرة عند الشك." },
 
 ];
 window.LABPREP_DB_PART1 = DB;
@@ -2700,7 +2715,7 @@ const UI = {
   fr: {
     tagline: "Guide de Préparation aux Analyses",
     heroTitle: "Préparez-vous<br/><em>correctement</em> avant<br/>votre analyse",
-    heroSub: "Tapez le nom d'une analyse - obtenez immédiatement les instructions de préparation exactes pour votre laboratoire en Algérie.",
+    heroSub: "Tapez le nom d'une analyse — obtenez immédiatement les instructions de préparation exactes pour votre laboratoire en Algérie.",
     searchPlaceholder: "Ex: Glycémie, ECBU, NFS, Bilan lipidique...",
     langBtn: "العربية",
     pillAll: "Tout",
@@ -2728,7 +2743,7 @@ const UI = {
   ar: {
     tagline: "دليل التحضير للتحاليل الطبية",
     heroTitle: "استعد<br/><em>بشكل صحيح</em><br/>قبل تحليلك",
-    heroSub: "اكتب اسم أي تحليل طبي - واحصل فوراً على تعليمات التحضير الدقيقة لمخبرك في الجزائر.",
+    heroSub: "اكتب اسم أي تحليل طبي — واحصل فوراً على تعليمات التحضير الدقيقة لمخبرك في الجزائر.",
     searchPlaceholder: "مثال: سكر الدم، ECBU، تعداد الدم...",
     langBtn: "Français",
     pillAll: "الكل",
@@ -2964,6 +2979,1233 @@ const EN_NAMES = {
 201:{n:"Urine Culture in Children (Urine Bag)",s:"Adapted urine collection for infants not yet toilet-trained."},
 };
 
+/* ═══════════════════════════════════════════════════════════════
+   ENGLISH DETAIL TRANSLATIONS (prep/sampling/meds/note)
+   Keyed by test id. Populated incrementally — any id not yet listed
+   here falls back to the French detail text in English mode, with a
+   note shown to the user explaining that. Coverage is tracked
+   honestly rather than silently claiming completeness.
+   ═══════════════════════════════════════════════════════════════ */
+const DETAIL_EN = {
+
+1: {
+  prep: ["Strict 12-hour fast (water allowed).", "Last meal the evening before, before 8pm.", "Avoid intense physical activity the day before.", "Do not smoke before the blood draw."],
+  sampling: ["Venous blood draw in the morning between 7am and 9am.", "A single tube is enough."],
+  meds: ["Report any diabetes treatment (insulin, metformin).", "Report corticosteroid therapy."],
+  note: "Fasting too long (over 16h) can falsely lower the result."
+},
+2: {
+  prep: ["Strict 12-hour fast.", "No alcohol during the 72 hours before.", "Keep your usual diet for the 3 days before (don't change your eating habits)."],
+  sampling: ["Venous blood draw in the morning.", "Sit for 15 minutes before the draw."],
+  meds: ["Report any lipid-lowering treatment (statins, fibrates).", "Report oral contraceptives or hormone therapy."],
+  note: "Pregnancy and recent infections can affect the results, report them."
+},
+3: {
+  prep: ["No mandatory fasting, but 4 hours is recommended.", "Stay well hydrated the day before."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report diuretics and anti-inflammatory drugs."],
+  note: "Often tested together with creatinine in the same draw."
+},
+4: {
+  prep: ["Fasting is not required.", "Avoid intense muscular effort 48h before (can falsely raise the value)."],
+  sampling: ["Simple venous blood draw, any time of day."],
+  meds: ["Report creatine supplement use (sports supplements).", "Report NSAIDs and certain antibiotics."],
+  note: "A diet very high in red meat can slightly raise the level."
+},
+5: {
+  prep: ["Fasting not required but recommended (8h).", "Avoid alcohol 48h before.", "Avoid intense physical activity the day before."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report paracetamol, statins, recent antibiotics.", "Report herbal remedies and dietary supplements."],
+  note: "A recent intramuscular injection can falsely raise AST."
+},
+6: {
+  prep: ["4h fasting recommended.", "Protect the sample from light after the draw (light-sensitive)."],
+  sampling: ["Venous blood draw, tube protected from light."],
+  meds: ["Report any treatment that may affect the liver."],
+  note: "Prolonged fasting (over 24h) can falsely raise indirect bilirubin."
+},
+7: {
+  prep: ["Fasting not required.", "Avoid a very fatty meal before the draw."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report oral contraceptives and hormone treatments."],
+  note: "Physiologically elevated in growing children and pregnant women."
+},
+8: {
+  prep: ["8h fasting recommended.", "Stop alcohol at least 24h before."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report anticonvulsants, oral contraceptives."],
+  note: "Very sensitive even to moderate alcohol consumption."
+},
+9: {
+  prep: ["No special preparation.", "No fasting needed."],
+  sampling: ["Simple venous blood draw, any time."],
+  meds: ["Report current anti-inflammatory drugs and corticosteroids."],
+  note: "Rises quickly (6-12h) after an infection begins."
+},
+10: {
+  prep: ["No mandatory fasting.", "Don't clench your fist for a long time during the draw (affects potassium)."],
+  sampling: ["Quick venous draw, without a prolonged tourniquet."],
+  meds: ["Report diuretics, ACE inhibitors, laxatives."],
+  note: "The sample must be analyzed quickly to avoid hemolysis."
+},
+11: {
+  prep: ["4h fasting recommended.", "Avoid a prolonged tourniquet during the draw."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report calcium supplements and vitamin D.", "Report thiazide diuretics."],
+  note: "Often interpreted together with albumin level (corrected calcium)."
+},
+12: {
+  prep: ["Fasting not required.", "Avoid taking magnesium supplements on the day of the test."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report diuretics and laxatives."],
+  note: "Hemolysis of the sample can affect the results."
+},
+13: {
+  prep: ["8h fasting recommended (phosphorus varies with meals)."],
+  sampling: ["Preferably morning venous blood draw."],
+  meds: ["Report aluminum-based antacids.", "Report vitamin D supplements."],
+  note: "Varies with the body's daily rhythm, morning is recommended."
+},
+14: {
+  prep: ["8h fasting recommended.", "Avoid alcohol and organ meats (liver, kidney) 48h before.", "Avoid seafood the day before."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report low-dose aspirin and diuretics.", "Report gout treatment (allopurinol)."],
+  note: "Excessive fasting or a purine-rich diet strongly distorts the result."
+},
+15: {
+  prep: ["8h fasting recommended.", "Sit for 15 minutes before the draw."],
+  sampling: ["Venous draw, without a prolonged tourniquet."],
+  meds: ["Report corticosteroids and estrogens."],
+  note: "Standing for a long time before the test artificially raises the level."
+},
+
+16: {
+  prep: ["Fasting is not strictly required.", "Avoid dehydration before the test."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report recent albumin or serum infusions."],
+  note: "Can be falsely low in pregnancy or overhydration."
+},
+17: {
+  prep: ["No fasting is truly necessary (but often requested along with fasting glucose).", "No special dietary restrictions."],
+  sampling: ["Simple venous blood draw, any time of day."],
+  meds: ["Report recent blood transfusions (affects the result)."],
+  note: "Distorted by anemia, hemoglobin disorders, or a recent transfusion."
+},
+18: {
+  prep: ["4h fasting recommended.", "Avoid alcohol 24h before."],
+  sampling: ["Simple venous blood draw, ideally during a pain episode."],
+  meds: ["Report opioid painkillers (can raise the level)."],
+  note: "Rises 2-12h after the start of acute pancreatitis."
+},
+19: {
+  prep: ["4h fasting recommended.", "Avoid a fatty meal the evening before."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report morphine or codeine treatment."],
+  note: "Stays elevated longer than amylase (up to 14 days)."
+},
+20: {
+  prep: ["Strict 12-hour fast before the test.", "Normal diet (carbohydrate-rich) for the 3 days before.", "Do not smoke during the test."],
+  sampling: ["Fasting draw, then drink 75g of glucose, then draws at 1h and 2h.", "Stay seated and calm during the whole test (2h)."],
+  meds: ["Report any treatment that may change blood sugar (corticosteroids, beta-blockers)."],
+  note: "Long test (2-3h), plan to stay at the lab between draws."
+},
+21: {
+  prep: ["12h fasting recommended (iron varies with meals).", "Preferably morning draw (8-10am), the daily peak.", "Do not take iron supplements 24h before."],
+  sampling: ["Morning venous blood draw."],
+  meds: ["Report any iron treatment.", "Report recent transfusions."],
+  note: "Varies a lot throughout the day, always draw in the morning to compare."
+},
+22: {
+  prep: ["Fasting not strictly required.", "Avoid intense physical activity the day before."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report any current iron treatment."],
+  note: "Falsely elevated during inflammation or infection, pair with CRP."
+},
+23: {
+  prep: ["8h fasting recommended.", "Preferably a morning draw."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report oral contraceptives and pregnancy."],
+  note: "Decreases with inflammation, increases with iron deficiency."
+},
+24: {
+  prep: ["Fasting not required.", "Avoid intense physical activity or an IM injection 48h before."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report statins and recent intramuscular injections."],
+  note: "Very sensitive to muscular effort, even brisk walking can distort the result."
+},
+25: {
+  prep: ["No preparation, it's an emergency test done immediately.", "No fasting required."],
+  sampling: ["Immediate venous draw, often repeated at 0h, 3h, 6h to track the trend."],
+  meds: ["Report any current anticoagulant treatment."],
+  note: "Done as an emergency test, no special preparation is needed."
+},
+26: {
+  prep: ["4h fasting advised.", "Avoid hemolysis, careful draw technique required."],
+  sampling: ["Simple venous blood draw, avoid a prolonged tourniquet."],
+  meds: ["Report recent cancer treatment."],
+  note: "Easily distorted by hemolysis of the sample."
+},
+27: {
+  prep: ["No fasting needed.", "Rest for 20-30 minutes before the draw.", "Report current oxygen therapy (exact flow rate)."],
+  sampling: ["Arterial draw (wrist or groin) by a qualified doctor or technician.", "Pressure applied to the puncture site for 5 minutes after."],
+  meds: ["Report oxygen therapy and assisted ventilation."],
+  note: "More uncomfortable than a venous draw, must be analyzed immediately (unstable sample)."
+},
+28: {
+  prep: ["Rest before the draw.", "Avoid clenching your fist during the draw (distorts the result)."],
+  sampling: ["Venous draw without a tourniquet, or arterial depending on the clinical context."],
+  meds: ["Report metformin (can raise lactate)."],
+  note: "Must be analyzed within 15 minutes of the draw."
+},
+29: {
+  prep: ["12h fasting recommended if requested alone, for comparison with the full lipid panel."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report lipid-lowering treatment."],
+  note: "Varies little during the day, unlike triglycerides."
+},
+30: {
+  prep: ["Strict 12-hour fast.", "No alcohol 72h before.", "Avoid a very fatty meal the evening before."],
+  sampling: ["Morning venous blood draw."],
+  meds: ["Report beta-blockers, corticosteroids, estrogens."],
+  note: "The single most fasting-sensitive marker in the whole blood panel."
+},
+31: {
+  prep: ["No fasting required.", "Avoid intense physical activity before the draw.", "Report any fever or ongoing infection."],
+  sampling: ["Simple venous blood draw, any time of day."],
+  meds: ["Report any anticoagulant treatment or chemotherapy."],
+  note: "Result usually available within a few hours, often the same day."
+},
+32: {
+  prep: ["No fasting needed.", "Recent pregnancy is a factor to report if applicable."],
+  sampling: ["Simple venous blood draw, analyzed within 2h of the draw."],
+  meds: ["Report current anti-inflammatory drugs."],
+  note: "Physiologically elevated during pregnancy and in older women."
+},
+33: {
+  prep: ["No preparation needed.", "No fasting required."],
+  sampling: ["Venous blood draw, usually 2 determinations from 2 separate draws."],
+  meds: ["No specific medication to report."],
+  note: "Final result obtained after 2 matching determinations (a blood type card is issued)."
+},
+34: {
+  prep: ["No fasting needed.", "Report any recent transfusion."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report recent treatment with iron, vitamin B12, or folic acid."],
+  note: "Useful to distinguish a central anemia from a peripheral one."
+},
+35: {
+  prep: ["No fasting needed."],
+  sampling: ["Venous or capillary draw (finger prick)."],
+  meds: ["Report chemotherapy or any recent treatment affecting the blood."],
+  note: "Must be done quickly after the draw to avoid artifacts."
+},
+
+36: {
+  prep: ["No fasting needed.", "Draw at a fixed time if on AVK treatment (regular monitoring)."],
+  sampling: ["Venous draw, tube must be filled precisely to the mark (strict blood-to-citrate ratio)."],
+  meds: ["Always report any anticoagulant treatment (Sintrom, Previscan, Warfarin).", "Report recent antibiotics."],
+  note: "An improperly filled tube fully invalidates the result, the technician checks this systematically."
+},
+37: {
+  prep: ["No fasting needed.", "Avoid any trauma at the puncture site before the test."],
+  sampling: ["Venous draw, citrate tube filled precisely."],
+  meds: ["Report heparin and current anticoagulants."],
+  note: "Used to monitor heparin treatment."
+},
+38: {
+  prep: ["No fasting needed."],
+  sampling: ["Venous draw, citrate tube."],
+  meds: ["Report current anticoagulant treatment."],
+  note: "Rises with inflammation, pregnancy, or infection."
+},
+39: {
+  prep: ["No fasting needed, test is often done as an emergency."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report pregnancy and anticoagulants."],
+  note: "Falsely elevated in pregnancy, recent surgery, or cancer."
+},
+40: {
+  prep: ["No fasting needed.", "Report any blood transfusion in the last 3 months."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["No specific medication to report."],
+  note: "A recent transfusion can completely distort the results."
+},
+41: {
+  prep: ["Wash with soap before the sample.", "Collect midstream urine (the second part of urination).", "Ideally the first urination of the morning.", "Not on antibiotics for at least 7 days."],
+  sampling: ["Collect 20-30 mL in the sterile container provided by the lab.", "Close immediately and bring to the lab within the hour."],
+  meds: ["IMPORTANT: report any recent antibiotic use, it fully distorts the culture."],
+  note: "Recent antibiotic therapy is the number one cause of false negatives in Algeria, avoid it before the test."
+},
+42: {
+  prep: ["Do not brush your teeth or use mouthwash before the test.", "Do not eat or drink for 2h before the sample.", "Not on antibiotics."],
+  sampling: ["Swab of the tonsils and pharynx by the technician."],
+  meds: ["Always report any recent antibiotic use."],
+  note: "The gag reflex is normal, breathing through the mouth makes it easier."
+},
+43: {
+  prep: ["Thorough skin disinfection by staff before the draw.", "Ideally drawn during a fever spike or chills.", "Not on antibiotics if possible."],
+  sampling: ["2-3 pairs of bottles drawn (aerobic/anaerobic) from different sites.", "Repeat if needed at 30-minute intervals."],
+  meds: ["Always report any current or recent antibiotic therapy."],
+  note: "Final result in 3-5 days (culture and sensitivity), a preliminary result can be given at 24h."
+},
+44: {
+  prep: ["Avoid intercourse for 48h before.", "No internal vaginal cleaning (no douching) for 48h before.", "Avoid vaginal suppositories or local treatments for 7 days before.", "Not during your period."],
+  sampling: ["Sample taken by a midwife or gynecologist using a speculum."],
+  meds: ["Report any recent antifungal or local antibiotic treatment."],
+  note: "Avoid intimate cleaning on the day of the exam itself, it distorts the flora."
+},
+45: {
+  prep: ["Not on antibiotics for 15 days.", "Avoid anti-diarrheal treatments before the sample.", "Collect in the sterile container, avoid contact with urine."],
+  sampling: ["Collect a small amount of fresh stool (walnut-sized).", "Bring to the lab within 2 hours, or refrigerate (not freeze)."],
+  meds: ["Always report any recent antibiotic therapy."],
+  note: "Often requested as 3 successive samples (3 different days) for reliability."
+},
+46: {
+  prep: ["Do not apply antiseptic or antibiotic ointment right before.", "Clean the skin around the wound (not the wound itself) before the sample."],
+  sampling: ["Swab taken by medical staff at the wound site."],
+  meds: ["Report any current local or systemic antibiotic treatment."],
+  note: "Result with sensitivity testing available in 48-72h."
+},
+47: {
+  prep: ["Do not use nasal spray or drops before the sample.", "Do not blow your nose right before the test."],
+  sampling: ["Gentle swab of each nostril."],
+  meds: ["Report any current local nasal antibiotic treatment."],
+  note: "Used especially to screen for MRSA before hospitalization."
+},
+48: {
+  prep: ["Rinse your mouth with clean water first (no toothpaste or mouthwash).", "Preferably a sample taken in the morning upon waking.", "Cough up deeply, not just saliva."],
+  sampling: ["Collect in the sterile container after a deep cough."],
+  meds: ["Report current or recent antibiotic therapy."],
+  note: "A saliva-only sample (without mucus) will be rejected by the lab."
+},
+49: {
+  prep: ["Collect 3 sputum samples over 3 consecutive days, preferably in the morning.", "Rinse your mouth with water before each sample.", "Report the clinical suspicion to the lab (special analysis timeline)."],
+  sampling: ["Cough up deeply into the sterile container provided, preferably fasting.", "Seal tightly and transport quickly to the lab."],
+  meds: ["Always report any anti-tuberculosis treatment already started."],
+  note: "Analysis done in approved anti-tuberculosis labs (culture can take up to 6-8 weeks)."
+},
+50: {
+  prep: ["Thorough intimate hygiene before the sample.", "Collect midstream urine.", "Preferably the first urination of the morning."],
+  sampling: ["Collect 20-30 mL in the sterile container.", "Bring to the lab within the hour."],
+  meds: ["Report any current or recent antibiotic treatment."],
+  note: "Test recommended every month during pregnancy, even without symptoms."
+},
+51: {
+  prep: ["Fasting not required.", "Preferably a morning draw (daily variation).", "Avoid biotin (vitamin B8) 48h before if at a high dose."],
+  sampling: ["Simple venous blood draw, ideally between 7am and 10am."],
+  meds: ["Report thyroid treatment (Levothyrox) and the time of the last dose.", "Report amiodarone, lithium, corticosteroids."],
+  note: "If on Levothyrox, draw before the morning dose for a reliable result."
+},
+52: {
+  prep: ["Fasting not required.", "Morning draw recommended."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Always report current thyroid treatment and the timing of the last dose."],
+  note: "Pregnancy physiologically changes these values, report it."
+},
+53: {
+  prep: ["Rest for 20-30 minutes before the draw (stress raises prolactin).", "Avoid intercourse and breast stimulation 24h before.", "Preferably a morning draw, away from meals."],
+  sampling: ["Venous draw after resting, avoid stress right before."],
+  meds: ["Report antidepressants, antipsychotics, anti-nausea drugs (domperidone)."],
+  note: "The simple stress of the blood draw itself can falsely raise it, rest is essential."
+},
+54: {
+  prep: ["In women: draw on day 3 of the menstrual cycle (unless told otherwise).", "No fasting needed."],
+  sampling: ["Simple venous blood draw, note the exact cycle day."],
+  meds: ["Report hormonal contraceptives and fertility treatments."],
+  note: "The cycle day must be noted on the prescription for correct interpretation."
+},
+55: {
+  prep: ["Draw dated precisely according to the menstrual cycle (often day 3).", "No fasting required."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report hormone replacement therapy or contraceptives."],
+  note: "Essential in monitoring ovarian stimulation (IVF)."
+},
+
+56: {
+  prep: ["Draw on day 21 of the cycle (unless told otherwise) to check ovulation.", "No fasting needed."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report current fertility treatment (Duphaston, Utrogestan)."],
+  note: "The cycle day is essential for interpretation, note it precisely."
+},
+57: {
+  prep: ["Draw in the morning between 7am and 10am (daily peak).", "No fasting required."],
+  sampling: ["Simple venous blood draw, preferably in the morning."],
+  meds: ["Report anabolic steroids and hormone treatments."],
+  note: "Varies strongly with the time of day, always draw in the morning."
+},
+58: {
+  prep: ["Draw in the morning between 7am and 9am (daily peak), preferably fasting.", "Avoid stress and physical effort before the draw.", "Sleep well the night before."],
+  sampling: ["Morning venous draw, sometimes repeated in the evening for comparison (daily cycle)."],
+  meds: ["Report current corticosteroid therapy (even topical or inhaled).", "Report oral contraceptives."],
+  note: "The stress of the blood draw itself can falsely raise the result."
+},
+59: {
+  prep: ["Strict 12-hour fast.", "Often done together with fasting glucose."],
+  sampling: ["Morning venous draw while fasting."],
+  meds: ["Report current diabetes treatment, especially injected insulin."],
+  note: "Not respecting the fast completely invalidates the HOMA interpretation."
+},
+60: {
+  prep: ["8h fasting recommended.", "Preferably a morning draw (daily variation).", "Fast transport to the lab (unstable hormone)."],
+  sampling: ["Morning venous draw, chilled tube if transport takes long."],
+  meds: ["Report calcium supplements and vitamin D."],
+  note: "Always interpreted together with the same-day calcium level."
+},
+61: {
+  prep: ["No fasting needed.", "Can be done at any time of day."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["No specific medication to report."],
+  note: "Detectable as early as 8-10 days after fertilization, earlier than a urine test."
+},
+62: {
+  prep: ["Can be drawn on any day of the cycle.", "No fasting needed."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report hormonal contraceptives (can slightly lower the values)."],
+  note: "Unlike FSH, doesn't need to be dated precisely within the cycle."
+},
+63: {
+  prep: ["No fasting needed.", "No special preparation."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report current anti-inflammatory drugs and immunosuppressants."],
+  note: "Can be positive in other autoimmune diseases, not 100% specific."
+},
+64: {
+  prep: ["No fasting needed.", "No special preparation."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report certain drugs that can induce lupus (hydralazine, procainamide)."],
+  note: "A single positive result isn't enough for a diagnosis, clinical context is needed."
+},
+65: {
+  prep: ["No fasting needed."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report current immunosuppressant treatment."],
+  note: "More specific than rheumatoid factor for early diagnosis."
+},
+66: {
+  prep: ["No fasting needed.", "Fast transport to the lab (fragile proteins)."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report immunosuppressant or biologic treatment."],
+  note: "Decreases during active flares of autoimmune diseases."
+},
+67: {
+  prep: ["No fasting needed.", "Report any known allergy."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report current antihistamines and corticosteroids."],
+  note: "Elevated in allergy, asthma, or parasitic infection."
+},
+68: {
+  prep: ["No fasting needed."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report immunosuppressant treatment, recent chemotherapy."],
+  note: "Useful for detecting primary or secondary immune deficiencies."
+},
+69: {
+  prep: ["No fasting needed.", "Test done confidentially and anonymously if desired."],
+  sampling: ["Simple venous blood draw.", "Informed patient consent required."],
+  meds: ["No specific medication to report, except current antiretroviral treatment."],
+  note: "If there's doubt or recent exposure, wait 6 weeks for a fully reliable result (window period)."
+},
+70: {
+  prep: ["No fasting needed.", "Often requested during prenatal or pre-surgery work-up."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report recent hepatitis B vaccination."],
+  note: "Mandatory in the 6th-month prenatal check-up in Algeria."
+},
+71: {
+  prep: ["No fasting needed."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["No specific medication to report."],
+  note: "If positive, a viral PCR test is needed to confirm active infection."
+},
+72: {
+  prep: ["No mandatory fasting.", "Mandatory monthly test for non-immune pregnant women."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["No specific medication to report."],
+  note: "In Algeria, mandatory monthly monitoring throughout pregnancy if seronegative."
+},
+73: {
+  prep: ["No fasting needed.", "Test done in early pregnancy or before conception."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report recent rubella vaccination (wait 1 month after the vaccine before pregnancy)."],
+  note: "If not immune, vaccination is recommended before pregnancy (contraindicated during pregnancy)."
+},
+74: {
+  prep: ["No fasting needed.", "Mandatory test in the prenatal work-up in Algeria."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report any recent antibiotic treatment (especially penicillin)."],
+  note: "A positive result requires prompt treatment, especially during pregnancy."
+},
+75: {
+  prep: ["No fasting needed."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report current immunosuppressant treatment (in transplant patients)."],
+  note: "Significant risk if a first infection happens during pregnancy, close monitoring needed."
+},
+76: {
+  prep: ["No fasting needed.", "Report contact with animals or consumption of unpasteurized milk/cheese."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report any recent antibiotic treatment."],
+  note: "Still common in rural and livestock-farming areas in Algeria, report the exposure."
+},
+77: {
+  prep: ["No fasting needed.", "Report any recent case of jaundice around you."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report recent hepatitis A vaccination."],
+  note: "Common in children in Algeria, usually mild but very contagious."
+},
+78: {
+  prep: ["Do not take anti-diarrheal medication or charcoal before the sample.", "Avoid oil-based laxatives before the test.", "Collect on 3 different days if possible (intermittent parasites)."],
+  sampling: ["Collect a small amount of fresh stool in the sterile container.", "Bring to the lab quickly (some parasites degrade fast)."],
+  meds: ["Report any recent antiparasitic treatment."],
+  note: "Very common test in Algeria, often requested 3 times for maximum reliability."
+},
+79: {
+  prep: ["Do the test in the morning BEFORE washing or a bowel movement.", "Do not wash the anal area before the sample.", "Repeat over 3 consecutive mornings for reliability."],
+  sampling: ["Apply the provided tape to the anal area upon waking, before any washing."],
+  meds: ["Report any recent antiparasitic treatment (Fluvermal)."],
+  note: "The key moment is the morning upon waking, the eggs are laid at night."
+},
+80: {
+  prep: ["Always report any recent travel to a malaria-endemic area.", "Ideally drawn during a fever spike."],
+  sampling: ["Venous or capillary draw (finger prick)."],
+  meds: ["Report any current preventive or curative anti-malaria treatment."],
+  note: "Diagnostic emergency, result should be obtained within hours if suspected."
+},
+
+81: {
+  prep: ["Do not take antiparasitic medication before the test.", "Preferably collect over several days (intermittent shedding)."],
+  sampling: ["Collect a fresh stool sample in the sterile container."],
+  meds: ["Report recent antiparasitic treatment (Metronidazole)."],
+  note: "Intermittent shedding, several samples increase test sensitivity."
+},
+82: {
+  prep: ["No fasting needed.", "Report contact with dogs or sheep farming."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["No specific medication to report."],
+  note: "Endemic disease in rural areas of Algeria, testing is important when a cyst is found on imaging."
+},
+83: {
+  prep: ["4h fasting recommended.", "Stop B12 supplements at least 1 week before if possible."],
+  sampling: ["Simple venous blood draw, protected from light."],
+  meds: ["Report any vitamin B12 injection treatment."],
+  note: "Common in strict vegetarians/vegans and older adults."
+},
+84: {
+  prep: ["4h fasting recommended.", "Stop supplements 1 week before if possible (unless your doctor says otherwise)."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report folic acid supplement use (often prescribed during pregnancy)."],
+  note: "Supplementation is recommended as soon as pregnancy is planned in Algeria."
+},
+85: {
+  prep: ["No fasting needed.", "No special preparation."],
+  sampling: ["Simple venous blood draw, any time of day."],
+  meds: ["Report any recent vitamin D supplementation."],
+  note: "Very widespread deficiency in Algeria, especially in veiled women and older adults."
+},
+86: {
+  prep: ["12h fasting recommended.", "Preferably a morning draw.", "Stop iron supplements 24h before."],
+  sampling: ["Simple venous blood draw, in the morning."],
+  meds: ["Report any current iron treatment or recent transfusion."],
+  note: "Ferritin is the most reliable marker to diagnose iron-deficiency anemia."
+},
+87: {
+  prep: ["8h fasting recommended.", "Avoid alcohol 48h before.", "Avoid intense physical activity the day before."],
+  sampling: ["Simple venous blood draw, preferably in the morning."],
+  meds: ["Report any liver-toxic medication (high-dose paracetamol, certain antibiotics)."],
+  note: "Often requested before surgery or in case of unexplained fatigue."
+},
+88: {
+  prep: ["8h fasting recommended.", "Stay well hydrated the day before.", "Avoid intense physical activity 48h before."],
+  sampling: ["Morning venous blood draw."],
+  meds: ["Report diuretics, ACE inhibitors, NSAIDs."],
+  note: "Calculating the GFR (glomerular filtration rate) requires the patient's age, weight, and sex."
+},
+89: {
+  prep: ["Discard the first morning urine (don't collect it).", "Collect ALL following urine for 24h, including the next morning's at the same time.", "Keep the container refrigerated or in a cool place."],
+  sampling: ["Collect in the container provided by the lab, note the start and end times.", "Bring the total volume to the lab."],
+  meds: ["Report current diuretics and anti-inflammatory drugs."],
+  note: "The collection must be complete and precise, missing even one urination fully distorts the result."
+},
+90: {
+  prep: ["Avoid intense physical activity before the sample.", "Avoid testing during a urinary infection or your period (distorts the result).", "Preferably a morning sample."],
+  sampling: ["Collect a simple urine sample in the sterile container."],
+  meds: ["Report antihypertensive or antidiabetic treatment."],
+  note: "Annual testing is recommended for every diabetic patient in Algeria."
+},
+91: {
+  prep: ["24h urine collection following the same protocol as protein testing.", "Blood draw for creatinine the same day."],
+  sampling: ["Full urine collection plus a venous blood draw the morning the container is returned."],
+  meds: ["Report diuretics and nephrotoxic medications."],
+  note: "Requires exact coordination between the urine collection and the blood draw."
+},
+92: {
+  prep: ["Mandatory 12h fasting (glucose is included in the panel).", "Stop certain treatments as advised by the anesthesiologist (especially anticoagulants)."],
+  sampling: ["Morning venous draw, several tubes depending on the tests requested (CBC, PT/aPTT, blood type, electrolytes)."],
+  meds: ["Always report ALL current treatments to the anesthesiologist."],
+  note: "Always bring the complete list of your usual medications on the day of the draw."
+},
+93: {
+  prep: ["No mandatory fasting.", "Report recent hydration status (vomiting, diarrhea)."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report diuretics and recent IV fluids."],
+  note: "Often requested in cases of severe dehydration or altered consciousness."
+},
+94: {
+  prep: ["No fasting needed.", "Report any occupational exposure (paint, batteries, plumbing)."],
+  sampling: ["Venous draw in a special lead-free tube."],
+  meds: ["No specific medication to report."],
+  note: "Mandatory occupational health test in certain exposed professions in Algeria."
+},
+95: {
+  prep: ["No fasting needed.", "Report recent exposure to organophosphate pesticides."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report recent anesthesia (succinylcholine)."],
+  note: "Important for farmers exposed to pesticides in rural areas of Algeria."
+},
+96: {
+  prep: ["No fasting needed."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report anticoagulant treatment, chemotherapy, heparin."],
+  note: "A false low platelet count can occur from clumping in the tube, check with a blood smear if in doubt."
+},
+97: {
+  prep: ["No fasting needed.", "Report a recent blood transfusion."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report certain antibiotics and methyldopa."],
+  note: "Also done routinely in newborns of Rh-negative mothers."
+},
+98: {
+  prep: ["No fasting needed.", "Report history of transfusion or previous pregnancies."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["No specific medication to report."],
+  note: "In Rh-negative pregnant women, done several times throughout pregnancy."
+},
+99: {
+  prep: ["Done at the hospital, usually fasting if deep local anesthesia is used.", "Report any known bleeding disorder."],
+  sampling: ["Puncture done by a specialist doctor at the sternum or iliac crest."],
+  meds: ["Always report any anticoagulant treatment."],
+  note: "Only done in a hospital setting by a hematologist."
+},
+100: {
+  prep: ["No fasting needed.", "Report family history of sickle cell disease."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report any recent transfusion."],
+  note: "Often done as part of the pre-marital check-up in Algeria."
+},
+
+101: {
+  prep: ["Avoid aspirin and NSAIDs 7 days before (unless your doctor says otherwise)."],
+  sampling: ["Done via a standardized skin incision on the forearm by the technician."],
+  meds: ["Always report aspirin, clopidogrel, NSAIDs."],
+  note: "Increasingly rarely used test, replaced by platelet aggregation tests."
+},
+102: {
+  prep: ["No fasting needed.", "Away from an acute clotting episode (several weeks) for a reliable interpretation."],
+  sampling: ["Venous draw, citrate tube."],
+  meds: ["Always report anticoagulants (heparin, AVK), they strongly distort the result."],
+  note: "Should be done well away from any acute episode and without anticoagulants if possible."
+},
+103: {
+  prep: ["No fasting needed.", "Away from an acute clotting episode."],
+  sampling: ["Venous draw, citrate tube."],
+  meds: ["Always report AVK treatment (Sintrom), it falsely lowers protein C/S."],
+  note: "Never done while on AVK treatment without specialist advice, results become uninterpretable."
+},
+104: {
+  prep: ["Do not use ear drops 48h before the sample.", "Do not clean the ear right before the test."],
+  sampling: ["Swab done by an ENT doctor or qualified technician."],
+  meds: ["Report any current local or systemic antibiotic treatment."],
+  note: "Usually reserved for chronic ear infections or ones not responding to initial treatment."
+},
+105: {
+  prep: ["Do not apply antibiotic eye drops before the sample.", "Do not wear eye makeup on the day of the test."],
+  sampling: ["Gentle swab of the conjunctival sac by medical staff."],
+  meds: ["Report any antibiotic eye drops used recently."],
+  note: "Particularly important in newborns (neonatal conjunctivitis)."
+},
+106: {
+  prep: ["Do not urinate for at least 2 hours before the sample.", "Avoid intimate hygiene right before the test.", "Not on antibiotics."],
+  sampling: ["Sample taken with a thin swab inserted into the urethra by the doctor."],
+  meds: ["Always report any recent antibiotic treatment."],
+  note: "Not urinating before the test is essential, urine washes away the bacteria being tested for."
+},
+107: {
+  prep: ["Stop proton pump inhibitors (PPIs) 2 weeks before.", "Stop antibiotics 4 weeks before.", "No fasting needed for the stool sample."],
+  sampling: ["Collect a fresh stool sample in the sterile container."],
+  meds: ["ESSENTIAL: report and stop PPIs and antibiotics per the timelines above, otherwise a false negative is almost guaranteed."],
+  note: "Not stopping PPIs beforehand is the number one cause of false negatives for this test."
+},
+108: {
+  prep: ["Do not apply antifungal cream 2 weeks before the sample.", "Do not wash the affected area on the day of the test."],
+  sampling: ["Skin scraping or scale sample taken by the dermatologist."],
+  meds: ["Report any recent local or oral antifungal treatment."],
+  note: "Stopping antifungal treatment before the test is essential for the culture to work."
+},
+109: {
+  prep: ["Empty your bladder at a precise time (e.g. 8am) without collecting it.", "Drink a large glass of water then don't urinate for 3 hours.", "Collect all urine exactly 3 hours later."],
+  sampling: ["Collect all the urine in the container provided, respecting the strict timing."],
+  meds: ["Report any current diuretic treatment."],
+  note: "Strictly respecting the 3 hours is essential for an interpretable result."
+},
+110: {
+  prep: ["Collect all morning urine (the full first stream, not just midstream).", "Collection over 3 consecutive days is recommended."],
+  sampling: ["Collect the entire first morning urination in the sterile container."],
+  meds: ["Report any anti-tuberculosis treatment already started."],
+  note: "Unlike a standard urine culture, HERE the entire urination is collected, not just midstream."
+},
+111: {
+  prep: ["No special preparation.", "Sample can be taken any time of day."],
+  sampling: ["Collect a simple urine sample, dip the strip immediately."],
+  meds: ["Report current diabetes treatment."],
+  note: "Immediate result in 1-2 minutes, can be done in a doctor's office."
+},
+112: {
+  prep: ["Sexual abstinence for 3 to 5 days before the sample.", "Thorough intimate hygiene before collection.", "Not on antibiotics."],
+  sampling: ["Collected by masturbation into a sterile container, at the lab or at home (fast transport under 1h)."],
+  meds: ["Report any recent antibiotic treatment."],
+  note: "Respecting the abstinence period is essential for a reliable result."
+},
+113: {
+  prep: ["Sexual abstinence for 3 to 5 days (no more, no less).", "Avoid fever or illness in the 3 months before (distorts the result).", "Avoid prolonged hot baths/sauna before the test."],
+  sampling: ["Collected by masturbation, ideally directly at the lab.", "If at home: transport within 30-45 minutes at body temperature."],
+  meds: ["Report any recent treatment, especially anabolic steroids or chemotherapy."],
+  note: "A fever episode in the 3 months before can strongly and temporarily distort the results."
+},
+114: {
+  prep: ["Strict 8-hour fast.", "Often done together with fasting glucose."],
+  sampling: ["Morning venous draw while fasting."],
+  meds: ["Report injected insulin treatment (affects the interpretation)."],
+  note: "Useful to distinguish type 1 from type 2 diabetes when there's doubt."
+},
+115: {
+  prep: ["No fasting needed."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report current thyroid treatment."],
+  note: "Often requested together with TSH in cases of hypothyroidism."
+},
+116: {
+  prep: ["No fasting needed.", "Morning draw recommended."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report oral contraceptives (raise the level)."],
+  note: "Useful in the work-up for polycystic ovary syndrome (PCOS)."
+},
+117: {
+  prep: ["Morning draw (daily peak).", "In women: ideally at the start of the cycle."],
+  sampling: ["Morning venous blood draw."],
+  meds: ["Report current corticosteroid therapy."],
+  note: "Routine newborn screening test in some countries for adrenal hyperplasia."
+},
+118: {
+  prep: ["No fasting needed.", "Morning draw recommended."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report corticosteroids and oral contraceptives."],
+  note: "Naturally decreases with age after 30."
+},
+119: {
+  prep: ["Draw in the morning between 7-9am, chilled tube, fast transport (unstable hormone).", "8h fasting recommended.", "Rest before the draw (stress raises ACTH)."],
+  sampling: ["Morning venous draw, transported to the lab on ice immediately."],
+  meds: ["Always report current corticosteroid therapy (even a small dose)."],
+  note: "Technically delicate test, requires fast, refrigerated transport to the lab."
+},
+120: {
+  prep: ["Strict 8h fast.", "Physical and mental rest before the test (stress and exertion raise GH)."],
+  sampling: ["Morning venous draw, sometimes repeated (dynamic test)."],
+  meds: ["Report any current growth hormone treatment."],
+  note: "Often done as a dynamic test (with stimulation) in a pediatric hospital setting."
+},
+121: {
+  prep: ["No strict fasting, but recommended.", "No special preparation."],
+  sampling: ["Simple venous blood draw, any time (unlike GH)."],
+  meds: ["Report growth hormone treatment."],
+  note: "More stable than GH throughout the day, easier to interpret."
+},
+122: {
+  prep: ["Done between the newborn's 3rd and 5th day of life.", "Baby must have been fed at least 24h before (not fasting)."],
+  sampling: ["Heel prick, a few drops of blood placed on special blotting paper."],
+  meds: ["No specific medication to report."],
+  note: "Essential and free test, allows early detection of serious but treatable diseases."
+},
+123: {
+  prep: ["Done routinely for every newborn in Algeria.", "No fasting needed."],
+  sampling: ["Heel prick, a few days after birth."],
+  meds: ["No specific medication to report."],
+  note: "Crucial screening because untreated congenital hypothyroidism causes irreversible intellectual disability."
+},
+124: {
+  prep: ["Fresh stool (under 30 minutes), the parasite degrades quickly.", "Do not take antiparasitic medication before."],
+  sampling: ["Collect a still-warm sample, bring to the lab IMMEDIATELY."],
+  meds: ["Report recent antiparasitic treatment."],
+  note: "The amoeba degrades within minutes, transport time is critical for this test."
+},
+125: {
+  prep: ["No fasting needed.", "Report any stay in a rural or Saharan area."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["No specific medication to report."],
+  note: "Disease present in several regions of Algeria, especially the South and the High Plateaus."
+},
+
+126: {
+  prep: ["No fasting needed.", "Report any contact with fresh water in a tropical/sub-Saharan area."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["No specific medication to report."],
+  note: "Rarely local to Algeria, mostly detected in travelers returning from sub-Saharan Africa."
+},
+127: {
+  prep: ["Collect fresh stool.", "Do not take anti-diarrheal medication before the test."],
+  sampling: ["Collect in the sterile container provided by the lab."],
+  meds: ["Report immune status (HIV, chemotherapy, immunosuppressants)."],
+  note: "Requires a special staining technique, tell the lab if this is suspected."
+},
+128: {
+  prep: ["No fasting needed."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["No specific medication to report."],
+  note: "Common in teenagers and young adults, presents with fatigue and a sore throat."
+},
+129: {
+  prep: ["No fasting needed.", "Report the date of the last pertussis vaccinations."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report recent antibiotic therapy."],
+  note: "Particularly dangerous in infants who aren't fully vaccinated."
+},
+130: {
+  prep: ["No fasting needed.", "Complementary test to the local sample (PCR)."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report any recent antibiotic treatment."],
+  note: "The definitive diagnosis mainly relies on PCR from a local sample."
+},
+131: {
+  prep: ["Do not urinate for 2h before if it's a urine sample.", "Avoid intimate hygiene before if it's a swab."],
+  sampling: ["First-catch urine or vaginal/urethral swab depending on the prescription."],
+  meds: ["Report any recent antibiotic treatment."],
+  note: "Very sensitive test, result usually available in 24-48h."
+},
+132: {
+  prep: ["No fasting needed."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report immunosuppressant treatment."],
+  note: "Useful for monitoring lupus activity (correlates with flares)."
+},
+133: {
+  prep: ["No fasting needed."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report current thyroid treatment."],
+  note: "Often paired with anti-TPO antibodies in the autoimmune thyroid work-up."
+},
+134: {
+  prep: ["IMPORTANT: the patient must eat gluten normally before the test.", "Do not stop gluten before the test (distorts the result)."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["No specific medication to report."],
+  note: "A gluten-free diet started before the test completely distorts the result, wait for the diagnosis before cutting out gluten."
+},
+135: {
+  prep: ["No fasting needed."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report current liver treatment."],
+  note: "Often requested in cases of unexplained cholestasis (isolated ALP/GGT elevation)."
+},
+136: {
+  prep: ["No special preparation.", "Often requested routinely upon hospital admission."],
+  sampling: ["Rectal swab done by nursing staff."],
+  meds: ["Report recent hospitalizations and antibiotic treatments (last 6 months)."],
+  note: "An essential prevention measure to limit the spread of resistant bacteria in hospitals."
+},
+137: {
+  prep: ["Done only by medical staff when removing the catheter.", "No preparation needed from the patient."],
+  sampling: ["The tip of the removed catheter is sent directly for culture."],
+  meds: ["Report current antibiotic therapy."],
+  note: "Exclusively a hospital test, no action needed from the patient."
+},
+138: {
+  prep: ["Strict 6-hour fast before the test.", "Stop PPIs 2 weeks before.", "Stop antibiotics 4 weeks before.", "Do not smoke on the day of the test."],
+  sampling: ["Breathe into a bag, drink a test solution, breathe again after 30 minutes."],
+  meds: ["ESSENTIAL: respect stopping PPIs and antibiotics per the timelines above."],
+  note: "Fast and painless test (30-40 min), a reliable alternative to endoscopy for this screening."
+},
+139: {
+  prep: ["Strict 12-hour fast.", "Avoid fiber, legumes, and whole-grain bread the evening before.", "Do not smoke before or during the test.", "Brush your teeth beforehand (without sugary toothpaste)."],
+  sampling: ["Breathe into the device, drink the lactose solution, breathe every 30 min for 3h."],
+  meds: ["Report recent antibiotics (they change the gut flora being tested)."],
+  note: "Long test (3h), plan to stay at the lab for the whole duration."
+},
+140: {
+  prep: ["Avoid ejaculation in the 48h before the test.", "Avoid a rectal exam or prostate massage 1 week before.", "Avoid intense cycling the day before."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report treatment for prostate enlargement (finasteride), it falsely lowers the level."],
+  note: "Any recent prostate manipulation can falsely and strongly raise the result."
+},
+141: {
+  prep: ["No fasting needed.", "Avoid your period if possible (can raise it slightly)."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["No specific medication to report."],
+  note: "Can be elevated in benign situations (endometriosis, periods, pregnancy)."
+},
+142: {
+  prep: ["No fasting needed."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["No specific medication to report."],
+  note: "Not specific, can be elevated with benign cholestasis."
+},
+143: {
+  prep: ["No fasting needed.", "Stop smoking before the test if possible (smoking raises the level)."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["No specific medication to report."],
+  note: "Smoking alone can slightly raise this marker, report it."
+},
+144: {
+  prep: ["No fasting needed.", "In pregnant women: date the pregnancy precisely."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["No specific medication to report."],
+  note: "Used both in prenatal screening (trisomy) and liver monitoring, the context must be specified."
+},
+145: {
+  prep: ["8h fasting recommended.", "Morning draw, special zinc-free tube."],
+  sampling: ["Venous draw, avoid contamination from latex gloves (contain zinc)."],
+  meds: ["Report current zinc supplements."],
+  note: "Easily contaminated by sampling equipment, careful technique is required."
+},
+146: {
+  prep: ["No mandatory fasting, but 8h is recommended."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report oral contraceptives (raise the level)."],
+  note: "Often paired with ceruloplasmin for diagnosing Wilson's disease."
+},
+147: {
+  prep: ["8h fasting recommended."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report oral contraceptives and pregnancy."],
+  note: "Decreased in Wilson's disease, increased with inflammation."
+},
+148: {
+  prep: ["Strict 12-hour fast.", "Fast transport to the lab (unstable at room temperature)."],
+  sampling: ["Morning venous draw, chilled tube if transport takes long."],
+  meds: ["Report vitamin B9/B12 supplements."],
+  note: "Elevated with folate or vitamin B12 deficiency, a cardiovascular risk factor."
+},
+149: {
+  prep: ["No special preparation, often done as an emergency.", "No fasting needed."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report current antibiotic therapy."],
+  note: "More specific than CRP for distinguishing bacterial from viral infection."
+},
+150: {
+  prep: ["No mandatory fasting.", "Bring your blood type card if available."],
+  sampling: ["Venous draw, several tubes (blood type, antibody screen, serologies)."],
+  meds: ["Report history of transfusion and any transfusion reactions."],
+  note: "Mandatory before any transfusion, includes blood typing, antibody screen, and viral serologies."
+},
+
+151: {
+  prep: ["Done exclusively at the hospital by a doctor.", "Report any bleeding disorder.", "A curled-up position is required during the procedure."],
+  sampling: ["Puncture done between two lumbar vertebrae by a specialist doctor."],
+  meds: ["Always report any anticoagulant treatment."],
+  note: "Lying down and resting for several hours afterward is recommended to prevent headaches."
+},
+152: {
+  prep: ["8h fasting advised.", "No other special preparation."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report corticosteroid therapy and immunosuppressants."],
+  note: "Essential for screening for multiple myeloma (monoclonal spike)."
+},
+153: {
+  prep: ["No fasting needed."],
+  sampling: ["Simple venous blood draw, avoid hemolysis during the draw."],
+  meds: ["No specific medication to report."],
+  note: "Drops significantly with hemolysis, useful to confirm hemolytic anemia."
+},
+154: {
+  prep: ["No fasting needed."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report recent transfusion."],
+  note: "Useful for exploring hereditary hemolytic anemia."
+},
+155: {
+  prep: ["No fasting needed.", "Away from an acute thrombotic episode."],
+  sampling: ["Venous draw, citrate tube."],
+  meds: ["Always report current anticoagulant treatment."],
+  note: "Tested for in cases of repeated miscarriages or thrombosis with no obvious cause."
+},
+156: {
+  prep: ["No fasting needed.", "Informed consent required (genetic test)."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["No medication affects this genetic test."],
+  note: "Result is stable over time, can be done even while on anticoagulants."
+},
+157: {
+  prep: ["Collect the second morning urine stream.", "Stay well hydrated before the sample."],
+  sampling: ["Collect in a sterile container, bring to the lab quickly."],
+  meds: ["No specific medication to report."],
+  note: "Often repeated over 3 consecutive days to improve sensitivity."
+},
+158: {
+  prep: ["Retrieve the stone as soon as it passes (strain your urine if needed).", "Keep it dry in a clean container."],
+  sampling: ["Bring the stone directly to the lab, no preservative liquid needed."],
+  meds: ["Report any current treatment for kidney stones."],
+  note: "Important for adjusting diet and preventing recurrence."
+},
+159: {
+  prep: ["24h urine collection following the standard protocol.", "Avoid alcohol and organ meats during the collection period."],
+  sampling: ["Collect all urine over 24h in the container provided."],
+  meds: ["Report current gout treatment."],
+  note: "Useful for classifying the type of uric acid stone (overproduction vs under-excretion)."
+},
+160: {
+  prep: ["No fasting needed.", "Report recent consumption of undercooked pork, wild boar, or horse meat."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["No specific medication to report."],
+  note: "Rare but possible after eating meat of questionable origin."
+},
+161: {
+  prep: ["No fasting needed.", "Report eating wild watercress or unwashed aquatic vegetables."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["No specific medication to report."],
+  note: "Always wash and cook wild watercress thoroughly to avoid this infection."
+},
+162: {
+  prep: ["Collect fresh stool.", "Report if white segments have been seen in stool or underwear."],
+  sampling: ["Collect in the sterile container, ideally with a segment if visible."],
+  meds: ["Report any recent antiparasitic treatment."],
+  note: "Often linked to eating undercooked beef or pork."
+},
+163: {
+  prep: ["No fasting needed.", "Must be done precisely between 11 and 14 weeks of pregnancy."],
+  sampling: ["Simple venous blood draw, combined with ultrasound measurements (nuchal translucency)."],
+  meds: ["No specific medication to report."],
+  note: "Precise timing (pregnancy date) is essential for interpreting the risk."
+},
+164: {
+  prep: ["8h fasting recommended for the included glucose test.", "No restrictions for the other tests in the panel."],
+  sampling: ["Venous draw, several tubes (CBC, blood type, glucose, serologies, TSH)."],
+  meds: ["Report any current treatment, especially folic acid."],
+  note: "Includes CBC, blood type/Rh, glucose, serologies (toxo, rubella, syphilis, HIV, hepatitis), TSH."
+},
+165: {
+  prep: ["8h fasting if the glucose tolerance test is included.", "No restrictions for the routine serologies."],
+  sampling: ["Venous draw, several tubes depending on the tests requested."],
+  meds: ["Report any current treatment during pregnancy."],
+  note: "Includes CBC, glucose tolerance test (gestational diabetes screening), antibody screen if Rh negative, HBsAg."
+},
+166: {
+  prep: ["Do not eat or drink for 1h before the sample.", "Do not use antifungal mouthwash beforehand."],
+  sampling: ["Swab of the whitish areas of the oral mucosa."],
+  meds: ["Report recent local antifungal treatment."],
+  note: "Very common in breastfed infants and those on antibiotics."
+},
+167: {
+  prep: ["Do not apply local cream or ointment before the test.", "Avoid washing right before the sample."],
+  sampling: ["Gentle swab of the peri-anal area by medical staff."],
+  meds: ["Report recent local or systemic antibiotic treatment."],
+  note: "Common cause of persistent peri-anal dermatitis in children."
+},
+168: {
+  prep: ["Done by a doctor in a sterile setting.", "Report any anticoagulant treatment before the procedure."],
+  sampling: ["Puncture of the affected joint (most often the knee) by the doctor."],
+  meds: ["Always report anticoagulants and anti-inflammatory drugs."],
+  note: "An emergency if septic arthritis is suspected, quick diagnosis and treatment are needed."
+},
+169: {
+  prep: ["Draw away from the dose (usually 6-8h after, before the next dose)."],
+  sampling: ["Venous draw, note the exact time of the last dose precisely."],
+  meds: ["Always report the exact time of the last digoxin dose."],
+  note: "Very narrow therapeutic margin, the timing of the draw is critical."
+},
+170: {
+  prep: ["Draw 12h after the last dose (usually in the morning before the dose)."],
+  sampling: ["Morning venous draw, preferably fasting."],
+  meds: ["Always report the exact time of the last lithium dose."],
+  note: "Narrow therapeutic margin, regular monitoring is essential (risk of toxicity)."
+},
+171: {
+  prep: ["Draw right before the next dose (trough level)."],
+  sampling: ["Venous draw, note the time of the last dose."],
+  meds: ["Report the exact time and dose of the anti-epileptic treatment."],
+  note: "Important to adjust the dose and avoid seizures or toxicity."
+},
+172: {
+  prep: ["Draw right before the next dose (trough level)."],
+  sampling: ["Venous draw, note the dosing time precisely."],
+  meds: ["Report the exact time of the last dose of the treatment."],
+  note: "Strictly respecting the draw timing is essential for interpretation."
+},
+173: {
+  prep: ["Done in a hospital setting, precise timing per protocol (trough level before the next dose)."],
+  sampling: ["Venous draw, timing determined by the hospital protocol."],
+  meds: ["Report the exact time of the last infusion."],
+  note: "Essential monitoring to avoid this antibiotic's kidney toxicity."
+},
+174: {
+  prep: ["No fasting needed.", "Informed consent required (genetic test)."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["No medication affects this genetic test."],
+  note: "A diagnostic test used in the context of inflammatory lower back pain."
+},
+175: {
+  prep: ["8h fasting recommended.", "Immediate transport to the lab on ice (very unstable)."],
+  sampling: ["Venous draw without a prolonged tourniquet, analyzed within 15-20 minutes."],
+  meds: ["Report any treatment for liver disease."],
+  note: "Very sensitive to sampling conditions, an extremely short analysis time is required."
+},
+
+176: {
+  prep: ["Protect the sample from light (sensitive).", "Urine and blood collection are often combined."],
+  sampling: ["Venous and urine draw, opaque tubes/containers provided by the lab."],
+  meds: ["Report any medication that could trigger a porphyria attack (especially barbiturates)."],
+  note: "A rare disease, but an attack requires immediate specialized care."
+},
+177: {
+  prep: ["No fasting needed.", "Report recent contact with someone who has chickenpox."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report recent chickenpox vaccination."],
+  note: "Important for non-immune pregnant women exposed to a chickenpox case."
+},
+178: {
+  prep: ["No fasting needed.", "Report vaccination status (MMR)."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report recent measles vaccination."],
+  note: "Useful in an outbreak context or before certain travel."
+},
+179: {
+  prep: ["No fasting needed."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report recent vaccination (MMR)."],
+  note: "Rarely requested alone, often paired with the measles-rubella panel."
+},
+180: {
+  prep: ["No fasting needed.", "Report the date of recent infection or vaccination."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report current immunosuppressant treatment."],
+  note: "Doesn't replace a PCR/antigen test for diagnosing an active infection."
+},
+181: {
+  prep: ["Do not eat, drink, or smoke for 30 min before the test.", "Blow your nose before the sample if needed."],
+  sampling: ["Deep nasopharyngeal swab done by trained staff."],
+  meds: ["No specific medication to report."],
+  note: "Result usually available in 24-48h depending on the lab."
+},
+182: {
+  prep: ["4h fasting recommended.", "Avoid intense physical activity before the test."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report proton pump inhibitor treatment (can raise it)."],
+  note: "Also elevated in kidney failure or smoking."
+},
+183: {
+  prep: ["Draw done standing after 2h upright (or lying down per protocol).", "Stop certain blood pressure medications 2 weeks before if possible (medical advice required).", "Normal-salt diet in the days before."],
+  sampling: ["Venous draw following a precise protocol (strict position and timing)."],
+  meds: ["Always report ALL blood pressure medications, most interfere with this test."],
+  note: "A complex test that often requires temporarily stopping treatments, always under medical supervision."
+},
+184: {
+  prep: ["Avoid coffee, tea, chocolate, bananas, citrus fruits 3 days before.", "Avoid stress and physical exertion before the sample.", "Rest lying down 20-30 min before if it's a blood test."],
+  sampling: ["Venous draw after resting, or a 24h urine collection depending on the prescription."],
+  meds: ["Always report beta-blockers, tricyclic antidepressants, decongestants."],
+  note: "Many foods and medications interfere, follow the restrictions carefully."
+},
+185: {
+  prep: ["8-10h fasting adjusted to the child's age.", "Reassure the child before the draw to reduce stress."],
+  sampling: ["Simple venous blood draw, adapted to the child's size."],
+  meds: ["Usually no specific medication to report."],
+  note: "Recommended if there's a family history of early cardiovascular disease."
+},
+186: {
+  prep: ["8h fasting recommended.", "Report any itching, especially on the palms and soles."],
+  sampling: ["Simple venous blood draw, includes liver enzymes and bile acids."],
+  meds: ["Report any current treatment during pregnancy."],
+  note: "An important diagnosis, pregnancy cholestasis requires close fetal monitoring."
+},
+187: {
+  prep: ["8h fasting recommended for optimal interpretation."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report ursodeoxycholic acid treatment if already started."],
+  note: "A high level is linked to an increased risk of fetal complications, monitoring is needed."
+},
+188: {
+  prep: ["No strict fasting needed for an infant.", "Preferably draw away from a milk feeding."],
+  sampling: ["Venous or capillary draw (heel) depending on age."],
+  meds: ["Report any iron supplementation already in progress."],
+  note: "Routine screening recommended for infants between 9 and 12 months in Algeria."
+},
+189: {
+  prep: ["No mandatory fasting.", "Morning draw recommended if possible."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report any thyroid treatment and the time of the last dose."],
+  note: "Normal TSH values differ from the general population during pregnancy."
+},
+190: {
+  prep: ["Strict 12-hour fast.", "Done between the 24th and 28th week of pregnancy.", "Normal diet for the 3 days before."],
+  sampling: ["Fasting draw, drink 75g of glucose, draws at 1h and 2h.", "Stay seated and calm during the 2-hour test."],
+  meds: ["Report any current treatment during pregnancy."],
+  note: "Routinely recommended for every pregnant woman in Algeria between 24-28 weeks."
+},
+191: {
+  prep: ["No fasting needed.", "Usually done in the 9th month of pregnancy."],
+  sampling: ["Venous draw, citrate tube filled precisely."],
+  meds: ["Report any current preventive anticoagulant treatment."],
+  note: "Essential for the safety of epidural anesthesia."
+},
+192: {
+  prep: ["No fasting needed.", "Done every trimester of pregnancy."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report current iron and folic acid supplementation."],
+  note: "Physiological dilution anemia is normal in late pregnancy, don't confuse it with a real deficiency."
+},
+193: {
+  prep: ["8h fasting recommended.", "Protect the sample from light."],
+  sampling: ["Venous draw, amber tube or protected from light."],
+  meds: ["Report vitamin A supplements."],
+  note: "A light-sensitive vitamin, fast handling is required after the draw."
+},
+194: {
+  prep: ["8h fasting recommended.", "Protect the sample from light."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report vitamin E supplements."],
+  note: "Often requested together with a complete lipid panel."
+},
+195: {
+  prep: ["No fasting needed."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["No specific medication to report."],
+  note: "Useful in monitoring multiple myeloma and certain lymphomas."
+},
+196: {
+  prep: ["Done together with newborn screening (heel blotting paper)."],
+  sampling: ["Heel prick sample, a few days after birth."],
+  meds: ["No specific medication to report."],
+  note: "Part of expanded newborn screening in some centers in Algeria."
+},
+197: {
+  prep: ["Avoid coffee, tea, chocolate, bananas, citrus fruits 3 days before.", "Avoid stress and intense physical effort.", "24h urine collection in an acidified container provided by the lab."],
+  sampling: ["Collect all urine over 24h, keep refrigerated."],
+  meds: ["Always report beta-blockers and antidepressants."],
+  note: "The collection container has an acid preservative, do not empty or dilute it."
+},
+198: {
+  prep: ["24h urine collection.", "Avoid certain interfering medications (check with the prescribing doctor)."],
+  sampling: ["Collect all urine over 24h in the container provided."],
+  meds: ["Report any hormone or corticosteroid treatment."],
+  note: "Increasingly rarely used, replaced by more specific hormone tests."
+},
+199: {
+  prep: ["No fasting needed."],
+  sampling: ["Simple venous blood draw."],
+  meds: ["Report current antithyroid treatment."],
+  note: "A very specific test to confirm the diagnosis of Graves' disease."
+},
+200: {
+  prep: ["Standing or lying position per the doctor's precise protocol.", "Normal-salt diet in the days before.", "Stop certain blood pressure medications as medically advised."],
+  sampling: ["Venous draw following a strict positional protocol."],
+  meds: ["Always report all current blood pressure medications."],
+  note: "Interpreted together with aldosterone to calculate the renin/aldosterone ratio."
+},
+201: {
+  prep: ["Thorough intimate hygiene for the child before placing the bag.", "Change the urine bag if no urination after 30 minutes.", "Bring to the lab quickly once urination happens."],
+  sampling: ["Sterile adhesive bag placed by the parent or medical staff."],
+  meds: ["Report any recent antibiotic treatment in the child."],
+  note: "A delicate technique, a positive result should be confirmed by catheterization if in doubt."
+},
+
+};
+
+
 const RELATED_TESTS = {
   // ── Metabolic / Diabetes ──
   1:  [17, 20, 59, 114],        // Glycémie à jeun → HbA1c, HGPO, Insulinémie, Peptide C
@@ -3105,35 +4347,35 @@ const RELATED_TESTS = {
    ═══════════════════════════════════════════════════════════════ */
 const CALM_MODE_CONTENT = {
   // Blood draws in general (very common anxiety trigger)
-  1:  { fr: "C'est juste une petite piqûre au bras, comme un pincement bref - ça dure quelques secondes et c'est fini. Le personnel du laboratoire fait ça toute la journée, en toute sécurité.",
-        ar: "الأمر مجرد وخزة صغيرة في الذراع، مثل قرصة خفيفة - تستغرق ثوانٍ معدودة وتنتهي بسرعة. طاقم المخبر يقوم بهذا يومياً وبأمان تام.",
-        en: "It's just a small pinch in your arm, like a brief poke - it lasts a few seconds and it's over. The lab staff does this safely, all day, every day." },
+  1:  { fr: "C'est juste une petite piqûre au bras, comme un pincement bref — ça dure quelques secondes et c'est fini. Le personnel du laboratoire fait ça toute la journée, en toute sécurité.",
+        ar: "الأمر مجرد وخزة صغيرة في الذراع، مثل قرصة خفيفة — تستغرق ثوانٍ معدودة وتنتهي بسرعة. طاقم المخبر يقوم بهذا يومياً وبأمان تام.",
+        en: "It's just a small pinch in your arm, like a brief poke — it lasts a few seconds and it's over. The lab staff does this safely, all day, every day." },
   // Lumbar puncture — one of the most feared procedures
   151:{ fr: "Cet examen fait souvent peur mais il est réalisé avec une anesthésie locale, donc vous ne sentirez qu'une légère pression, pas de douleur vive. Le médecin vous expliquera chaque étape avant de commencer, et vous pouvez toujours demander une pause.",
         ar: "هذا الفحص يخيف الكثيرين لكنه يُجرى بتخدير موضعي، لذا ستشعر فقط بضغط خفيف وليس ألماً حاداً. سيشرح لك الطبيب كل خطوة قبل البدء، ويمكنك دائماً طلب توقف مؤقت.",
-        en: "This test often sounds scary, but it's done with local anesthesia - you'll only feel light pressure, not sharp pain. The doctor will explain each step before starting, and you can always ask for a pause." },
+        en: "This test often sounds scary, but it's done with local anesthesia — you'll only feel light pressure, not sharp pain. The doctor will explain each step before starting, and you can always ask for a pause." },
   // Bone marrow aspiration
-  99: { fr: "Vous recevrez une anesthésie locale avant le geste, donc la douleur est très limitée - souvent juste une sensation de pression pendant quelques secondes. L'équipe médicale est habituée à accompagner les patients anxieux, n'hésitez pas à leur en parler.",
-        ar: "ستحصل على تخدير موضعي قبل الإجراء، لذا الألم محدود جداً - غالباً مجرد شعور بالضغط لثوانٍ معدودة. الطاقم الطبي معتاد على مرافقة المرضى القلقين، لا تتردد في إخبارهم.",
-        en: "You'll get local anesthesia before the procedure, so the pain is very limited - often just a feeling of pressure for a few seconds. The medical team is used to supporting anxious patients, so feel free to tell them how you're feeling." },
+  99: { fr: "Vous recevrez une anesthésie locale avant le geste, donc la douleur est très limitée — souvent juste une sensation de pression pendant quelques secondes. L'équipe médicale est habituée à accompagner les patients anxieux, n'hésitez pas à leur en parler.",
+        ar: "ستحصل على تخدير موضعي قبل الإجراء، لذا الألم محدود جداً — غالباً مجرد شعور بالضغط لثوانٍ معدودة. الطاقم الطبي معتاد على مرافقة المرضى القلقين، لا تتردد في إخبارهم.",
+        en: "You'll get local anesthesia before the procedure, so the pain is very limited — often just a feeling of pressure for a few seconds. The medical team is used to supporting anxious patients, so feel free to tell them how you're feeling." },
   // Arterial blood gas — known to be more uncomfortable than a regular draw
-  27: { fr: "Cette prise de sang est un peu plus sensible qu'une prise de sang classique, mais elle est très rapide - quelques secondes seulement. Respirer lentement pendant le geste aide beaucoup à se détendre.",
-        ar: "أخذ عينة الدم هذه أكثر حساسية قليلاً من أخذ الدم العادي، لكنها سريعة جداً - ثوانٍ معدودة فقط. التنفس ببطء أثناء الإجراء يساعد كثيراً على الاسترخاء.",
-        en: "This blood draw is a bit more sensitive than a regular one, but it's very quick - just a few seconds. Breathing slowly during the procedure really helps you relax." },
+  27: { fr: "Cette prise de sang est un peu plus sensible qu'une prise de sang classique, mais elle est très rapide — quelques secondes seulement. Respirer lentement pendant le geste aide beaucoup à se détendre.",
+        ar: "أخذ عينة الدم هذه أكثر حساسية قليلاً من أخذ الدم العادي، لكنها سريعة جداً — ثوانٍ معدودة فقط. التنفس ببطء أثناء الإجراء يساعد كثيراً على الاسترخاء.",
+        en: "This blood draw is a bit more sensitive than a regular one, but it's very quick — just a few seconds. Breathing slowly during the procedure really helps you relax." },
   // Joint aspiration
   168:{ fr: "Le médecin désinfecte et parfois anesthésie localement la zone avant de piquer, donc l'inconfort est généralement bref. Beaucoup de patients disent que l'appréhension est pire que la sensation réelle.",
         ar: "يقوم الطبيب بتعقيم المنطقة وأحياناً تخديرها موضعياً قبل الوخز، لذا الانزعاج يكون عادة قصيراً. يقول الكثير من المرضى إن القلق أسوأ من الشعور الفعلي.",
         en: "The doctor cleans and sometimes locally numbs the area before the needle, so the discomfort is usually brief. Many patients say the anticipation is worse than the actual sensation." },
   // Endoscopy-adjacent / breath tests (claustrophobia-adjacent anxiety)
-  138:{ fr: "Pas d'aiguille ni d'inconfort ici - il suffit de souffler dans un petit sachet, comme gonfler un ballon doucement. C'est l'un des tests les plus simples et les moins stressants du laboratoire.",
-        ar: "لا إبرة ولا انزعاج هنا - كل ما عليك فعله هو النفخ في كيس صغير، مثل نفخ بالون بلطف. إنه من أبسط وأقل الفحوصات إثارة للتوتر في المخبر.",
-        en: "No needle, no discomfort here - you just breathe into a small bag, like gently blowing up a balloon. It's one of the simplest, least stressful tests in the whole lab." },
+  138:{ fr: "Pas d'aiguille ni d'inconfort ici — il suffit de souffler dans un petit sachet, comme gonfler un ballon doucement. C'est l'un des tests les plus simples et les moins stressants du laboratoire.",
+        ar: "لا إبرة ولا انزعاج هنا — كل ما عليك فعله هو النفخ في كيس صغير، مثل نفخ بالون بلطف. إنه من أبسط وأقل الفحوصات إثارة للتوتر في المخبر.",
+        en: "No needle, no discomfort here — you just breathe into a small bag, like gently blowing up a balloon. It's one of the simplest, least stressful tests in the whole lab." },
 };
 
 const CALM_MODE_GENERIC = {
-  fr: "Cette analyse peut sembler impressionnante en la lisant, mais le personnel du laboratoire réalise ce geste très régulièrement, en toute sécurité. N'hésitez pas à leur poser vos questions ou à leur dire si vous êtes anxieux(se) - ils sont là pour vous rassurer.",
-  ar: "قد يبدو هذا التحليل مقلقاً عند قراءته، لكن طاقم المخبر يقوم بهذا الإجراء بانتظام وبأمان تام. لا تتردد في طرح أسئلتك أو إخبارهم إذا كنت قلقاً - فهم هنا لطمأنتك.",
-  en: "This test might sound intimidating when you read about it, but lab staff perform this procedure very routinely and safely. Don't hesitate to ask questions or tell them if you're feeling anxious - they're there to help put you at ease."
+  fr: "Cette analyse peut sembler impressionnante en la lisant, mais le personnel du laboratoire réalise ce geste très régulièrement, en toute sécurité. N'hésitez pas à leur poser vos questions ou à leur dire si vous êtes anxieux(se) — ils sont là pour vous rassurer.",
+  ar: "قد يبدو هذا التحليل مقلقاً عند قراءته، لكن طاقم المخبر يقوم بهذا الإجراء بانتظام وبأمان تام. لا تتردد في طرح أسئلتك أو إخبارهم إذا كنت قلقاً — فهم هنا لطمأنتك.",
+  en: "This test might sound intimidating when you read about it, but lab staff perform this procedure very routinely and safely. Don't hesitate to ask questions or tell them if you're feeling anxious — they're there to help put you at ease."
 };
 
 const CALM_TEXT = {
@@ -3166,7 +4408,7 @@ function toggleCalmMode(testId) {
 UI.en = {
   tagline: "Medical Test Preparation Guide",
   heroTitle: "Get<br/><em>properly</em> prepared<br/>for your test",
-  heroSub: "Type the name of any medical test - get instant, accurate preparation instructions for your lab in Algeria.",
+  heroSub: "Type the name of any medical test — get instant, accurate preparation instructions for your lab in Algeria.",
   searchPlaceholder: "E.g: Fasting glucose, Urine culture, CBC...",
   langBtn: "FR",
   pillAll: "All",
@@ -3214,6 +4456,28 @@ function getSecondaryName(item) {
   return currentLang === 'fr' ? item.name_ar : item.name_fr;
 }
 
+function saveSearchAnalytics() {
+  try { localStorage.setItem('labprepdz_analytics', JSON.stringify(searchAnalytics)); } catch(e) {}
+}
+
+function logSearchAnalytics(resultCount) {
+  const q = currentQuery.trim();
+  if (q.length < 3) return; // ignore very short/partial typing
+
+  // Debounce: only log once the user has paused typing for a moment,
+  // so we count "searches" rather than every keystroke.
+  if (analyticsLogTimer) clearTimeout(analyticsLogTimer);
+  analyticsLogTimer = setTimeout(() => {
+    const key = q.toLowerCase();
+    searchAnalytics.termCounts[key] = (searchAnalytics.termCounts[key] || 0) + 1;
+    searchAnalytics.totalSearches += 1;
+    if (resultCount === 0) {
+      searchAnalytics.zeroResultTerms[key] = (searchAnalytics.zeroResultTerms[key] || 0) + 1;
+    }
+    saveSearchAnalytics();
+  }, 700);
+}
+
 function getFilteredResults() {
   const q = currentQuery.trim().toLowerCase();
   return DB.filter(item => {
@@ -3237,6 +4501,8 @@ function renderCards() {
 
   const results = getFilteredResults();
   const ui = UI[currentLang];
+
+  logSearchAnalytics(results.length);
 
   grid.innerHTML = '';
 
@@ -3369,12 +4635,26 @@ renderRecentStrip();
 
   const name = getName(item);
   const nameSecondary = getSecondaryName(item);
-  // Detailed protocol content: FR/AR shown natively; EN mode shows FR text (labeled) for medical accuracy
+  // Tube labels always use FR/AR (there's no English tube-color naming
+  // convention in the source data, and it's not medically significant).
   const contentLang = currentLang === 'en' ? 'fr' : currentLang;
-  const prep = contentLang === 'fr' ? item.prep_fr : item.prep_ar;
-  const sampling = contentLang === 'fr' ? item.sampling_fr : item.sampling_ar;
-  const meds = contentLang === 'fr' ? item.meds_fr : item.meds_ar;
-  const note = contentLang === 'fr' ? item.note_fr : item.note_ar;
+  // Detailed protocol content: FR/AR shown natively. In English mode, use
+  // the real English translation from DETAIL_EN if this test has one yet;
+  // otherwise fall back to French with a visible note, since translation
+  // coverage is still being completed incrementally across all 201 tests.
+  let prep, sampling, meds, note, usingFallback = false;
+  if (currentLang === 'en' && DETAIL_EN[item.id]) {
+    prep = DETAIL_EN[item.id].prep;
+    sampling = DETAIL_EN[item.id].sampling;
+    meds = DETAIL_EN[item.id].meds;
+    note = DETAIL_EN[item.id].note;
+  } else {
+    prep = contentLang === 'fr' ? item.prep_fr : item.prep_ar;
+    sampling = contentLang === 'fr' ? item.sampling_fr : item.sampling_ar;
+    meds = contentLang === 'fr' ? item.meds_fr : item.meds_ar;
+    note = contentLang === 'fr' ? item.note_fr : item.note_ar;
+    usingFallback = (currentLang === 'en');
+  }
 
   const isNoFast = item.fasting === 0;
   const fastLabel = isNoFast ? ui.noFasting : ui.fastingReq(item.fasting);
@@ -3386,7 +4666,7 @@ renderRecentStrip();
     </span>
   `).join('');
 
-  const enNoteHTML = currentLang === 'en' ? `<p class="modal-text" style="opacity:0.65;font-style:italic;margin-bottom:14px;font-size:0.78rem">${ui.contentNote}</p>` : '';
+  const enNoteHTML = usingFallback ? `<p class="modal-text" style="opacity:0.65;font-style:italic;margin-bottom:14px;font-size:0.78rem">${ui.contentNote}</p>` : '';
 
   const prepHTML = prep.map((p, i) => `
     <li class="prep-check-item" data-idx="${i}">
@@ -3542,7 +4822,7 @@ const REMINDER_TEXT = {
     copyBtn: 'Copier le message',
     copied: 'Copié !',
     msgReminder: (name, test, date, time) => `📋 Rappel de rendez-vous${name ? ' pour ' + name : ''}\n\n🧪 Analyse : ${test}\n📅 Date : ${date}\n🕐 Heure : ${time}`,
-    msgFasting: (fh, fdate, ftime) => `\n\n⏱ Jeûne de ${fh}h à respecter - commencer le jeûne le ${fdate} à ${ftime} au plus tard.`,
+    msgFasting: (fh, fdate, ftime) => `\n\n⏱ Jeûne de ${fh}h à respecter — commencer le jeûne le ${fdate} à ${ftime} au plus tard.`,
     msgNoFasting: `\n\n✅ Aucun jeûne requis pour cette analyse.`,
     msgFooter: `\n\n— Généré via LabPrep DZ`,
   },
@@ -3558,7 +4838,7 @@ const REMINDER_TEXT = {
     copyBtn: 'نسخ الرسالة',
     copied: 'تم النسخ!',
     msgReminder: (name, test, date, time) => `📋 تذكير بموعد${name ? ' لـ ' + name : ''}\n\n🧪 التحليل: ${test}\n📅 التاريخ: ${date}\n🕐 الوقت: ${time}`,
-    msgFasting: (fh, fdate, ftime) => `\n\n⏱ يجب الصيام ${fh} ساعات - ابدأ الصيام يوم ${fdate} الساعة ${ftime} على أبعد تقدير.`,
+    msgFasting: (fh, fdate, ftime) => `\n\n⏱ يجب الصيام ${fh} ساعات — ابدأ الصيام يوم ${fdate} الساعة ${ftime} على أبعد تقدير.`,
     msgNoFasting: `\n\n✅ لا يتطلب هذا التحليل الصيام.`,
     msgFooter: `\n\n— تم الإنشاء عبر LabPrep DZ`,
   },
@@ -3574,7 +4854,7 @@ const REMINDER_TEXT = {
     copyBtn: 'Copy message',
     copied: 'Copied!',
     msgReminder: (name, test, date, time) => `📋 Appointment reminder${name ? ' for ' + name : ''}\n\n🧪 Test: ${test}\n📅 Date: ${date}\n🕐 Time: ${time}`,
-    msgFasting: (fh, fdate, ftime) => `\n\n⏱ ${fh}h fasting required - start fasting by ${fdate} at ${ftime} at the latest.`,
+    msgFasting: (fh, fdate, ftime) => `\n\n⏱ ${fh}h fasting required — start fasting by ${fdate} at ${ftime} at the latest.`,
     msgNoFasting: `\n\n✅ No fasting required for this test.`,
     msgFooter: `\n\n— Generated via LabPrep DZ`,
   }
@@ -3685,11 +4965,11 @@ const LABFINDER_TEXT = {
   fr: {
     title: 'Laboratoires à proximité',
     intro: "Localise les laboratoires d'analyses et pharmacies proches de vous, à partir des données OpenStreetMap.",
-    coverageNote: "⚠️ Cette liste dépend des données publiques OpenStreetMap - elle peut être incomplète, surtout hors des grandes villes.",
+    coverageNote: "Cette liste dépend des données publiques OpenStreetMap. Elle peut être incomplète, surtout hors des grandes villes.",
     locateBtn: 'Me localiser et chercher',
     locating: 'Localisation en cours...',
     searching: 'Recherche des laboratoires...',
-    noResults: "Aucun laboratoire trouvé dans les données disponibles pour votre zone. Essayez d'élargir la recherche ou vérifiez directement auprès de votre municipalité.",
+    noResults: "Aucun résultat trouvé dans les données disponibles pour votre zone. Essayez d'élargir la recherche ou vérifiez directement auprès de votre municipalité.",
     permissionDenied: "Accès à la position refusé. Autorisez la géolocalisation dans les paramètres de votre navigateur pour utiliser cette fonction.",
     geoUnavailable: "La géolocalisation n'est pas disponible sur cet appareil ou navigateur.",
     networkError: "Impossible de contacter le service de recherche. Vérifiez votre connexion internet.",
@@ -3698,15 +4978,17 @@ const LABFINDER_TEXT = {
     typeLab: 'Laboratoire',
     typePharmacy: 'Pharmacie',
     typeHospital: 'Hôpital / Clinique',
+    labsFoundCount: (n) => n === 1 ? `1 laboratoire trouvé à proximité` : `${n} laboratoires trouvés à proximité`,
+    noLabsFound: "Aucun laboratoire d'analyses spécifiquement identifié dans cette zone. Les pharmacies et hôpitaux ci-dessous peuvent parfois orienter vers un laboratoire partenaire.",
   },
   ar: {
     title: 'المخابر القريبة',
     intro: "حدد موقع مخابر التحاليل والصيدليات القريبة منك، بالاعتماد على بيانات OpenStreetMap.",
-    coverageNote: "⚠️ تعتمد هذه القائمة على بيانات OpenStreetMap العامة - قد تكون غير مكتملة، خاصة خارج المدن الكبرى.",
+    coverageNote: "تعتمد هذه القائمة على بيانات OpenStreetMap العامة. قد تكون غير مكتملة، خاصة خارج المدن الكبرى.",
     locateBtn: 'تحديد موقعي والبحث',
     locating: 'جارٍ تحديد الموقع...',
     searching: 'جارٍ البحث عن المخابر...',
-    noResults: "لم يتم العثور على مخابر في البيانات المتوفرة لمنطقتك. حاول توسيع نطاق البحث أو تحقق مباشرة من بلديتك.",
+    noResults: "لم يتم العثور على نتائج في البيانات المتوفرة لمنطقتك. حاول توسيع نطاق البحث أو تحقق مباشرة من بلديتك.",
     permissionDenied: "تم رفض الوصول إلى الموقع. يرجى السماح بتحديد الموقع الجغرافي في إعدادات متصفحك لاستخدام هذه الميزة.",
     geoUnavailable: "تحديد الموقع الجغرافي غير متوفر على هذا الجهاز أو المتصفح.",
     networkError: "تعذر الاتصال بخدمة البحث. تحقق من اتصالك بالإنترنت.",
@@ -3715,15 +4997,17 @@ const LABFINDER_TEXT = {
     typeLab: 'مخبر',
     typePharmacy: 'صيدلية',
     typeHospital: 'مستشفى / عيادة',
+    labsFoundCount: (n) => `تم العثور على ${n} مخبر قريب`,
+    noLabsFound: "لم يتم تحديد مخبر تحاليل بشكل خاص في هذه المنطقة. قد ترشدك الصيدليات والمستشفيات أدناه إلى مخبر شريك.",
   },
   en: {
     title: 'Nearby Labs',
     intro: "Find medical labs and pharmacies near you, using OpenStreetMap data.",
-    coverageNote: "⚠️ This list depends on public OpenStreetMap data - it may be incomplete, especially outside major cities.",
+    coverageNote: "This list depends on public OpenStreetMap data. It may be incomplete, especially outside major cities.",
     locateBtn: 'Locate me and search',
     locating: 'Locating you...',
     searching: 'Searching for labs...',
-    noResults: "No labs found in the available data for your area. Try widening the search or check directly with your local municipality.",
+    noResults: "No results found in the available data for your area. Try widening the search or check directly with your local municipality.",
     permissionDenied: "Location access denied. Please allow geolocation in your browser settings to use this feature.",
     geoUnavailable: "Geolocation isn't available on this device or browser.",
     networkError: "Couldn't reach the search service. Check your internet connection.",
@@ -3732,6 +5016,8 @@ const LABFINDER_TEXT = {
     typeLab: 'Lab',
     typePharmacy: 'Pharmacy',
     typeHospital: 'Hospital / Clinic',
+    labsFoundCount: (n) => n === 1 ? `1 lab found nearby` : `${n} labs found nearby`,
+    noLabsFound: "No medical analysis lab was specifically identified in this area. The pharmacies and hospitals below may sometimes point you to a partner lab.",
   }
 };
 
@@ -3804,15 +5090,25 @@ function fetchNearbyLabs(lat, lon) {
   const radiusMeters = 8000; // 8km search radius
 
   // Overpass QL query: medical labs, pharmacies, hospitals/clinics within radius.
+  // Private analysis labs in Algeria are tagged inconsistently on OpenStreetMap —
+  // this query covers every realistic variant we know of (healthcare=laboratory,
+  // the common non-standard amenity=laboratory, doctors/offices whose name
+  // contains "laboratoire"/"analyses", and blood_bank as a related facility).
+  // Coverage still depends on what's actually been mapped for a given area.
   const query = `
-    [out:json][timeout:20];
+    [out:json][timeout:25];
     (
       node["healthcare"="laboratory"](around:${radiusMeters},${lat},${lon});
+      way["healthcare"="laboratory"](around:${radiusMeters},${lat},${lon});
+      node["amenity"="laboratory"](around:${radiusMeters},${lat},${lon});
+      way["amenity"="laboratory"](around:${radiusMeters},${lat},${lon});
+      node["healthcare"="blood_bank"](around:${radiusMeters},${lat},${lon});
       node["amenity"="pharmacy"](around:${radiusMeters},${lat},${lon});
+      way["amenity"="pharmacy"](around:${radiusMeters},${lat},${lon});
       node["amenity"="hospital"](around:${radiusMeters},${lat},${lon});
       node["amenity"="clinic"](around:${radiusMeters},${lat},${lon});
-      way["healthcare"="laboratory"](around:${radiusMeters},${lat},${lon});
-      way["amenity"="pharmacy"](around:${radiusMeters},${lat},${lon});
+      node["amenity"="doctors"]["name"~"laborator|analyse|labo",i](around:${radiusMeters},${lat},${lon});
+      node["office"="medical"]["name"~"laborator|analyse|labo",i](around:${radiusMeters},${lat},${lon});
     );
     out center;
   `;
@@ -3832,13 +5128,17 @@ function fetchNearbyLabs(lat, lon) {
         const elLon = el.lon || (el.center && el.center.lon);
         if (!elLat || !elLon) return null;
         const tags = el.tags || {};
-        const name = tags.name || (tags.healthcare === 'laboratory' ? t.typeLab : (tags.amenity === 'pharmacy' ? t.typePharmacy : t.typeHospital));
-        const type = tags.healthcare === 'laboratory' ? t.typeLab
-          : tags.amenity === 'pharmacy' ? t.typePharmacy
-          : t.typeHospital;
+
+        const isLab = tags.healthcare === 'laboratory' || tags.amenity === 'laboratory' ||
+          tags.healthcare === 'blood_bank' ||
+          /laborator|analyse|labo/i.test(tags.name || '');
+        const isPharmacy = tags.amenity === 'pharmacy';
+
+        const type = isLab ? t.typeLab : isPharmacy ? t.typePharmacy : t.typeHospital;
+        const name = tags.name || type;
         const distance = haversineDistanceKm(lat, lon, elLat, elLon);
-        return { name, type, lat: elLat, lon: elLon, distance };
-      }).filter(Boolean).sort((a, b) => a.distance - b.distance).slice(0, 20);
+        return { name, type, lat: elLat, lon: elLon, distance, isLab };
+      }).filter(Boolean).sort((a, b) => a.distance - b.distance).slice(0, 25);
 
       renderLabResults(elements);
     })
@@ -3863,10 +5163,16 @@ function renderLabResults(results) {
     return 'fa-hospital';
   };
 
+  const labCount = results.filter((r) => r.isLab).length;
+  const countNote = labCount > 0
+    ? `<p class="labfinder-count-note">${t.labsFoundCount(labCount)}</p>`
+    : `<p class="labfinder-count-note labfinder-count-note-warn">${t.noLabsFound}</p>`;
+
   resultsEl.innerHTML = `
+    ${countNote}
     <div class="labfinder-list">
       ${results.map((r) => `
-        <div class="labfinder-item">
+        <div class="labfinder-item ${r.isLab ? 'labfinder-item-lab' : ''}">
           <div class="labfinder-item-icon"><i class="fa-solid ${typeIcon(r.type)}"></i></div>
           <div class="labfinder-item-info">
             <span class="labfinder-item-name">${r.name}</span>
@@ -3879,6 +5185,142 @@ function renderLabResults(results) {
       `).join('')}
     </div>
   `;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   REPORT A MISSING TEST (anonymous, no account, no backend)
+   Since this is a static site with no server, there is no way to
+   collect this centrally without the visitor's own action. This
+   feature lets them send the report themselves, via their own email
+   client or WhatsApp — genuinely anonymous (nothing is stored about
+   who sent it), and requires zero setup on their end.
+   ═══════════════════════════════════════════════════════════════ */
+
+const REPORT_TEXT = {
+  fr: {
+    title: 'Signaler une analyse manquante',
+    intro: "Vous n'avez pas trouvé l'analyse que vous cherchiez ? Aidez-nous à compléter la liste. Aucune information personnelle n'est demandée.",
+    searchedLabel: 'Ce que vous avez cherché',
+    detailsLabel: 'Précisions (optionnel)',
+    detailsPlaceholder: "Ex: nom exact de l'analyse, contexte médical général...",
+    sendEmail: 'Envoyer par email',
+    sendWhatsapp: 'Envoyer par WhatsApp',
+    copyText: 'Copier le message',
+    copied: 'Copié !',
+    thanks: 'Merci de contribuer à améliorer LabPrep DZ pour tous.',
+    noRecipientNote: "Configurez d'abord une adresse email ou un numéro WhatsApp de contact pour activer l'envoi direct.",
+  },
+  ar: {
+    title: 'الإبلاغ عن تحليل غير موجود',
+    intro: "لم تجد التحليل الذي تبحث عنه؟ ساعدنا في إكمال القائمة. لا حاجة لأي معلومات شخصية.",
+    searchedLabel: 'ما الذي بحثت عنه',
+    detailsLabel: 'تفاصيل إضافية (اختياري)',
+    detailsPlaceholder: "مثال: الاسم الدقيق للتحليل، السياق الطبي العام...",
+    sendEmail: 'إرسال عبر البريد الإلكتروني',
+    sendWhatsapp: 'إرسال عبر واتساب',
+    copyText: 'نسخ الرسالة',
+    copied: 'تم النسخ!',
+    thanks: 'شكراً لمساهمتك في تحسين LabPrep DZ للجميع.',
+    noRecipientNote: "يرجى إعداد عنوان بريد إلكتروني أو رقم واتساب للتواصل أولاً لتفعيل الإرسال المباشر.",
+  },
+  en: {
+    title: 'Report a missing test',
+    intro: "Couldn't find the test you were looking for? Help us complete the list. No personal information is requested.",
+    searchedLabel: 'What you searched for',
+    detailsLabel: 'Extra details (optional)',
+    detailsPlaceholder: "E.g: exact test name, general medical context...",
+    sendEmail: 'Send via email',
+    sendWhatsapp: 'Send via WhatsApp',
+    copyText: 'Copy message',
+    copied: 'Copied!',
+    thanks: 'Thank you for helping improve LabPrep DZ for everyone.',
+    noRecipientNote: "Set up a contact email or WhatsApp number first to enable direct sending.",
+  }
+};
+
+/* Fill in your own contact details to receive reports.
+   Leave as '#' to hide that specific sending option. */
+const REPORT_RECIPIENT = {
+  email: '#',       // e.g. 'contact@example.com'
+  whatsapp: '#'      // e.g. '213555000000' (country code, no + or spaces)
+};
+
+function openReportMissing() {
+  const t = REPORT_TEXT[currentLang];
+  const body = document.getElementById('reportmissing-modal-body');
+  const searchedTerm = currentQuery.trim();
+
+  const hasEmail = REPORT_RECIPIENT.email && REPORT_RECIPIENT.email !== '#';
+  const hasWhatsapp = REPORT_RECIPIENT.whatsapp && REPORT_RECIPIENT.whatsapp !== '#';
+
+  body.innerHTML = `
+    <h2 class="modal-title" style="margin-bottom:6px"><i class="fa-solid fa-paper-plane" style="color:var(--teal)"></i> ${t.title}</h2>
+    <p class="modal-text" style="margin-bottom:16px;opacity:0.75">${t.intro}</p>
+
+    <div class="reminder-field">
+      <label class="timer-input-label">${t.searchedLabel}</label>
+      <input type="text" id="report-searched" class="timer-time-input" value="${searchedTerm.replace(/"/g, '&quot;')}"/>
+    </div>
+    <div class="reminder-field" style="margin-top:12px">
+      <label class="timer-input-label">${t.detailsLabel}</label>
+      <textarea id="report-details" class="timer-time-input" rows="3" placeholder="${t.detailsPlaceholder}" style="resize:vertical;font-family:var(--font-body)"></textarea>
+    </div>
+
+    ${(!hasEmail && !hasWhatsapp) ? `<p class="labfinder-coverage-note" style="margin-top:14px">${t.noRecipientNote}</p>` : ''}
+
+    <div class="reminder-actions" style="margin-top:16px">
+      ${hasEmail ? `
+        <button class="timer-start-btn" id="report-email-btn">
+          <i class="fa-solid fa-envelope"></i> ${t.sendEmail}
+        </button>` : ''}
+      ${hasWhatsapp ? `
+        <button class="timer-start-btn" id="report-whatsapp-btn" style="background:#25D366;margin-top:8px">
+          <i class="fa-brands fa-whatsapp"></i> ${t.sendWhatsapp}
+        </button>` : ''}
+      <button class="print-btn" id="report-copy-btn" style="width:100%;justify-content:center;margin-top:8px">
+        <i class="fa-solid fa-copy"></i> ${t.copyText}
+      </button>
+    </div>
+  `;
+
+  const buildReportText = () => {
+    const searched = document.getElementById('report-searched').value.trim();
+    const details = document.getElementById('report-details').value.trim();
+    let msg = `LabPrep DZ - ${t.title}\n\n${t.searchedLabel}: ${searched}`;
+    if (details) msg += `\n${t.detailsLabel}: ${details}`;
+    return msg;
+  };
+
+  const emailBtn = document.getElementById('report-email-btn');
+  if (emailBtn) emailBtn.addEventListener('click', () => {
+    const msg = buildReportText();
+    const subject = encodeURIComponent('LabPrep DZ - ' + t.title);
+    window.location.href = `mailto:${REPORT_RECIPIENT.email}?subject=${subject}&body=${encodeURIComponent(msg)}`;
+  });
+
+  const waBtn = document.getElementById('report-whatsapp-btn');
+  if (waBtn) waBtn.addEventListener('click', () => {
+    const msg = buildReportText();
+    window.open(`https://wa.me/${REPORT_RECIPIENT.whatsapp}?text=${encodeURIComponent(msg)}`, '_blank');
+  });
+
+  document.getElementById('report-copy-btn').addEventListener('click', (e) => {
+    const msg = buildReportText();
+    navigator.clipboard.writeText(msg).then(() => {
+      const btn = e.currentTarget;
+      const original = btn.innerHTML;
+      btn.innerHTML = `<i class="fa-solid fa-check"></i> ${t.copied}`;
+      setTimeout(() => { btn.innerHTML = original; }, 1500);
+    }).catch(() => {});
+  });
+
+  document.getElementById('reportmissing-overlay').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeReportMissing() {
+  document.getElementById('reportmissing-overlay').style.display = 'none';
+  document.body.style.overflow = '';
 }
 
 function renderRecentStrip() {
@@ -3945,6 +5387,8 @@ function applyLang() {
   document.getElementById('fasting-timer-btn-lbl').textContent = TIMER_BTN_LABEL[currentLang];
   const labFinderLbl = document.getElementById('lab-finder-btn-lbl');
   if (labFinderLbl) labFinderLbl.textContent = LAB_FINDER_HERO_LABEL[currentLang];
+  const reportMissingLbl = document.getElementById('report-missing-btn-lbl');
+  if (reportMissingLbl) reportMissingLbl.textContent = REPORT_TEXT[currentLang].title;
   document.getElementById('fav-modal-title').innerHTML = `<i class="fa-solid fa-star" style="color:#d97706"></i> ${ui.favTitle}`;
   const supportBtnText = document.getElementById('support-btn-text');
   if (supportBtnText) supportBtnText.textContent = SUPPORT_TEXT[currentLang].btn;
@@ -4015,7 +5459,8 @@ function initModalEvents() {
     'support-overlay': closeSupportModal,
     'checklist-overlay': closeChecklistModal,
     'reminder-overlay': closeReminderModal,
-    'labfinder-overlay': closeLabFinder
+    'labfinder-overlay': closeLabFinder,
+    'reportmissing-overlay': closeReportMissing
   };
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
@@ -4139,9 +5584,9 @@ function closeFavorites() {
 
 /* ── FAVORITES EXPORT ─────────────────────────────────────────── */
 const EXPORT_TEXT = {
-  fr: { exportBtn: 'Télécharger ma liste (.txt)', header: 'MES ANALYSES FAVORITES - LabPrep DZ', fasting: 'Jeûne', noFasting: 'Aucun jeûne requis' },
-  ar: { exportBtn: 'تحميل قائمتي (.txt)', header: 'تحاليلي المفضلة - LabPrep DZ', fasting: 'الصيام', noFasting: 'لا يتطلب صيام' },
-  en: { exportBtn: 'Download my list (.txt)', header: 'MY FAVORITE TESTS - LabPrep DZ', fasting: 'Fasting', noFasting: 'No fasting required' }
+  fr: { exportBtn: 'Télécharger ma liste (.txt)', header: 'MES ANALYSES FAVORITES — LabPrep DZ', fasting: 'Jeûne', noFasting: 'Aucun jeûne requis' },
+  ar: { exportBtn: 'تحميل قائمتي (.txt)', header: 'تحاليلي المفضلة — LabPrep DZ', fasting: 'الصيام', noFasting: 'لا يتطلب صيام' },
+  en: { exportBtn: 'Download my list (.txt)', header: 'MY FAVORITE TESTS — LabPrep DZ', fasting: 'Fasting', noFasting: 'No fasting required' }
 };
 
 function exportFavorites() {
@@ -4166,7 +5611,7 @@ function exportFavorites() {
     out += `\n${divider}\n\n`;
   });
 
-  out += `LabPrep DZ - All rights reserved to Zekraoui Rabah Allaa Eddine 🦑\n`;
+  out += `LabPrep DZ — All rights reserved to Zekraoui Rabah Allaa Eddine 🦑\n`;
 
   const blob = new Blob([out], { type: 'text/plain;charset=utf-8' });
   const url = URL.createObjectURL(blob);
@@ -4196,7 +5641,7 @@ const CHECKLIST_TEXT = {
     fastingSummaryTitle: "TEMPS DE JEÛNE À RESPECTER",
     fastingSummaryText: (h) => `Jeûnez <strong>${h} heures</strong> avant votre prélèvement — cela couvre l'exigence la plus stricte parmi toutes les analyses sélectionnées.`,
     noFastingNeeded: "Aucune de vos analyses sélectionnées ne nécessite de jeûne.",
-    conflictTitle: "⚠️ ATTENTION - CONFLIT DÉTECTÉ",
+    conflictTitle: "⚠️ ATTENTION — CONFLIT DÉTECTÉ",
     conflictText: (names) => `Un jeûne prolongé peut altérer le résultat de : <strong>${names}</strong>. Parlez-en à votre médecin ou au laboratoire avant le prélèvement.`,
     listTitle: "ANALYSES DE CETTE LISTE",
     removeAll: "Tout effacer",
@@ -4213,7 +5658,7 @@ const CHECKLIST_TEXT = {
     fastingSummaryTitle: "مدة الصيام الواجب احترامها",
     fastingSummaryText: (h) => `صُم <strong>${h} ساعات</strong> قبل أخذ العينة — هذا يغطي أصرم شرط بين جميع التحاليل المحددة.`,
     noFastingNeeded: "لا يتطلب أي من التحاليل المحددة الصيام.",
-    conflictTitle: "⚠️ تنبيه - تعارض مكتشف",
+    conflictTitle: "⚠️ تنبيه — تعارض مكتشف",
     conflictText: (names) => `الصيام لفترة طويلة قد يؤثر على نتيجة: <strong>${names}</strong>. تحدث مع طبيبك أو المخبر قبل أخذ العينة.`,
     listTitle: "تحاليل هذه القائمة",
     removeAll: "مسح الكل",
@@ -4230,7 +5675,7 @@ const CHECKLIST_TEXT = {
     fastingSummaryTitle: "FASTING TIME TO FOLLOW",
     fastingSummaryText: (h) => `Fast for <strong>${h} hours</strong> before your sample collection — this covers the strictest requirement among all selected tests.`,
     noFastingNeeded: "None of your selected tests require fasting.",
-    conflictTitle: "⚠️ WARNING - CONFLICT DETECTED",
+    conflictTitle: "⚠️ WARNING — CONFLICT DETECTED",
     conflictText: (names) => `Prolonged fasting may alter the result of: <strong>${names}</strong>. Talk to your doctor or the lab before your sample is taken.`,
     listTitle: "TESTS IN THIS LIST",
     removeAll: "Clear all",
@@ -4700,9 +6145,9 @@ function showUpdateToast() {
   const toast = document.createElement('div');
   toast.id = 'update-toast';
   toast.className = 'update-toast';
-  const label = currentLang === 'ar' ? 'تتوفر نسخة جديدة - اضغط للتحديث'
-              : currentLang === 'en' ? 'New version available - tap to update'
-              : 'Nouvelle version disponible - appuyez pour mettre à jour';
+  const label = currentLang === 'ar' ? 'تتوفر نسخة جديدة — اضغط للتحديث'
+              : currentLang === 'en' ? 'New version available — tap to update'
+              : 'Nouvelle version disponible — appuyez pour mettre à jour';
   toast.innerHTML = `<i class="fa-solid fa-rotate"></i> <span>${label}</span>`;
   toast.addEventListener('click', () => window.location.reload());
   document.body.appendChild(toast);

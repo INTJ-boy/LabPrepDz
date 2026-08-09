@@ -389,14 +389,35 @@ body.dark-mode .labfinder-coverage-note { background: #451a03; border-color: #92
 .labfinder-error { color: var(--red); background: var(--red-light); border-radius: 8px; margin-top: 12px; }
 body.dark-mode .labfinder-error { background: #7f1d1d; color: #fca5a5; }
 
+.labfinder-count-note {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--teal-dark);
+  margin-top: 14px;
+  padding: 8px 12px;
+  background: var(--teal-pale);
+  border-radius: 8px;
+}
+.labfinder-count-note-warn {
+  color: #92400e;
+  background: #fef3c7;
+}
+body.dark-mode .labfinder-count-note { background: #134e4a; color: #5eead4; }
+body.dark-mode .labfinder-count-note-warn { background: #451a03; color: #fde68a; }
+
 .labfinder-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 14px;
+  margin-top: 10px;
   max-height: 340px;
   overflow-y: auto;
 }
+.labfinder-item-lab {
+  border-color: var(--teal);
+  background: var(--teal-pale);
+}
+body.dark-mode .labfinder-item-lab { background: #134e4a; border-color: var(--teal); }
 .labfinder-item {
   display: flex;
   align-items: center;
@@ -1055,6 +1076,23 @@ body.dark-mode .fav-export-row { border-top-color: #334155; }
 .empty-state i { font-size: 3rem; opacity: 0.4; }
 #empty-title { font-size: 1.05rem; font-weight: 600; color: var(--slate-600); }
 #empty-sub   { font-size: 0.85rem; }
+
+.report-missing-btn {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: var(--teal);
+  color: white;
+  padding: 11px 22px;
+  border-radius: 24px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-top: 10px;
+  transition: background 0.2s, transform 0.15s;
+}
+.report-missing-btn:hover { background: var(--teal-dark); transform: translateY(-1px); }
+
+.reportmissing-modal { max-width: 460px; }
 
 /* ── FOOTER ──────────────────────────────────────────────────── */
 /* Fixed dark background at all times — never driven by --slate-900,

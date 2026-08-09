@@ -51,9 +51,23 @@
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": "Your Page Title",
-  "description": "Your description"
+  "@type": "WebApplication",
+  "name": "LabPrep DZ",
+  "alternateName": "LabPrep Zekraoui",
+  "url": "https://intj-boy.github.io/LabPrepDz/",
+  "description": "Guide gratuit de préparation aux analyses médicales pour patients algériens, disponible en français, arabe et anglais. Plus de 200 analyses couvertes avec instructions de jeûne, prélèvement et médicaments à signaler.",
+  "applicationCategory": "MedicalApplication",
+  "operatingSystem": "Any",
+  "inLanguage": ["fr", "ar", "en"],
+  "author": {
+    "@type": "Person",
+    "name": "Zekraoui Rabah Allaa Eddine"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "DZD"
+  }
 }
   </script>
 
@@ -201,6 +215,10 @@
         <i class="fa-solid fa-flask"></i>
         <p id="empty-title">Aucune analyse trouvée</p>
         <p id="empty-sub">Essayez un autre terme de recherche</p>
+        <button class="report-missing-btn" id="report-missing-btn" onclick="openReportMissing()">
+          <i class="fa-solid fa-paper-plane"></i>
+          <span id="report-missing-btn-lbl">Signaler cette analyse manquante</span>
+        </button>
       </div>
     </div>
   </main>
@@ -238,13 +256,13 @@
 
       <!-- Social Links -->
       <div class="footer-social">
-        <a href="https://www.linkedin.com/in/zekraouirabahallaaeddine" class="social-link" id="social-linkedin" data-platform="linkedin" aria-label="LinkedIn" target="_blank" rel="noopener">
+        <a href="#" class="social-link" id="social-linkedin" data-platform="linkedin" aria-label="LinkedIn" target="_blank" rel="noopener">
           <i class="fa-brands fa-linkedin"></i>
         </a>
-        <a href="https://www.instagram.com/thismf3ya?igsh=OG1vYTNzOXNwanBq" class="social-link" id="social-instagram" data-platform="instagram" aria-label="Instagram" target="_blank" rel="noopener">
+        <a href="#" class="social-link" id="social-instagram" data-platform="instagram" aria-label="Instagram" target="_blank" rel="noopener">
           <i class="fa-brands fa-instagram"></i>
         </a>
-        <a href="https://www.t.me/Itzjust_me" class="social-link" id="social-telegram" data-platform="telegram" aria-label="Telegram" target="_blank" rel="noopener">
+        <a href="#" class="social-link" id="social-telegram" data-platform="telegram" aria-label="Telegram" target="_blank" rel="noopener">
           <i class="fa-brands fa-telegram"></i>
         </a>
       </div>
@@ -256,7 +274,7 @@
       </button>
 
       <p class="footer-rights">
-        © <span id="footer-year">2026</span> LabPrep DZ - All rights reserved to Zekraoui Rabah Allaa Eddine 🦑
+        © <span id="footer-year">2025</span> LabPrep DZ - All rights reserved to Zekraoui Rabah Allaa Eddine 🦑
       </p>
     </div>
   </footer>
@@ -333,6 +351,16 @@
         <i class="fa-solid fa-xmark"></i>
       </button>
       <div class="modal-body" id="labfinder-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- ══ REPORT MISSING TEST MODAL ═══════════════════════════════ -->
+  <div class="modal-overlay" id="reportmissing-overlay" onclick="closeReportMissing()" role="dialog" aria-modal="true" style="display:none">
+    <div class="modal reportmissing-modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeReportMissing()" aria-label="Fermer">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="modal-body" id="reportmissing-modal-body"></div>
     </div>
   </div>
 
