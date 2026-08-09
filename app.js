@@ -5241,8 +5241,8 @@ const REPORT_TEXT = {
 /* Fill in your own contact details to receive reports.
    Leave as '#' to hide that specific sending option. */
 const REPORT_RECIPIENT = {
-  email: '#',       // e.g. 'contact@example.com'
-  whatsapp: '#'      // e.g. '213555000000' (country code, no + or spaces)
+  email: 'rabahallaa666@gmail.com',       // e.g. 'contact@example.com'
+  whatsapp: '213773939496'      // e.g. '213555000000' (country code, no + or spaces)
 };
 
 function openReportMissing() {
