@@ -2,8 +2,7 @@
 
 # LabPrep DZ 🧪
 
-A free, non-profit guide to preparing for medical laboratory tests in Algeria - real fasting requirements, real sample collection rules, and real medication warnings for over 200 medical analyses. No generic copy-pasted advice, no invented protocols. Created voluntarily by Zekraoui Rabah Allaa Eddine as a charitable project, in memory of and dedication to his father.
-
+A free, non-profit guide to preparing for medical laboratory tests in Algeria - real fasting requirements, real sample collection rules, and real medication warnings for over 200 medical analyses. No generic copy-pasted advice, no invented protocols. Created voluntarily by Zekraoui Rabah Allaa Eddine as a charitable project. 
 ## Sections
 
 - **Test Database** - 201 medical analyses across biochemistry, hematology, coagulation, bacteriology, urology, hormonology, immunology, serology, and parasitology, each with exact fasting time, sample collection method, and medications to report
