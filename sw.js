@@ -1,4 +1,4 @@
-const CACHE_NAME = 'labprepdz-v2';
+const CACHE_NAME = 'labprepdz-v3';
 
 const urlsToCache = [
   './',
