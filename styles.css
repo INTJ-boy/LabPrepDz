@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   LabPrep DZ — Styles
+   LabPrep DZ - Styles
    All rights reserved to Zekraoui Rabah Allaa Eddine 🦑
    ═══════════════════════════════════════════════════════════════ */
 
@@ -1095,7 +1095,7 @@ body.dark-mode .fav-export-row { border-top-color: #334155; }
 .reportmissing-modal { max-width: 460px; }
 
 /* ── FOOTER ──────────────────────────────────────────────────── */
-/* Fixed dark background at all times — never driven by --slate-900,
+/* Fixed dark background at all times - never driven by --slate-900,
    so it can never be affected by dark-mode variable swaps or any
    future theme change. This block is always dark, text always light. */
 .site-footer {
@@ -1277,7 +1277,7 @@ body.dark-mode .text-size-btn { background: #1e293b; color: var(--slate-600); }
 body.dark-mode .text-size-btn:first-child { border-right-color: #334155; }
 body.dark-mode .text-size-btn:hover { background: #334155; }
 
-/* Text-size scale classes applied to <html> — scales rem-based sizing globally.
+/* Text-size scale classes applied to <html> - scales rem-based sizing globally.
    Base (no class) = 100%. Each step is a further +8% for clear, comfortable jumps. */
 html.text-size-1 { font-size: 108%; }
 html.text-size-2 { font-size: 116%; }
@@ -1287,7 +1287,7 @@ html.text-size-4 { font-size: 132%; }
 /* ═══════════════════════════════════════════════════════════════
    DARK MODE
    Scoped carefully: the hero and footer are ALREADY dark-on-light-text
-   by design (teal hero, near-black footer) — they must NOT be touched
+   by design (teal hero, near-black footer) - they must NOT be touched
    by the variable swap below, or their text becomes unreadable.
    Only "light surface" components (page background, header, cards,
    modal, pills, badges) get inverted.
@@ -1306,7 +1306,7 @@ body.dark-mode {
   --teal-pale: #134e4a;
 }
 
-/* Page base — applied to BOTH html and body. Mobile browsers (notably
+/* Page base - applied to BOTH html and body. Mobile browsers (notably
    Chrome on Android) paint the overscroll/bounce area below the last
    element using <html>'s background, not <body>'s. Since JS now also
    toggles the "dark-mode" class on document.documentElement (<html>),
@@ -1332,7 +1332,7 @@ body.dark-mode .dark-btn:hover { background: #475569; }
 body.dark-mode .lang-btn { background: #334155; }
 body.dark-mode .lang-btn:hover { background: #475569; }
 
-/* Charity banner — keep its own warm palette, just deepen it slightly */
+/* Charity banner - keep its own warm palette, just deepen it slightly */
 body.dark-mode .charity-banner {
   background: linear-gradient(90deg, #451a03, #78350f, #451a03);
   color: #fde68a;
@@ -1340,7 +1340,7 @@ body.dark-mode .charity-banner {
 }
 body.dark-mode .charity-banner i { color: #fbbf24; }
 
-/* Hero & Fasting timer button — force-protected, never inherit dark-mode swap */
+/* Hero & Fasting timer button - force-protected, never inherit dark-mode swap */
 body.dark-mode .hero,
 body.dark-mode .hero * {
   color: inherit;
@@ -1357,7 +1357,7 @@ body.dark-mode #search-input::placeholder { color: #64748b; }
 body.dark-mode .fasting-timer-btn { color: white; }
 body.dark-mode .recent-chip { color: white; }
 
-/* Filter pills — already designed for the teal hero background, no change needed */
+/* Filter pills - already designed for the teal hero background, no change needed */
 
 /* Results / Cards */
 body.dark-mode .analysis-card {
@@ -1417,7 +1417,7 @@ body.dark-mode .timer-time-left { color: var(--slate-900); }
 body.dark-mode .timer-done-at { color: var(--slate-600); }
 /* Base styles for form inputs used by the Fasting Timer, Ramadan mode
    (if added later), and the Reminder modal. These were previously only
-   defined for dark mode — added here so light mode isn't unstyled. */
+   defined for dark mode - added here so light mode isn't unstyled. */
 .timer-input-label {
   display: block;
   font-size: 0.72rem;
@@ -1465,13 +1465,13 @@ body.dark-mode .timer-time-input {
   color: var(--slate-800);
 }
 
-/* Footer intentionally has NO dark-mode overrides — it now uses fixed
+/* Footer intentionally has NO dark-mode overrides - it now uses fixed
    colors defined in the base .site-footer rule above, so it looks
    identical (and correctly readable) in both light and dark mode. */
 
 /* ── RESPONSIVE ───────────────────────────────────────────────── */
 
-/* Wide desktop (large monitors) — give content more breathing room
+/* Wide desktop (large monitors) - give content more breathing room
    instead of leaving huge empty side margins at the same 1200px cap
    used for laptops. */
 @media (min-width: 1440px) {
@@ -1480,7 +1480,7 @@ body.dark-mode .timer-time-input {
   .results-grid { grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 22px; }
 }
 
-/* Tablet / small laptop (768px–1024px) — the header has 5+ controls
+/* Tablet / small laptop (768px–1024px) - the header has 5+ controls
    plus the brand; without this, they can crowd or wrap awkwardly
    between the phone breakpoint and full desktop width. */
 @media (max-width: 1024px) and (min-width: 641px) {
@@ -1629,7 +1629,7 @@ body.dark-mode .checklist-clear-btn:hover { background: #991b1b; }
 }
 
 /* ── PRINT STYLESHEET ─────────────────────────────────────────── */
-/* Only the open modal's content should print — hide all app chrome. */
+/* Only the open modal's content should print - hide all app chrome. */
 @media print {
   .site-header, .site-nav, .hero, .charity-banner, .results-section,
   .site-footer, .checklist-bar, .update-toast,

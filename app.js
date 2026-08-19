@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   LabPrep DZ — Application Logic
+   LabPrep DZ - Application Logic
    All rights reserved to Zekraoui Rabah Allaa Eddine 🦑
    ═══════════════════════════════════════════════════════════════ */
 
@@ -14,11 +14,11 @@ const LANG_CYCLE = ['fr','ar','en'];
 let recentlyViewed = [];
 try { recentlyViewed = JSON.parse(localStorage.getItem('labprepdz_recent') || '[]'); } catch(e) {}
 
-/* Favorites — persisted in localStorage */
+/* Favorites - persisted in localStorage */
 let favorites = [];
 try { favorites = JSON.parse(localStorage.getItem('labprepdz_favs') || '[]'); } catch(e) { favorites = []; }
 
-/* Checklist ("my prescribed tests") — session-only by default, but
+/* Checklist ("my prescribed tests") - session-only by default, but
    persisted too so a half-built list survives an accidental refresh. */
 let checklistItems = [];
 try { checklistItems = JSON.parse(localStorage.getItem('labprepdz_checklist') || '[]'); } catch(e) { checklistItems = []; }
@@ -48,7 +48,7 @@ try {
 } catch(e) {}
 
 /* ═══════════════════════════════════════════════════════════════
-   DATASET — 200+ Medical Analyses (Algeria protocols)
+   DATASET - 200+ Medical Analyses (Algeria protocols)
    Each entry:
    id, cat, fasting (hours or 0), tubes[], name_fr, name_ar,
    summary_fr, summary_ar, prep_fr[], prep_ar[], sampling_fr[],
@@ -72,16 +72,16 @@ const DB = [
 
 { id:2, cat:'biochimie', fasting:12, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Bilan lipidique complet (EAL)', name_ar:'الفحص الشامل للدهون',
-  summary_fr:"Cholestérol total, HDL, LDL et triglycérides — nécessite 12h de jeûne.",
-  summary_ar:"الكوليسترول الكلي، HDL، LDL والدهون الثلاثية — يتطلب صيام 12 ساعة.",
+  summary_fr:"Cholestérol total, HDL, LDL et triglycérides - nécessite 12h de jeûne.",
+  summary_ar:"الكوليسترول الكلي، HDL، LDL والدهون الثلاثية - يتطلب صيام 12 ساعة.",
   prep_fr:["Jeûne strict de 12 heures.","Pas d'alcool durant les 72h précédentes.","Alimentation habituelle les 3 jours avant (ne pas changer de régime)."],
   prep_ar:["صيام صارم لمدة 12 ساعة.","عدم شرب الكحول خلال 72 ساعة السابقة.","نظام غذائي معتاد خلال 3 أيام قبل الفحص (عدم تغيير النظام الغذائي)."],
   sampling_fr:["Prélèvement veineux le matin.","Position assise 15 minutes avant le prélèvement."],
   sampling_ar:["أخذ عينة وريدية في الصباح.","الجلوس لمدة 15 دقيقة قبل أخذ العينة."],
   meds_fr:["Signaler tout traitement hypolipémiant (statines, fibrates).","Signaler pilule contraceptive ou traitement hormonal."],
   meds_ar:["إبلاغ عن أي علاج لخفض الدهون (ستاتين، فيبرات).","إبلاغ عن حبوب منع الحمل أو العلاج الهرموني."],
-  note_fr:"Grossesse et infections récentes peuvent fausser les résultats — à signaler.",
-  note_ar:"الحمل والالتهابات الحديثة قد تؤثر على النتائج — يجب الإبلاغ عنها." },
+  note_fr:"Grossesse et infections récentes peuvent fausser les résultats - à signaler.",
+  note_ar:"الحمل والالتهابات الحديثة قد تؤثر على النتائج - يجب الإبلاغ عنها." },
 
 { id:3, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Urée sanguine', name_ar:'اليوريا في الدم',
@@ -223,8 +223,8 @@ const DB = [
   sampling_ar:["يفضل أخذ العينة الوريدية في الصباح."],
   meds_fr:["Signaler antiacides à base d'aluminium.","Signaler compléments en vitamine D."],
   meds_ar:["إبلاغ عن مضادات الحموضة المحتوية على الألمنيوم.","إبلاغ عن مكملات فيتامين د."],
-  note_fr:"Varie selon le rythme circadien — le matin est recommandé.",
-  note_ar:"يتغير حسب الساعة البيولوجية — يُفضل الصباح." },
+  note_fr:"Varie selon le rythme circadien - le matin est recommandé.",
+  note_ar:"يتغير حسب الساعة البيولوجية - يُفضل الصباح." },
 
 { id:14, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Acide urique (Uricémie)', name_ar:'حمض اليوريك في الدم',
@@ -314,21 +314,21 @@ const DB = [
   sampling_ar:["أخذ عينة على الريق، ثم شرب 75غ من الجلوكوز، ثم أخذ عينات بعد ساعة وساعتين.","البقاء جالساً وهادئاً طوال الفحص (ساعتان)."],
   meds_fr:["Signaler tout traitement pouvant modifier la glycémie (corticoïdes, bêta-bloquants)."],
   meds_ar:["إبلاغ عن أي علاج قد يغير نسبة السكر (كورتيزون، حاصرات بيتا)."],
-  note_fr:"Test long (2-3h) — prévoir du temps, rester au laboratoire entre les prélèvements.",
-  note_ar:"فحص طويل (2-3 ساعات) — يجب توفير الوقت والبقاء في المخبر بين أخذ العينات." },
+  note_fr:"Test long (2-3h) - prévoir du temps, rester au laboratoire entre les prélèvements.",
+  note_ar:"فحص طويل (2-3 ساعات) - يجب توفير الوقت والبقاء في المخبر بين أخذ العينات." },
 
 { id:21, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Fer sérique', name_ar:'الحديد في الدم',
   summary_fr:"Évalue les réserves en fer, utile pour le dépistage d'anémie.",
   summary_ar:"يقيّم مخزون الحديد، مفيد للكشف عن فقر الدم.",
-  prep_fr:["Jeûne de 12h recommandé (le fer varie selon les repas).","Prélèvement de préférence le matin (8h-10h) — pic circadien.","Ne pas prendre de complément en fer 24h avant."],
-  prep_ar:["يُنصح بصيام 12 ساعة (يتغير الحديد حسب الوجبات).","يفضل أخذ العينة صباحاً (8-10) — ذروة الساعة البيولوجية.","عدم تناول مكملات الحديد قبل 24 ساعة."],
+  prep_fr:["Jeûne de 12h recommandé (le fer varie selon les repas).","Prélèvement de préférence le matin (8h-10h) - pic circadien.","Ne pas prendre de complément en fer 24h avant."],
+  prep_ar:["يُنصح بصيام 12 ساعة (يتغير الحديد حسب الوجبات).","يفضل أخذ العينة صباحاً (8-10) - ذروة الساعة البيولوجية.","عدم تناول مكملات الحديد قبل 24 ساعة."],
   sampling_fr:["Prélèvement veineux le matin."],
   sampling_ar:["أخذ عينة وريدية في الصباح."],
   meds_fr:["Signaler tout traitement à base de fer.","Signaler transfusions récentes."],
   meds_ar:["إبلاغ عن أي علاج يحتوي على الحديد.","إبلاغ عن عمليات نقل الدم الحديثة."],
-  note_fr:"Varie fortement dans la journée — toujours prélever le matin pour comparer.",
-  note_ar:"يتغير بشدة خلال اليوم — يجب أخذ العينة دائماً في الصباح للمقارنة." },
+  note_fr:"Varie fortement dans la journée - toujours prélever le matin pour comparer.",
+  note_ar:"يتغير بشدة خلال اليوم - يجب أخذ العينة دائماً في الصباح للمقارنة." },
 
 { id:22, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Ferritine', name_ar:'الفيريتين',
@@ -340,8 +340,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بسيطة."],
   meds_fr:["Signaler tout traitement martial en cours."],
   meds_ar:["إبلاغ عن أي علاج بالحديد جارٍ."],
-  note_fr:"S'élève faussement en cas d'inflammation ou d'infection — coupler avec la CRP.",
-  note_ar:"يرتفع بشكل خاطئ في حالة الالتهاب أو العدوى — يُنصح بربطه مع CRP." },
+  note_fr:"S'élève faussement en cas d'inflammation ou d'infection - coupler avec la CRP.",
+  note_ar:"يرتفع بشكل خاطئ في حالة الالتهاب أو العدوى - يُنصح بربطه مع CRP." },
 
 { id:23, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Transferrine (Sidérophiline)', name_ar:'الترانسفيرين',
@@ -366,15 +366,15 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بسيطة."],
   meds_fr:["Signaler statines et injections intramusculaires récentes."],
   meds_ar:["إبلاغ عن الستاتين والحقن العضلي الحديث."],
-  note_fr:"Très sensible à l'effort musculaire — même une marche rapide peut fausser le résultat.",
-  note_ar:"حساس جداً للمجهود العضلي — حتى المشي السريع قد يؤثر على النتيجة." },
+  note_fr:"Très sensible à l'effort musculaire - même une marche rapide peut fausser le résultat.",
+  note_ar:"حساس جداً للمجهود العضلي - حتى المشي السريع قد يؤثر على النتيجة." },
 
 { id:25, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Troponine (Ic ou T)', name_ar:'التروبونين',
-  summary_fr:"Marqueur spécifique de l'infarctus du myocarde — urgence cardiaque.",
-  summary_ar:"مؤشر خاص باحتشاء عضلة القلب — حالة قلبية طارئة.",
-  prep_fr:["Aucune préparation — test d'urgence réalisé immédiatement.","Pas de jeûne requis."],
-  prep_ar:["لا تحضير — فحص طارئ يُجرى فوراً.","لا حاجة للصيام."],
+  summary_fr:"Marqueur spécifique de l'infarctus du myocarde - urgence cardiaque.",
+  summary_ar:"مؤشر خاص باحتشاء عضلة القلب - حالة قلبية طارئة.",
+  prep_fr:["Aucune préparation - test d'urgence réalisé immédiatement.","Pas de jeûne requis."],
+  prep_ar:["لا تحضير - فحص طارئ يُجرى فوراً.","لا حاجة للصيام."],
   sampling_fr:["Prélèvement veineux immédiat, souvent répété à H0, H3, H6 pour suivre la cinétique."],
   sampling_ar:["أخذ عينة وريدية فورية، غالباً تُكرر عند الساعة صفر، 3، 6 لمتابعة التطور."],
   meds_fr:["Signaler tout traitement anticoagulant en cours."],
@@ -386,8 +386,8 @@ const DB = [
   name_fr:'LDH (Lactate Déshydrogénase)', name_ar:'إنزيم LDH',
   summary_fr:"Marqueur non spécifique de destruction cellulaire (cœur, foie, muscles, sang).",
   summary_ar:"مؤشر غير خاص على تدمير الخلايا (القلب، الكبد، العضلات، الدم).",
-  prep_fr:["Jeûne de 4h conseillé.","Éviter l'hémolyse — technique de prélèvement soigneuse requise."],
-  prep_ar:["يُنصح بصيام 4 ساعات.","تجنب انحلال الدم — يتطلب تقنية أخذ عينة دقيقة."],
+  prep_fr:["Jeûne de 4h conseillé.","Éviter l'hémolyse - technique de prélèvement soigneuse requise."],
+  prep_ar:["يُنصح بصيام 4 ساعات.","تجنب انحلال الدم - يتطلب تقنية أخذ عينة دقيقة."],
   sampling_fr:["Prélèvement veineux simple, éviter le garrot prolongé."],
   sampling_ar:["أخذ عينة وريدية بسيطة، تجنب الرباط الضاغط لفترة طويلة."],
   meds_fr:["Signaler traitement anticancéreux récent."],
@@ -405,8 +405,8 @@ const DB = [
   sampling_ar:["أخذ عينة شريانية (المعصم أو الفخذ) من قبل طبيب أو فني مؤهل.","الضغط على مكان الوخز لمدة 5 دقائق بعد ذلك."],
   meds_fr:["Signaler oxygénothérapie et ventilation assistée."],
   meds_ar:["إبلاغ عن العلاج بالأكسجين والتنفس الاصطناعي."],
-  note_fr:"Prélèvement plus douloureux que veineux — analyse immédiate obligatoire (échantillon instable).",
-  note_ar:"أخذ العينة أكثر ألماً من الوريدي — التحليل الفوري إلزامي (العينة غير مستقرة)." },
+  note_fr:"Prélèvement plus douloureux que veineux - analyse immédiate obligatoire (échantillon instable).",
+  note_ar:"أخذ العينة أكثر ألماً من الوريدي - التحليل الفوري إلزامي (العينة غير مستقرة)." },
 
 { id:28, cat:'biochimie', fasting:0, tubes:[{c:'#a78bfa',n_fr:'Violet (EDTA)',n_ar:'بنفسجي (EDTA)'}],
   name_fr:'Lactate sanguin', name_ar:'اللاكتات في الدم',
@@ -436,8 +436,8 @@ const DB = [
 
 { id:30, cat:'biochimie', fasting:12, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Triglycérides', name_ar:'الدهون الثلاثية',
-  summary_fr:"Très sensible à l'alimentation récente — nécessite un jeûne strict.",
-  summary_ar:"حساس جداً للتغذية الأخيرة — يتطلب صياماً صارماً.",
+  summary_fr:"Très sensible à l'alimentation récente - nécessite un jeûne strict.",
+  summary_ar:"حساس جداً للتغذية الأخيرة - يتطلب صياماً صارماً.",
   prep_fr:["Jeûne strict de 12 heures.","Pas d'alcool 72h avant.","Éviter repas très gras la veille."],
   prep_ar:["صيام صارم لمدة 12 ساعة.","عدم شرب الكحول قبل 72 ساعة.","تجنب الوجبات الدسمة جداً في اليوم السابق."],
   sampling_fr:["Prélèvement veineux le matin."],
@@ -524,8 +524,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية، يجب ملء الأنبوب بدقة حتى العلامة (نسبة دقيقة بين الدم والسيترات)."],
   meds_fr:["Signaler impérativement tout traitement anticoagulant (Sintrom, Previscan, Warfarine).","Signaler antibiotiques récents."],
   meds_ar:["إبلاغ إلزامياً عن أي علاج مضاد للتخثر (سنترون، بريفيسكان، وارفارين).","إبلاغ عن المضادات الحيوية الحديثة."],
-  note_fr:"Le tube mal rempli invalide totalement le résultat — vérification systématique par le technicien.",
-  note_ar:"الأنبوب غير المملوء بشكل صحيح يبطل النتيجة تماماً — يتحقق الفني من ذلك دائماً." },
+  note_fr:"Le tube mal rempli invalide totalement le résultat - vérification systématique par le technicien.",
+  note_ar:"الأنبوب غير المملوء بشكل صحيح يبطل النتيجة تماماً - يتحقق الفني من ذلك دائماً." },
 
 { id:37, cat:'coagulation', fasting:0, tubes:[{c:'#60a5fa',n_fr:'Bleu (citrate)',n_ar:'أزرق (سيترات)'}],
   name_fr:'TCA (Temps de Céphaline Activée)', name_ar:'زمن الثرومبوبلاستين الجزئي TCA',
@@ -582,16 +582,16 @@ const DB = [
 /* ── BACTÉRIOLOGIE ──────────────────────────────────────────── */
 { id:41, cat:'bacteriologie', fasting:0, tubes:[{c:'#4ade80',n_fr:'Pot stérile',n_ar:'وعاء معقم'}],
   name_fr:'ECBU (Examen Cytobactériologique des Urines)', name_ar:'التحليل الجرثومي للبول ECBU',
-  summary_fr:"Recherche d'infection urinaire — nécessite une toilette intime rigoureuse.",
-  summary_ar:"البحث عن التهاب المسالك البولية — يتطلب نظافة حميمة دقيقة.",
+  summary_fr:"Recherche d'infection urinaire - nécessite une toilette intime rigoureuse.",
+  summary_ar:"البحث عن التهاب المسالك البولية - يتطلب نظافة حميمة دقيقة.",
   prep_fr:["Toilette intime avec savon avant le prélèvement.","Recueillir les urines du milieu du jet (deuxième partie de la miction).","Idéalement la première miction du matin.","Ne pas être sous antibiotique depuis au moins 7 jours."],
   prep_ar:["نظافة حميمة بالصابون قبل أخذ العينة.","جمع البول من منتصف التبول (الجزء الثاني من التبول).","يفضل أول تبول في الصباح.","عدم تناول مضادات حيوية منذ 7 أيام على الأقل."],
   sampling_fr:["Recueillir 20-30 mL dans le pot stérile fourni par le laboratoire.","Refermer immédiatement et apporter au labo dans l'heure qui suit."],
   sampling_ar:["جمع 20-30 مل في الوعاء المعقم المقدم من المخبر.","إغلاقه فوراً وإحضاره للمخبر خلال ساعة."],
-  meds_fr:["IMPORTANT : signaler toute prise récente d'antibiotique — fausse totalement la culture."],
-  meds_ar:["مهم جداً: إبلاغ عن أي تناول حديث لمضاد حيوي — يشوه الزرع بالكامل."],
-  note_fr:"L'antibiothérapie récente est la cause n°1 de faux négatifs en Algérie — à éviter absolument avant le test.",
-  note_ar:"العلاج الحديث بالمضادات الحيوية هو السبب الأول للنتائج السلبية الخاطئة في الجزائر — يجب تجنبه تماماً قبل الفحص." },
+  meds_fr:["IMPORTANT : signaler toute prise récente d'antibiotique - fausse totalement la culture."],
+  meds_ar:["مهم جداً: إبلاغ عن أي تناول حديث لمضاد حيوي - يشوه الزرع بالكامل."],
+  note_fr:"L'antibiothérapie récente est la cause n°1 de faux négatifs en Algérie - à éviter absolument avant le test.",
+  note_ar:"العلاج الحديث بالمضادات الحيوية هو السبب الأول للنتائج السلبية الخاطئة في الجزائر - يجب تجنبه تماماً قبل الفحص." },
 
 { id:42, cat:'bacteriologie', fasting:0, tubes:[{c:'#4ade80',n_fr:'Écouvillon stérile',n_ar:'مسحة معقمة'}],
   name_fr:'Prélèvement de gorge (angine)', name_ar:'مسحة الحلق',
@@ -603,21 +603,21 @@ const DB = [
   sampling_ar:["مسح اللوزتين والبلعوم من قبل الفني."],
   meds_fr:["Signaler impérativement toute prise récente d'antibiotique."],
   meds_ar:["إبلاغ إلزامياً عن أي تناول حديث لمضاد حيوي."],
-  note_fr:"Le réflexe nauséeux est normal — respirer par la bouche facilite le geste.",
-  note_ar:"منعكس الغثيان طبيعي — التنفس عبر الفم يسهل العملية." },
+  note_fr:"Le réflexe nauséeux est normal - respirer par la bouche facilite le geste.",
+  note_ar:"منعكس الغثيان طبيعي - التنفس عبر الفم يسهل العملية." },
 
 { id:43, cat:'bacteriologie', fasting:0, tubes:[{c:'#4ade80',n_fr:'Flacons hémoculture',n_ar:'قوارير زرع الدم'}],
   name_fr:'Hémoculture', name_ar:'زرع الدم',
-  summary_fr:"Recherche de bactéries dans le sang — réalisée idéalement lors d'un pic fébrile.",
-  summary_ar:"البحث عن الجراثيم في الدم — يفضل إجراؤه أثناء ذروة الحمى.",
+  summary_fr:"Recherche de bactéries dans le sang - réalisée idéalement lors d'un pic fébrile.",
+  summary_ar:"البحث عن الجراثيم في الدم - يفضل إجراؤه أثناء ذروة الحمى.",
   prep_fr:["Désinfection cutanée rigoureuse par le personnel avant le prélèvement.","Idéalement prélevé lors d'un pic de fièvre ou de frissons.","Ne pas être sous antibiotique si possible."],
   prep_ar:["تعقيم دقيق للجلد من قبل الطاقم الطبي قبل أخذ العينة.","يفضل أخذها أثناء ذروة الحمى أو القشعريرة.","عدم تناول مضادات حيوية إن أمكن."],
   sampling_fr:["Prélèvement de 2-3 paires de flacons (aérobie/anaérobie) à des sites différents.","Répéter si nécessaire à intervalle de 30 minutes."],
   sampling_ar:["أخذ 2-3 أزواج من القوارير (هوائي/لاهوائي) من مواقع مختلفة.","التكرار عند الحاجة بفاصل 30 دقيقة."],
   meds_fr:["Signaler impérativement toute antibiothérapie en cours ou récente."],
   meds_ar:["إبلاغ إلزامياً عن أي علاج بالمضادات الحيوية جارٍ أو حديث."],
-  note_fr:"Résultat définitif en 3-5 jours (culture + antibiogramme) — une réponse préliminaire peut être donnée à 24h.",
-  note_ar:"النتيجة النهائية خلال 3-5 أيام (زرع + اختبار حساسية) — يمكن إعطاء نتيجة أولية بعد 24 ساعة." },
+  note_fr:"Résultat définitif en 3-5 jours (culture + antibiogramme) - une réponse préliminaire peut être donnée à 24h.",
+  note_ar:"النتيجة النهائية خلال 3-5 أيام (زرع + اختبار حساسية) - يمكن إعطاء نتيجة أولية بعد 24 ساعة." },
 
 { id:44, cat:'bacteriologie', fasting:0, tubes:[{c:'#4ade80',n_fr:'Écouvillon stérile',n_ar:'مسحة معقمة'}],
   name_fr:'Prélèvement vaginal (PV)', name_ar:'المسحة المهبلية',
@@ -735,8 +735,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بسيطة."],
   meds_fr:["Signaler impérativement le traitement thyroïdien en cours et l'horaire de la dernière prise."],
   meds_ar:["إبلاغ إلزامياً عن علاج الغدة الدرقية الجاري ووقت آخر جرعة."],
-  note_fr:"La grossesse modifie physiologiquement ces valeurs — à signaler.",
-  note_ar:"الحمل يغير هذه القيم فيزيولوجياً — يجب الإبلاغ عنه." },
+  note_fr:"La grossesse modifie physiologiquement ces valeurs - à signaler.",
+  note_ar:"الحمل يغير هذه القيم فيزيولوجياً - يجب الإبلاغ عنه." },
 
 { id:53, cat:'hormonologie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Prolactine', name_ar:'البرولاكتين',
@@ -748,8 +748,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بعد الراحة، تجنب التوتر قبلها مباشرة."],
   meds_fr:["Signaler antidépresseurs, antipsychotiques, antiémétiques (dompéridone)."],
   meds_ar:["إبلاغ عن مضادات الاكتئاب، مضادات الذهان، مضادات القيء."],
-  note_fr:"Le simple stress du prélèvement peut faussement l'élever — repos indispensable.",
-  note_ar:"مجرد التوتر من أخذ العينة قد يرفعها بشكل خاطئ — الراحة ضرورية." },
+  note_fr:"Le simple stress du prélèvement peut faussement l'élever - repos indispensable.",
+  note_ar:"مجرد التوتر من أخذ العينة قد يرفعها بشكل خاطئ - الراحة ضرورية." },
 
 { id:54, cat:'hormonologie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'FSH / LH', name_ar:'FSH / LH',
@@ -787,8 +787,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بسيطة."],
   meds_fr:["Signaler traitement de fertilité en cours (Duphaston, Utrogestan)."],
   meds_ar:["إبلاغ عن علاج الخصوبة الجاري."],
-  note_fr:"Le jour du cycle est essentiel pour l'interprétation — le noter précisément.",
-  note_ar:"يوم الدورة أساسي للتفسير — يجب تدوينه بدقة." },
+  note_fr:"Le jour du cycle est essentiel pour l'interprétation - le noter précisément.",
+  note_ar:"يوم الدورة أساسي للتفسير - يجب تدوينه بدقة." },
 
 { id:57, cat:'hormonologie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Testostérone', name_ar:'التستوستيرون',
@@ -800,8 +800,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بسيطة، يفضل صباحاً."],
   meds_fr:["Signaler anabolisants et traitements hormonaux."],
   meds_ar:["إبلاغ عن المنشطات والعلاجات الهرمونية."],
-  note_fr:"Varie fortement selon l'heure — toujours prélever le matin.",
-  note_ar:"يتغير بشدة حسب الوقت — يجب أخذ العينة دائماً في الصباح." },
+  note_fr:"Varie fortement selon l'heure - toujours prélever le matin.",
+  note_ar:"يتغير بشدة حسب الوقت - يجب أخذ العينة دائماً في الصباح." },
 
 { id:58, cat:'hormonologie', fasting:8, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Cortisol', name_ar:'الكورتيزول',
@@ -892,8 +892,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بسيطة."],
   meds_fr:["Signaler certains médicaments pouvant induire un lupus (hydralazine, procaïnamide)."],
   meds_ar:["إبلاغ عن بعض الأدوية التي قد تسبب ذئبة دوائية."],
-  note_fr:"Un résultat positif isolé n'est pas suffisant pour un diagnostic — contexte clinique nécessaire.",
-  note_ar:"نتيجة إيجابية منفردة غير كافية للتشخيص — يلزم السياق السريري." },
+  note_fr:"Un résultat positif isolé n'est pas suffisant pour un diagnostic - contexte clinique nécessaire.",
+  note_ar:"نتيجة إيجابية منفردة غير كافية للتشخيص - يلزم السياق السريري." },
 
 { id:65, cat:'immunologie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Anti-CCP (Peptides cycliques citrullinés)', name_ar:'الأجسام المضادة CCP',
@@ -1036,8 +1036,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بسيطة."],
   meds_fr:["Signaler traitement immunosuppresseur en cours (chez patients transplantés)."],
   meds_ar:["إبلاغ عن علاج مثبط للمناعة جارٍ (لدى مرضى الزرع)."],
-  note_fr:"Risque important si primo-infection pendant la grossesse — surveillance rapprochée nécessaire.",
-  note_ar:"خطر كبير في حالة العدوى الأولى أثناء الحمل — تلزم مراقبة دقيقة." },
+  note_fr:"Risque important si primo-infection pendant la grossesse - surveillance rapprochée nécessaire.",
+  note_ar:"خطر كبير في حالة العدوى الأولى أثناء الحمل - تلزم مراقبة دقيقة." },
 
 { id:76, cat:'serologie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Sérologie Brucellose (Test de Wright)', name_ar:'فحص داء البروسيلات',
@@ -1049,8 +1049,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بسيطة."],
   meds_fr:["Signaler tout traitement antibiotique récent."],
   meds_ar:["إبلاغ عن أي علاج حديث بالمضادات الحيوية."],
-  note_fr:"Maladie encore fréquente dans les zones rurales et d'élevage en Algérie — signaler l'exposition.",
-  note_ar:"مرض لا يزال شائعاً في المناطق الريفية ومناطق تربية المواشي في الجزائر — يجب الإبلاغ عن التعرض." },
+  note_fr:"Maladie encore fréquente dans les zones rurales et d'élevage en Algérie - signaler l'exposition.",
+  note_ar:"مرض لا يزال شائعاً في المناطق الريفية ومناطق تربية المواشي في الجزائر - يجب الإبلاغ عن التعرض." },
 
 { id:77, cat:'serologie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Sérologie Hépatite A (Anti-VHA)', name_ar:'فحص التهاب الكبد A',
@@ -1062,8 +1062,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بسيطة."],
   meds_fr:["Signaler vaccination récente contre l'hépatite A."],
   meds_ar:["إبلاغ عن التطعيم الحديث ضد التهاب الكبد A."],
-  note_fr:"Fréquente en Algérie chez l'enfant — souvent bénigne mais très contagieuse.",
-  note_ar:"شائع في الجزائر عند الأطفال — غالباً حميد لكن معدٍ جداً." },
+  note_fr:"Fréquente en Algérie chez l'enfant - souvent bénigne mais très contagieuse.",
+  note_ar:"شائع في الجزائر عند الأطفال - غالباً حميد لكن معدٍ جداً." },
 
 /* ── PARASITOLOGIE ──────────────────────────────────────────── */
 { id:78, cat:'parasitologie', fasting:0, tubes:[{c:'#4ade80',n_fr:'Pot stérile',n_ar:'وعاء معقم'}],
@@ -1076,8 +1076,8 @@ const DB = [
   sampling_ar:["جمع كمية صغيرة من البراز الطازج في الوعاء المعقم.","إحضاره بسرعة للمخبر (بعض الطفيليات تتحلل بسرعة)."],
   meds_fr:["Signaler tout traitement antiparasitaire récent."],
   meds_ar:["إبلاغ عن أي علاج مضاد للطفيليات حديث."],
-  note_fr:"Test très fréquent en Algérie — souvent demandé 3 fois pour fiabilité maximale.",
-  note_ar:"فحص شائع جداً في الجزائر — غالباً يُطلب 3 مرات لأقصى موثوقية." },
+  note_fr:"Test très fréquent en Algérie - souvent demandé 3 fois pour fiabilité maximale.",
+  note_ar:"فحص شائع جداً في الجزائر - غالباً يُطلب 3 مرات لأقصى موثوقية." },
 
 { id:79, cat:'parasitologie', fasting:0, tubes:[{c:'#4ade80',n_fr:'Scotch test',n_ar:'شريط لاصق'}],
   name_fr:'Scotch test (recherche d\'oxyures)', name_ar:'اختبار الشريط اللاصق (الديدان الدبوسية)',
@@ -1089,8 +1089,8 @@ const DB = [
   sampling_ar:["وضع الشريط اللاصق المقدم على منطقة الشرج عند الاستيقاظ، قبل أي غسل."],
   meds_fr:["Signaler tout traitement antiparasitaire récent (Fluvermal)."],
   meds_ar:["إبلاغ عن أي علاج مضاد للطفيليات حديث."],
-  note_fr:"Le moment clé est le matin au réveil — les œufs sont pondus la nuit.",
-  note_ar:"اللحظة الأساسية هي الصباح عند الاستيقاظ — البيوض تُوضع ليلاً." },
+  note_fr:"Le moment clé est le matin au réveil - les œufs sont pondus la nuit.",
+  note_ar:"اللحظة الأساسية هي الصباح عند الاستيقاظ - البيوض تُوضع ليلاً." },
 
 { id:80, cat:'parasitologie', fasting:0, tubes:[{c:'#a78bfa',n_fr:'Violet (EDTA)',n_ar:'بنفسجي (EDTA)'}],
   name_fr:'Goutte épaisse (Recherche de Paludisme)', name_ar:'القطرة السميكة (البحث عن الملاريا)',
@@ -1102,8 +1102,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية أو شعرية (وخز الإصبع)."],
   meds_fr:["Signaler tout traitement antipaludéen préventif ou curatif en cours."],
   meds_ar:["إبلاغ عن أي علاج وقائي أو علاجي للملاريا جارٍ."],
-  note_fr:"Urgence diagnostique — résultat à obtenir en quelques heures en cas de suspicion.",
-  note_ar:"حالة تشخيصية طارئة — يجب الحصول على النتيجة خلال ساعات في حالة الاشتباه." },
+  note_fr:"Urgence diagnostique - résultat à obtenir en quelques heures en cas de suspicion.",
+  note_ar:"حالة تشخيصية طارئة - يجب الحصول على النتيجة خلال ساعات في حالة الاشتباه." },
 
 { id:81, cat:'parasitologie', fasting:0, tubes:[{c:'#4ade80',n_fr:'Pot stérile',n_ar:'وعاء معقم'}],
   name_fr:'Recherche de Giardia intestinalis', name_ar:'البحث عن الجيارديا المعوية',
@@ -1115,8 +1115,8 @@ const DB = [
   sampling_ar:["جمع عينة براز طازجة في الوعاء المعقم."],
   meds_fr:["Signaler traitement antiparasitaire récent (Métronidazole)."],
   meds_ar:["إبلاغ عن علاج مضاد للطفيليات حديث."],
-  note_fr:"Excrétion intermittente — plusieurs échantillons augmentent la sensibilité.",
-  note_ar:"الإفراز متقطع — عدة عينات تزيد من دقة الفحص." },
+  note_fr:"Excrétion intermittente - plusieurs échantillons augmentent la sensibilité.",
+  note_ar:"الإفراز متقطع - عدة عينات تزيد من دقة الفحص." },
 
 { id:82, cat:'parasitologie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Sérologie Hydatidose (Kyste hydatique)', name_ar:'فحص داء الكيسات المائية',
@@ -1128,11 +1128,11 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بسيطة."],
   meds_fr:["Aucun médicament particulier à signaler."],
   meds_ar:["لا حاجة للإبلاغ عن أدوية معينة."],
-  note_fr:"Maladie endémique dans les zones rurales d'Algérie — dépistage important en cas de kyste découvert à l'imagerie.",
-  note_ar:"مرض متوطن في المناطق الريفية بالجزائر — الفحص مهم عند اكتشاف كيس بالتصوير." },
+  note_fr:"Maladie endémique dans les zones rurales d'Algérie - dépistage important en cas de kyste découvert à l'imagerie.",
+  note_ar:"مرض متوطن في المناطق الريفية بالجزائر - الفحص مهم عند اكتشاف كيس بالتصوير." },
 
 
-/* ── BIOCHIMIE — SUITE ─────────────────────────────────────── */
+/* ── BIOCHIMIE - SUITE ─────────────────────────────────────── */
 { id:83, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Vitamine B12', name_ar:'فيتامين B12',
   summary_fr:"Dépistage de carence, cause fréquente d'anémie et de troubles neurologiques.",
@@ -1161,8 +1161,8 @@ const DB = [
 
 { id:85, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Vitamine D (25-OH)', name_ar:'فيتامين د',
-  summary_fr:"Très fréquente carence en Algérie malgré l'ensoleillement — liée au mode de vie.",
-  summary_ar:"نقص شائع جداً في الجزائر رغم أشعة الشمس — مرتبط بنمط الحياة.",
+  summary_fr:"Très fréquente carence en Algérie malgré l'ensoleillement - liée au mode de vie.",
+  summary_ar:"نقص شائع جداً في الجزائر رغم أشعة الشمس - مرتبط بنمط الحياة.",
   prep_fr:["Aucun jeûne nécessaire.","Aucune préparation spéciale."],
   prep_ar:["لا حاجة للصيام.","لا تحضير خاص."],
   sampling_fr:["Prélèvement veineux simple, à tout moment de la journée."],
@@ -1221,8 +1221,8 @@ const DB = [
   sampling_ar:["الجمع في الوعاء المقدم من المخبر، تدوين وقت البداية والنهاية.","إحضار الكمية الكاملة إلى المخبر."],
   meds_fr:["Signaler diurétiques et anti-inflammatoires en cours."],
   meds_ar:["إبلاغ عن مدرات البول ومضادات الالتهاب الجارية."],
-  note_fr:"Le recueil doit être complet et précis — un oubli de miction fausse totalement le résultat.",
-  note_ar:"يجب أن يكون الجمع كاملاً ودقيقاً — نسيان تبول واحد يشوه النتيجة بالكامل." },
+  note_fr:"Le recueil doit être complet et précis - un oubli de miction fausse totalement le résultat.",
+  note_ar:"يجب أن يكون الجمع كاملاً ودقيقاً - نسيان تبول واحد يشوه النتيجة بالكامل." },
 
 { id:90, cat:'biochimie', fasting:0, tubes:[{c:'#4ade80',n_fr:'Pot urine simple',n_ar:'وعاء بول بسيط'}],
   name_fr:'Microalbuminurie', name_ar:'الألبومين الدقيق في البول',
@@ -1302,7 +1302,7 @@ const DB = [
   note_fr:"Important chez les agriculteurs exposés aux pesticides en zones rurales algériennes.",
   note_ar:"مهم عند الفلاحين المعرضين للمبيدات في المناطق الريفية الجزائرية." },
 
-/* ── HÉMATOLOGIE — SUITE ──────────────────────────────────── */
+/* ── HÉMATOLOGIE - SUITE ──────────────────────────────────── */
 { id:96, cat:'hematologie', fasting:0, tubes:[{c:'#a78bfa',n_fr:'Violet (EDTA)',n_ar:'بنفسجي (EDTA)'}],
   name_fr:'Numération plaquettaire isolée', name_ar:'عد الصفائح الدموية',
   summary_fr:"Contrôle du taux de plaquettes, souvent en suivi de traitement.",
@@ -1313,8 +1313,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بسيطة."],
   meds_fr:["Signaler traitement anticoagulant, chimiothérapie, héparine."],
   meds_ar:["إبلاغ عن العلاج المضاد للتخثر، العلاج الكيميائي، الهيبارين."],
-  note_fr:"Une fausse thrombopénie peut survenir par agrégation des plaquettes dans le tube — à vérifier au frottis si doute.",
-  note_ar:"قد يحدث نقص صفائح كاذب بسبب تكتل الصفائح في الأنبوب — يجب التحقق بمسحة الدم عند الشك." },
+  note_fr:"Une fausse thrombopénie peut survenir par agrégation des plaquettes dans le tube - à vérifier au frottis si doute.",
+  note_ar:"قد يحدث نقص صفائح كاذب بسبب تكتل الصفائح في الأنبوب - يجب التحقق بمسحة الدم عند الشك." },
 
 { id:97, cat:'hematologie', fasting:0, tubes:[{c:'#a78bfa',n_fr:'Violet (EDTA)',n_ar:'بنفسجي (EDTA)'}],
   name_fr:'Test de Coombs direct', name_ar:'اختبار كومبس المباشر',
@@ -1368,7 +1368,7 @@ const DB = [
   note_fr:"Souvent réalisé lors du bilan prénuptial en Algérie.",
   note_ar:"غالباً يُجرى أثناء الفحص قبل الزواج في الجزائر." },
 
-/* ── COAGULATION — SUITE ─────────────────────────────────── */
+/* ── COAGULATION - SUITE ─────────────────────────────────── */
 { id:101, cat:'coagulation', fasting:0, tubes:[{c:'#a78bfa',n_fr:'Violet (EDTA)',n_ar:'بنفسجي (EDTA)'}],
   name_fr:'Temps de saignement', name_ar:'زمن النزيف',
   summary_fr:"Évalue la fonction plaquettaire lors du saignement.",
@@ -1390,8 +1390,8 @@ const DB = [
   prep_ar:["لا حاجة للصيام.","بعيداً عن نوبة جلطة حادة (عدة أسابيع) للحصول على تفسير موثوق."],
   sampling_fr:["Prélèvement veineux, tube citraté."],
   sampling_ar:["أخذ عينة وريدية، أنبوب سيترات."],
-  meds_fr:["Signaler impérativement anticoagulants (héparine, AVK) — faussent fortement le résultat."],
-  meds_ar:["إبلاغ إلزامياً عن مضادات التخثر — تؤثر بشدة على النتيجة."],
+  meds_fr:["Signaler impérativement anticoagulants (héparine, AVK) - faussent fortement le résultat."],
+  meds_ar:["إبلاغ إلزامياً عن مضادات التخثر - تؤثر بشدة على النتيجة."],
   note_fr:"Doit être réalisé à distance de tout épisode aigu et sans anticoagulant si possible.",
   note_ar:"يجب إجراؤه بعيداً عن أي نوبة حادة ودون مضاد تخثر إن أمكن." },
 
@@ -1403,12 +1403,12 @@ const DB = [
   prep_ar:["لا حاجة للصيام.","بعيداً عن نوبة جلطة حادة."],
   sampling_fr:["Prélèvement veineux, tube citraté."],
   sampling_ar:["أخذ عينة وريدية، أنبوب سيترات."],
-  meds_fr:["Signaler impérativement AVK (Sintrom) — diminue faussement la protéine C/S."],
-  meds_ar:["إبلاغ إلزامياً عن مضادات فيتامين ك — تخفض البروتين بشكل خاطئ."],
-  note_fr:"Ne jamais réaliser sous traitement AVK sans avis spécialisé — résultats ininterprétables.",
+  meds_fr:["Signaler impérativement AVK (Sintrom) - diminue faussement la protéine C/S."],
+  meds_ar:["إبلاغ إلزامياً عن مضادات فيتامين ك - تخفض البروتين بشكل خاطئ."],
+  note_fr:"Ne jamais réaliser sous traitement AVK sans avis spécialisé - résultats ininterprétables.",
   note_ar:"لا يجب إجراؤه أبداً تحت علاج مضاد فيتامين ك دون رأي متخصص." },
 
-/* ── BACTÉRIOLOGIE — SUITE ──────────────────────────────────── */
+/* ── BACTÉRIOLOGIE - SUITE ──────────────────────────────────── */
 { id:104, cat:'bacteriologie', fasting:0, tubes:[{c:'#4ade80',n_fr:'Écouvillon stérile',n_ar:'مسحة معقمة'}],
   name_fr:'Prélèvement auriculaire (otite)', name_ar:'مسحة الأذن',
   summary_fr:"Identification bactérienne en cas d'otite compliquée ou récidivante.",
@@ -1445,8 +1445,8 @@ const DB = [
   sampling_ar:["يُجرى أخذ العينة بمسحة رفيعة تُدخل في الإحليل من قبل الطبيب."],
   meds_fr:["Signaler impérativement tout traitement antibiotique récent."],
   meds_ar:["إبلاغ إلزامياً عن أي علاج حديث بالمضادات الحيوية."],
-  note_fr:"Ne pas uriner avant le test est essentiel — l'urine élimine les bactéries recherchées.",
-  note_ar:"عدم التبول قبل الفحص ضروري — البول يزيل الجراثيم المطلوب الكشف عنها." },
+  note_fr:"Ne pas uriner avant le test est essentiel - l'urine élimine les bactéries recherchées.",
+  note_ar:"عدم التبول قبل الفحص ضروري - البول يزيل الجراثيم المطلوب الكشف عنها." },
 
 { id:107, cat:'bacteriologie', fasting:0, tubes:[{c:'#4ade80',n_fr:'Pot stérile',n_ar:'وعاء معقم'}],
   name_fr:'Recherche d\'Helicobacter pylori (selles)', name_ar:'البحث عن جرثومة المعدة (براز)',
@@ -1456,8 +1456,8 @@ const DB = [
   prep_ar:["التوقف عن مثبطات مضخة البروتون قبل أسبوعين.","التوقف عن المضادات الحيوية قبل 4 أسابيع.","لا حاجة للصيام لأخذ عينة البراز."],
   sampling_fr:["Recueillir un échantillon de selles fraîches dans le pot stérile."],
   sampling_ar:["جمع عينة براز طازجة في الوعاء المعقم."],
-  meds_fr:["ESSENTIEL : signaler et arrêter IPP et antibiotiques selon délai indiqué — sinon faux négatif garanti."],
-  meds_ar:["ضروري: إبلاغ ووقف مثبطات مضخة البروتون والمضادات الحيوية حسب المدة المحددة — وإلا نتيجة سلبية خاطئة مضمونة."],
+  meds_fr:["ESSENTIEL : signaler et arrêter IPP et antibiotiques selon délai indiqué - sinon faux négatif garanti."],
+  meds_ar:["ضروري: إبلاغ ووقف مثبطات مضخة البروتون والمضادات الحيوية حسب المدة المحددة - وإلا نتيجة سلبية خاطئة مضمونة."],
   note_fr:"Le non-respect de l'arrêt des IPP est la cause n°1 de faux négatifs pour ce test.",
   note_ar:"عدم احترام وقف مثبطات مضخة البروتون هو السبب الأول للنتائج السلبية الخاطئة." },
 
@@ -1474,7 +1474,7 @@ const DB = [
   note_fr:"L'arrêt du traitement antifongique avant le test est indispensable pour la culture.",
   note_ar:"وقف العلاج المضاد للفطريات قبل الفحص ضروري للزرع." },
 
-/* ── UROLOGIE — SUITE ──────────────────────────────────────── */
+/* ── UROLOGIE - SUITE ──────────────────────────────────────── */
 { id:109, cat:'urologie', fasting:0, tubes:[{c:'#4ade80',n_fr:'Pot stérile',n_ar:'وعاء معقم'}],
   name_fr:'Compte d\'Addis (HLM)', name_ar:'اختبار عد الخلايا في البول',
   summary_fr:"Quantifie les globules rouges/blancs dans les urines sur un temps précis.",
@@ -1541,7 +1541,7 @@ const DB = [
   note_ar:"نوبة حمى خلال 3 أشهر سابقة قد تغير النتائج مؤقتاً بشكل كبير." },
 
 
-/* ── HORMONOLOGIE — SUITE ─────────────────────────────────── */
+/* ── HORMONOLOGIE - SUITE ─────────────────────────────────── */
 { id:114, cat:'hormonologie', fasting:8, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Peptide C', name_ar:'الببتيد C',
   summary_fr:"Évalue la sécrétion résiduelle d'insuline par le pancréas.",
@@ -1617,8 +1617,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية صباحاً، نقل فوري على الثلج إلى المخبر."],
   meds_fr:["Signaler impérativement corticothérapie en cours (même minime)."],
   meds_ar:["إبلاغ إلزامياً عن العلاج بالكورتيزون الجاري (حتى البسيط)."],
-  note_fr:"Test techniquement délicat — nécessite transport rapide réfrigéré au laboratoire.",
-  note_ar:"فحص دقيق تقنياً — يتطلب نقلاً سريعاً ومبرداً إلى المخبر." },
+  note_fr:"Test techniquement délicat - nécessite transport rapide réfrigéré au laboratoire.",
+  note_ar:"فحص دقيق تقنياً - يتطلب نقلاً سريعاً ومبرداً إلى المخبر." },
 
 { id:120, cat:'hormonologie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'GH (Hormone de croissance)', name_ar:'هرمون النمو',
@@ -1673,19 +1673,19 @@ const DB = [
   note_fr:"Dépistage crucial car l'hypothyroïdie congénitale non traitée cause un retard mental irréversible.",
   note_ar:"كشف حاسم لأن قصور الغدة الدرقية الخلقي غير المعالج يسبب تأخراً عقلياً لا رجعة فيه." },
 
-/* ── PARASITOLOGIE — SUITE ─────────────────────────────────── */
+/* ── PARASITOLOGIE - SUITE ─────────────────────────────────── */
 { id:124, cat:'parasitologie', fasting:0, tubes:[{c:'#4ade80',n_fr:'Pot stérile',n_ar:'وعاء معقم'}],
   name_fr:'Recherche d\'Entamoeba histolytica', name_ar:'البحث عن الأميبا الحالة للنسج',
   summary_fr:"Recherche d'amibiase intestinale, cause de dysenterie.",
   summary_ar:"البحث عن داء الأميبا المعوي، سبب الزحار.",
-  prep_fr:["Selles fraîches (moins de 30 minutes) — le parasite se dégrade vite.","Ne pas prendre d'antiparasitaire avant."],
-  prep_ar:["براز طازج (أقل من 30 دقيقة) — الطفيلي يتحلل بسرعة.","عدم تناول مضاد للطفيليات قبل الفحص."],
+  prep_fr:["Selles fraîches (moins de 30 minutes) - le parasite se dégrade vite.","Ne pas prendre d'antiparasitaire avant."],
+  prep_ar:["براز طازج (أقل من 30 دقيقة) - الطفيلي يتحلل بسرعة.","عدم تناول مضاد للطفيليات قبل الفحص."],
   sampling_fr:["Recueillir un échantillon encore chaud, apporter IMMÉDIATEMENT au laboratoire."],
   sampling_ar:["جمع عينة لا تزال دافئة، إحضارها فوراً إلى المخبر."],
   meds_fr:["Signaler traitement antiparasitaire récent."],
   meds_ar:["إبلاغ عن علاج مضاد للطفيليات حديث."],
-  note_fr:"L'amibe se dégrade en quelques minutes — le délai de transport est critique pour ce test.",
-  note_ar:"الأميبا تتحلل خلال دقائق — مدة النقل حاسمة لهذا الفحص." },
+  note_fr:"L'amibe se dégrade en quelques minutes - le délai de transport est critique pour ce test.",
+  note_ar:"الأميبا تتحلل خلال دقائق - مدة النقل حاسمة لهذا الفحص." },
 
 { id:125, cat:'parasitologie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Sérologie Leishmaniose', name_ar:'فحص داء الليشمانيات',
@@ -1710,8 +1710,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بسيطة."],
   meds_fr:["Aucun médicament particulier à signaler."],
   meds_ar:["لا حاجة للإبلاغ عن أدوية معينة."],
-  note_fr:"Rarement autochtone en Algérie — surtout dépistée chez les voyageurs revenant d'Afrique subsaharienne.",
-  note_ar:"نادراً ما يكون محلياً في الجزائر — يُكشف خاصة عند المسافرين العائدين من أفريقيا جنوب الصحراء." },
+  note_fr:"Rarement autochtone en Algérie - surtout dépistée chez les voyageurs revenant d'Afrique subsaharienne.",
+  note_ar:"نادراً ما يكون محلياً في الجزائر - يُكشف خاصة عند المسافرين العائدين من أفريقيا جنوب الصحراء." },
 
 { id:127, cat:'parasitologie', fasting:0, tubes:[{c:'#4ade80',n_fr:'Pot stérile',n_ar:'وعاء معقم'}],
   name_fr:'Recherche de Cryptosporidium', name_ar:'البحث عن الكريبتوسبوريديوم',
@@ -1726,7 +1726,7 @@ const DB = [
   note_fr:"Nécessite une technique de coloration spéciale, à signaler au laboratoire si suspecté.",
   note_ar:"يتطلب تقنية تلوين خاصة، يجب إبلاغ المخبر عند الاشتباه." },
 
-/* ── SÉROLOGIE — SUITE ─────────────────────────────────────── */
+/* ── SÉROLOGIE - SUITE ─────────────────────────────────────── */
 { id:128, cat:'serologie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Sérologie EBV (Mononucléose infectieuse)', name_ar:'فحص داء وحيدات النوى المعدي',
   summary_fr:"Dépistage de la mononucléose, maladie du baiser.",
@@ -1779,7 +1779,7 @@ const DB = [
   note_fr:"Test très sensible, résultat généralement disponible en 24-48h.",
   note_ar:"فحص حساس جداً، النتيجة متوفرة عادة خلال 24-48 ساعة." },
 
-/* ── IMMUNOLOGIE — SUITE ───────────────────────────────────── */
+/* ── IMMUNOLOGIE - SUITE ───────────────────────────────────── */
 { id:132, cat:'immunologie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Anticorps anti-DNA natif', name_ar:'الأجسام المضادة للحمض النووي',
   summary_fr:"Marqueur spécifique du lupus érythémateux systémique.",
@@ -1816,8 +1816,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بسيطة."],
   meds_fr:["Aucun médicament particulier à signaler."],
   meds_ar:["لا حاجة للإبلاغ عن أدوية معينة."],
-  note_fr:"Un régime sans gluten débuté avant le test fausse totalement le résultat — attendre le diagnostic avant d'exclure le gluten.",
-  note_ar:"النظام الخالي من الغلوتين قبل الفحص يشوه النتيجة تماماً — يجب انتظار التشخيص قبل استبعاد الغلوتين." },
+  note_fr:"Un régime sans gluten débuté avant le test fausse totalement le résultat - attendre le diagnostic avant d'exclure le gluten.",
+  note_ar:"النظام الخالي من الغلوتين قبل الفحص يشوه النتيجة تماماً - يجب انتظار التشخيص قبل استبعاد الغلوتين." },
 
 { id:135, cat:'immunologie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Anticorps anti-mitochondries', name_ar:'الأجسام المضادة للميتوكوندريا',
@@ -1832,7 +1832,7 @@ const DB = [
   note_fr:"Souvent demandé en cas de cholestase inexpliquée (élévation isolée des PAL/GGT).",
   note_ar:"غالباً يُطلب في حالة ركود صفراوي غير مفسر." },
 
-/* ── BACTÉRIOLOGIE / SANTÉ PUBLIQUE — SUITE ─────────────────── */
+/* ── BACTÉRIOLOGIE / SANTÉ PUBLIQUE - SUITE ─────────────────── */
 { id:136, cat:'bacteriologie', fasting:0, tubes:[{c:'#4ade80',n_fr:'Écouvillon rectal',n_ar:'مسحة شرجية'}],
   name_fr:'Portage de bactéries multirésistantes (BMR)', name_ar:'حمل الجراثيم المقاومة',
   summary_fr:"Dépistage avant hospitalisation, notamment en réanimation.",
@@ -1859,7 +1859,7 @@ const DB = [
   note_fr:"Examen exclusivement hospitalier, sans action requise du patient.",
   note_ar:"فحص استشفائي حصري، لا يتطلب إجراءً من المريض." },
 
-/* ── BIOCHIMIE — TESTS FONCTIONNELS ────────────────────────── */
+/* ── BIOCHIMIE - TESTS FONCTIONNELS ────────────────────────── */
 { id:138, cat:'biochimie', fasting:0, tubes:[{c:'#4ade80',n_fr:'Sachet respiratoire',n_ar:'كيس تنفسي'}],
   name_fr:'Test respiratoire à l\'urée (Helicobacter pylori)', name_ar:'اختبار التنفس لليوريا',
   summary_fr:"Test non invasif de dépistage d'Helicobacter pylori par l'haleine.",
@@ -1883,10 +1883,10 @@ const DB = [
   sampling_ar:["النفخ في الجهاز، شرب محلول اللاكتوز، النفخ كل 30 دقيقة لمدة 3 ساعات."],
   meds_fr:["Signaler antibiotiques récents (modifient la flore intestinale testée)."],
   meds_ar:["إبلاغ عن المضادات الحيوية الحديثة (تغير الفلورا المعوية المفحوصة)."],
-  note_fr:"Test long (3h) — prévoir de rester au laboratoire pendant toute la durée.",
-  note_ar:"فحص طويل (3 ساعات) — يجب البقاء في المخبر طوال المدة." },
+  note_fr:"Test long (3h) - prévoir de rester au laboratoire pendant toute la durée.",
+  note_ar:"فحص طويل (3 ساعات) - يجب البقاء في المخبر طوال المدة." },
 
-/* ── BIOCHIMIE — MARQUEURS TUMORAUX ───────────────────────── */
+/* ── BIOCHIMIE - MARQUEURS TUMORAUX ───────────────────────── */
 { id:140, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'PSA (Antigène Spécifique de la Prostate)', name_ar:'مستضد البروستاتا النوعي PSA',
   summary_fr:"Dépistage et suivi des pathologies prostatiques chez l'homme.",
@@ -1895,8 +1895,8 @@ const DB = [
   prep_ar:["تجنب القذف خلال 48 ساعة قبل الفحص.","تجنب الفحص الشرجي أو تدليك البروستاتا قبل أسبوع.","تجنب ركوب الدراجة بشكل مكثف في اليوم السابق."],
   sampling_fr:["Prélèvement veineux simple."],
   sampling_ar:["أخذ عينة وريدية بسيطة."],
-  meds_fr:["Signaler traitement pour hypertrophie prostatique (finastéride) — diminue faussement le taux."],
-  meds_ar:["إبلاغ عن علاج تضخم البروستاتا — يخفض المعدل بشكل خاطئ."],
+  meds_fr:["Signaler traitement pour hypertrophie prostatique (finastéride) - diminue faussement le taux."],
+  meds_ar:["إبلاغ عن علاج تضخم البروستاتا - يخفض المعدل بشكل خاطئ."],
   note_fr:"Toute manipulation prostatique récente peut fortement élever faussement le résultat.",
   note_ar:"أي تلاعب حديث بالبروستاتا قد يرفع النتيجة بشكل خاطئ وكبير." },
 
@@ -1923,8 +1923,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بسيطة."],
   meds_fr:["Aucun médicament particulier à signaler."],
   meds_ar:["لا حاجة للإبلاغ عن أدوية معينة."],
-  note_fr:"Non spécifique — peut être élevé en cas de cholestase bénigne.",
-  note_ar:"غير خاص — قد يرتفع في حالة ركود صفراوي حميد." },
+  note_fr:"Non spécifique - peut être élevé en cas de cholestase bénigne.",
+  note_ar:"غير خاص - قد يرتفع في حالة ركود صفراوي حميد." },
 
 { id:143, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'ACE (Antigène Carcino-Embryonnaire)', name_ar:'المستضد المضغي السرطاني ACE',
@@ -1936,8 +1936,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بسيطة."],
   meds_fr:["Aucun médicament particulier à signaler."],
   meds_ar:["لا حاجة للإبلاغ عن أدوية معينة."],
-  note_fr:"Le tabagisme peut à lui seul augmenter légèrement ce marqueur — à signaler.",
-  note_ar:"التدخين وحده قد يرفع هذا المؤشر قليلاً — يجب الإبلاغ عنه." },
+  note_fr:"Le tabagisme peut à lui seul augmenter légèrement ce marqueur - à signaler.",
+  note_ar:"التدخين وحده قد يرفع هذا المؤشر قليلاً - يجب الإبلاغ عنه." },
 
 { id:144, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Alpha-fœtoprotéine (AFP)', name_ar:'ألفا فيتوبروتين',
@@ -1949,11 +1949,11 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بسيطة."],
   meds_fr:["Aucun médicament particulier à signaler."],
   meds_ar:["لا حاجة للإبلاغ عن أدوية معينة."],
-  note_fr:"Utilisé à la fois en dépistage prénatal (trisomie) et en suivi hépatique — le contexte doit être précisé.",
-  note_ar:"يُستخدم في الكشف عن التثلث الصبغي وفي متابعة الكبد — يجب تحديد السياق." },
+  note_fr:"Utilisé à la fois en dépistage prénatal (trisomie) et en suivi hépatique - le contexte doit être précisé.",
+  note_ar:"يُستخدم في الكشف عن التثلث الصبغي وفي متابعة الكبد - يجب تحديد السياق." },
 
 
-/* ── BIOCHIMIE — DIVERS COMPLÉMENTAIRES ────────────────────── */
+/* ── BIOCHIMIE - DIVERS COMPLÉMENTAIRES ────────────────────── */
 { id:145, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Zinc sérique', name_ar:'الزنك في الدم',
   summary_fr:"Oligo-élément important pour l'immunité et la cicatrisation.",
@@ -1964,8 +1964,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية، تجنب التلوث بقفازات لاتكس (تحتوي على زنك)."],
   meds_fr:["Signaler suppléments en zinc en cours."],
   meds_ar:["إبلاغ عن مكملات الزنك الجارية."],
-  note_fr:"Facilement contaminé par le matériel de prélèvement — technique rigoureuse requise.",
-  note_ar:"يتلوث بسهولة بمعدات أخذ العينة — يتطلب تقنية دقيقة." },
+  note_fr:"Facilement contaminé par le matériel de prélèvement - technique rigoureuse requise.",
+  note_ar:"يتلوث بسهولة بمعدات أخذ العينة - يتطلب تقنية دقيقة." },
 
 { id:146, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Cuivre sérique (Cuprémie)', name_ar:'النحاس في الدم',
@@ -2003,8 +2003,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية صباحاً، أنبوب مبرد إذا كان النقل طويلاً."],
   meds_fr:["Signaler suppléments en vitamine B9/B12."],
   meds_ar:["إبلاغ عن مكملات فيتامين B9/B12."],
-  note_fr:"Élevée en cas de carence en folates ou vitamine B12 — facteur de risque cardiovasculaire.",
-  note_ar:"يرتفع في حالة نقص الفوليك أو فيتامين B12 — عامل خطر قلبي وعائي." },
+  note_fr:"Élevée en cas de carence en folates ou vitamine B12 - facteur de risque cardiovasculaire.",
+  note_ar:"يرتفع في حالة نقص الفوليك أو فيتامين B12 - عامل خطر قلبي وعائي." },
 
 { id:149, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Procalcitonine (PCT)', name_ar:'البروكالسيتونين',
@@ -2029,8 +2029,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية، عدة أنابيب."],
   meds_fr:["Signaler antécédents de transfusion et réactions transfusionnelles."],
   meds_ar:["إبلاغ عن سوابق نقل الدم وردود الفعل السابقة."],
-  note_fr:"Obligatoire avant toute transfusion — inclut groupage, RAI et sérologies virales.",
-  note_ar:"إلزامي قبل أي نقل دم — يشمل فصيلة الدم والأجسام المضادة والفحوصات الفيروسية." },
+  note_fr:"Obligatoire avant toute transfusion - inclut groupage, RAI et sérologies virales.",
+  note_ar:"إلزامي قبل أي نقل دم - يشمل فصيلة الدم والأجسام المضادة والفحوصات الفيروسية." },
 
 { id:151, cat:'biochimie', fasting:0, tubes:[{c:'#4ade80',n_fr:'Pot LCR (ponction)',n_ar:'وعاء السائل النخاعي'}],
   name_fr:'Ponction lombaire (analyse du LCR)', name_ar:'البزل القطني (تحليل السائل النخاعي)',
@@ -2045,7 +2045,7 @@ const DB = [
   note_fr:"Repos allongé recommandé plusieurs heures après le geste pour éviter les céphalées.",
   note_ar:"يُنصح بالراحة مستلقياً لعدة ساعات بعد الإجراء لتجنب الصداع." },
 
-/* ── HÉMATOLOGIE — SUITE 2 ─────────────────────────────────── */
+/* ── HÉMATOLOGIE - SUITE 2 ─────────────────────────────────── */
 { id:152, cat:'hematologie', fasting:0, tubes:[{c:'#a78bfa',n_fr:'Violet (EDTA)',n_ar:'بنفسجي (EDTA)'}],
   name_fr:'Électrophorèse des protéines sériques', name_ar:'الرحلان الكهربائي لبروتينات الدم',
   summary_fr:"Analyse fine des protéines sanguines, dépistage de pics anormaux.",
@@ -2069,8 +2069,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بسيطة، تجنب انحلال الدم أثناء أخذ العينة."],
   meds_fr:["Aucun médicament particulier à signaler."],
   meds_ar:["لا حاجة للإبلاغ عن أدوية معينة."],
-  note_fr:"Diminue fortement en cas d'hémolyse — utile pour confirmer une anémie hémolytique.",
-  note_ar:"ينخفض بشدة في حالة انحلال الدم — مفيد لتأكيد فقر الدم الانحلالي." },
+  note_fr:"Diminue fortement en cas d'hémolyse - utile pour confirmer une anémie hémolytique.",
+  note_ar:"ينخفض بشدة في حالة انحلال الدم - مفيد لتأكيد فقر الدم الانحلالي." },
 
 { id:154, cat:'hematologie', fasting:0, tubes:[{c:'#a78bfa',n_fr:'Violet (EDTA)',n_ar:'بنفسجي (EDTA)'}],
   name_fr:'Test de fragilité osmotique', name_ar:'اختبار الهشاشة الأسموزية',
@@ -2085,7 +2085,7 @@ const DB = [
   note_fr:"Utile pour explorer une anémie hémolytique d'origine héréditaire.",
   note_ar:"مفيد لفحص فقر الدم الانحلالي الوراثي." },
 
-/* ── COAGULATION — SUITE 2 ─────────────────────────────────── */
+/* ── COAGULATION - SUITE 2 ─────────────────────────────────── */
 { id:155, cat:'coagulation', fasting:0, tubes:[{c:'#60a5fa',n_fr:'Bleu (citrate)',n_ar:'أزرق (سيترات)'}],
   name_fr:'Anticoagulant circulant (lupique)', name_ar:'مضاد التخثر الذئبي',
   summary_fr:"Bilan de thrombophilie et de fausses couches à répétition.",
@@ -2112,7 +2112,7 @@ const DB = [
   note_fr:"Résultat stable dans le temps, peut être réalisé même sous anticoagulant.",
   note_ar:"النتيجة ثابتة عبر الزمن، يمكن إجراؤها حتى تحت مضاد التخثر." },
 
-/* ── UROLOGIE — SUITE 2 ─────────────────────────────────────── */
+/* ── UROLOGIE - SUITE 2 ─────────────────────────────────────── */
 { id:157, cat:'urologie', fasting:0, tubes:[{c:'#4ade80',n_fr:'Pot stérile',n_ar:'وعاء معقم'}],
   name_fr:'Cytologie urinaire', name_ar:'الخلايا في البول',
   summary_fr:"Recherche de cellules anormales dans les urines.",
@@ -2152,7 +2152,7 @@ const DB = [
   note_fr:"Utile pour classer le type de lithiase urique (sur-production vs sous-excrétion).",
   note_ar:"مفيد لتصنيف نوع حصى اليوريك." },
 
-/* ── PARASITOLOGIE — SUITE 2 ───────────────────────────────── */
+/* ── PARASITOLOGIE - SUITE 2 ───────────────────────────────── */
 { id:160, cat:'parasitologie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Sérologie Trichinellose', name_ar:'فحص داء الشعرينات',
   summary_fr:"Dépistage suite à la consommation de viande insuffisamment cuite.",
@@ -2232,9 +2232,9 @@ const DB = [
   note_fr:"Comprend NFS, HGPO (dépistage diabète gestationnel), RAI si Rhésus négatif, AgHBs.",
   note_ar:"يشمل تعداد الدم، فحص تحمل السكر، الأجسام المضادة إذا كانت الفصيلة سلبية." },
 
-/* ── BACTÉRIOLOGIE — DIVERS COMPLÉMENTAIRES ─────────────────── */
+/* ── BACTÉRIOLOGIE - DIVERS COMPLÉMENTAIRES ─────────────────── */
 { id:166, cat:'bacteriologie', fasting:0, tubes:[{c:'#4ade80',n_fr:'Écouvillon stérile',n_ar:'مسحة معقمة'}],
-  name_fr:'Prélèvement de gorge — Recherche de Candida', name_ar:'مسحة الحلق — البحث عن المبيضات',
+  name_fr:'Prélèvement de gorge - Recherche de Candida', name_ar:'مسحة الحلق - البحث عن المبيضات',
   summary_fr:"Recherche de candidose buccale (muguet), fréquente chez le nourrisson.",
   summary_ar:"البحث عن داء المبيضات الفموي، شائع عند الرضع.",
   prep_fr:["Ne pas manger ni boire 1h avant le prélèvement.","Ne pas utiliser de bain de bouche antifongique avant."],
@@ -2269,10 +2269,10 @@ const DB = [
   sampling_ar:["بزل المفصل المعني (الركبة غالباً) من قبل الطبيب."],
   meds_fr:["Signaler impérativement anticoagulants et anti-inflammatoires."],
   meds_ar:["إبلاغ إلزامياً عن مضادات التخثر ومضادات الالتهاب."],
-  note_fr:"Urgence en cas de suspicion d'arthrite septique — diagnostic et traitement rapides nécessaires.",
-  note_ar:"حالة طارئة عند الاشتباه بالتهاب المفصل الجرثومي — يلزم تشخيص وعلاج سريعان." },
+  note_fr:"Urgence en cas de suspicion d'arthrite septique - diagnostic et traitement rapides nécessaires.",
+  note_ar:"حالة طارئة عند الاشتباه بالتهاب المفصل الجرثومي - يلزم تشخيص وعلاج سريعان." },
 
-/* ── BIOCHIMIE — SUITE FINALE ──────────────────────────────── */
+/* ── BIOCHIMIE - SUITE FINALE ──────────────────────────────── */
 { id:169, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Digoxinémie (dosage de la digoxine)', name_ar:'قياس الديجوكسين',
   summary_fr:"Surveillance thérapeutique d'un médicament cardiaque à marge étroite.",
@@ -2283,8 +2283,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية، تدوين وقت آخر جرعة بدقة."],
   meds_fr:["Signaler impérativement l'heure exacte de la dernière prise de digoxine."],
   meds_ar:["إبلاغ إلزامياً عن الوقت الدقيق لآخر جرعة ديجوكسين."],
-  note_fr:"Marge thérapeutique très étroite — le timing du prélèvement est critique.",
-  note_ar:"هامش علاجي ضيق جداً — توقيت أخذ العينة حاسم." },
+  note_fr:"Marge thérapeutique très étroite - le timing du prélèvement est critique.",
+  note_ar:"هامش علاجي ضيق جداً - توقيت أخذ العينة حاسم." },
 
 { id:170, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Lithiémie (dosage du lithium)', name_ar:'قياس الليثيوم',
@@ -2296,8 +2296,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية صباحاً، يفضل على الريق."],
   meds_fr:["Signaler impérativement l'heure exacte de la dernière prise de lithium."],
   meds_ar:["إبلاغ إلزامياً عن الوقت الدقيق لآخر جرعة ليثيوم."],
-  note_fr:"Marge thérapeutique étroite — surveillance régulière indispensable (risque de toxicité).",
-  note_ar:"هامش علاجي ضيق — المراقبة المنتظمة ضرورية." },
+  note_fr:"Marge thérapeutique étroite - surveillance régulière indispensable (risque de toxicité).",
+  note_ar:"هامش علاجي ضيق - المراقبة المنتظمة ضرورية." },
 
 { id:171, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Dosage de la carbamazépine', name_ar:'قياس الكاربامازيبين',
@@ -2361,8 +2361,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية دون رباط ضاغط طويل، التحليل خلال 15-20 دقيقة."],
   meds_fr:["Signaler tout traitement pour maladie hépatique."],
   meds_ar:["إبلاغ عن أي علاج لمرض الكبد."],
-  note_fr:"Test très sensible aux conditions de prélèvement — délai d'analyse extrêmement court requis.",
-  note_ar:"فحص حساس جداً لظروف أخذ العينة — يتطلب مدة تحليل قصيرة جداً." },
+  note_fr:"Test très sensible aux conditions de prélèvement - délai d'analyse extrêmement court requis.",
+  note_ar:"فحص حساس جداً لظروف أخذ العينة - يتطلب مدة تحليل قصيرة جداً." },
 
 { id:176, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Bilan des porphyries', name_ar:'فحص البورفيريا',
@@ -2377,7 +2377,7 @@ const DB = [
   note_fr:"Maladie rare mais nécessitant une prise en charge spécialisée immédiate en cas de crise.",
   note_ar:"مرض نادر لكن يتطلب رعاية متخصصة فورية في حالة النوبة." },
 
-/* ── SÉROLOGIE — SUITE 2 ────────────────────────────────────── */
+/* ── SÉROLOGIE - SUITE 2 ────────────────────────────────────── */
 { id:177, cat:'serologie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Sérologie Varicelle-Zona (VZV)', name_ar:'فحص جدري الماء والحزام الناري',
   summary_fr:"Vérifie l'immunité contre la varicelle, important en grossesse.",
@@ -2443,7 +2443,7 @@ const DB = [
   note_fr:"Résultat généralement disponible en 24-48h selon le laboratoire.",
   note_ar:"النتيجة متوفرة عادة خلال 24-48 ساعة حسب المخبر." },
 
-/* ── HORMONOLOGIE — SUITE FINALE ───────────────────────────── */
+/* ── HORMONOLOGIE - SUITE FINALE ───────────────────────────── */
 { id:182, cat:'hormonologie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Calcitonine', name_ar:'الكالسيتونين',
   summary_fr:"Marqueur du cancer médullaire de la thyroïde.",
@@ -2465,10 +2465,10 @@ const DB = [
   prep_ar:["أخذ العينة واقفاً بعد ساعتين من الوقوف (أو مستلقياً حسب البروتوكول).","التوقف عن بعض أدوية ضغط الدم قبل أسبوعين إن أمكن (يتطلب رأياً طبياً).","نظام غذائي طبيعي الملح في الأيام السابقة."],
   sampling_fr:["Prélèvement veineux selon protocole précis (position et horaire stricts)."],
   sampling_ar:["أخذ عينة وريدية حسب بروتوكول دقيق (وضعية وتوقيت صارمان)."],
-  meds_fr:["Signaler impérativement TOUS les antihypertenseurs — la plupart interfèrent avec ce test."],
-  meds_ar:["إبلاغ إلزامياً عن جميع أدوية ضغط الدم — معظمها يتداخل مع هذا الفحص."],
-  note_fr:"Test complexe nécessitant souvent un arrêt temporaire des traitements — toujours sous supervision médicale.",
-  note_ar:"فحص معقد يتطلب غالباً وقفاً مؤقتاً للعلاجات — دائماً تحت إشراف طبي." },
+  meds_fr:["Signaler impérativement TOUS les antihypertenseurs - la plupart interfèrent avec ce test."],
+  meds_ar:["إبلاغ إلزامياً عن جميع أدوية ضغط الدم - معظمها يتداخل مع هذا الفحص."],
+  note_fr:"Test complexe nécessitant souvent un arrêt temporaire des traitements - toujours sous supervision médicale.",
+  note_ar:"فحص معقد يتطلب غالباً وقفاً مؤقتاً للعلاجات - دائماً تحت إشراف طبي." },
 
 { id:184, cat:'hormonologie', fasting:8, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Métanéphrines urinaires/sanguines', name_ar:'الميتانفرين في البول/الدم',
@@ -2480,10 +2480,10 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بعد الراحة، أو جمع بول 24 ساعة حسب الوصفة."],
   meds_fr:["Signaler impérativement bêta-bloquants, antidépresseurs tricycliques, decongestionnants."],
   meds_ar:["إبلاغ إلزامياً عن حاصرات بيتا، مضادات الاكتئاب ثلاثية الحلقات، مزيلات الاحتقان."],
-  note_fr:"De nombreux aliments et médicaments interfèrent — respecter scrupuleusement les restrictions.",
-  note_ar:"العديد من الأطعمة والأدوية تتداخل — يجب احترام القيود بدقة." },
+  note_fr:"De nombreux aliments et médicaments interfèrent - respecter scrupuleusement les restrictions.",
+  note_ar:"العديد من الأطعمة والأدوية تتداخل - يجب احترام القيود بدقة." },
 
-/* ── BIOCHIMIE — FINAL BATCH POUR DÉPASSER 200 ─────────────── */
+/* ── BIOCHIMIE - FINAL BATCH POUR DÉPASSER 200 ─────────────── */
 { id:185, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Bilan lipidique chez l\'enfant', name_ar:'فحص الدهون عند الطفل',
   summary_fr:"Dépistage précoce des dyslipidémies familiales.",
@@ -2507,8 +2507,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بسيطة، تشمل الإنزيمات الكبدية وأحماض الصفراء."],
   meds_fr:["Signaler tout traitement en cours durant la grossesse."],
   meds_ar:["إبلاغ عن أي علاج جارٍ أثناء الحمل."],
-  note_fr:"Diagnostic important — la cholestase gravidique nécessite une surveillance fœtale rapprochée.",
-  note_ar:"تشخيص مهم — ركود صفراوي الحمل يتطلب مراقبة دقيقة للجنين." },
+  note_fr:"Diagnostic important - la cholestase gravidique nécessite une surveillance fœtale rapprochée.",
+  note_ar:"تشخيص مهم - ركود صفراوي الحمل يتطلب مراقبة دقيقة للجنين." },
 
 { id:187, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Acides biliaires (grossesse)', name_ar:'أحماض الصفراء (الحمل)',
@@ -2520,8 +2520,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بسيطة."],
   meds_fr:["Signaler traitement par acide ursodésoxycholique si déjà débuté."],
   meds_ar:["إبلاغ عن علاج حمض أورسوديوكسيكوليك إذا بدأ بالفعل."],
-  note_fr:"Taux élevé associé à un risque accru de complications fœtales — surveillance nécessaire.",
-  note_ar:"المعدل المرتفع مرتبط بزيادة خطر مضاعفات الجنين — تلزم المراقبة." },
+  note_fr:"Taux élevé associé à un risque accru de complications fœtales - surveillance nécessaire.",
+  note_ar:"المعدل المرتفع مرتبط بزيادة خطر مضاعفات الجنين - تلزم المراقبة." },
 
 { id:188, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Bilan martial chez le nourrisson', name_ar:'فحص الحديد عند الرضيع',
@@ -2550,7 +2550,7 @@ const DB = [
   note_ar:"القيم الطبيعية لـTSH تختلف عن عامة السكان أثناء الحمل." },
 
 { id:190, cat:'biochimie', fasting:12, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
-  name_fr:'HGPO grossesse (dépistage diabète gestationnel — 75g)', name_ar:'فحص تحمل السكر للحامل',
+  name_fr:'HGPO grossesse (dépistage diabète gestationnel - 75g)', name_ar:'فحص تحمل السكر للحامل',
   summary_fr:"Test standard de dépistage du diabète gestationnel entre 24-28 semaines.",
   summary_ar:"فحص قياسي للكشف عن سكري الحمل بين الأسبوع 24-28.",
   prep_fr:["Jeûne strict de 12 heures.","Réalisé entre la 24e et la 28e semaine d'aménorrhée.","Alimentation normale les 3 jours précédents."],
@@ -2585,8 +2585,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية بسيطة."],
   meds_fr:["Signaler supplémentation en fer et acide folique en cours."],
   meds_ar:["إبلاغ عن تكميل الحديد وحمض الفوليك الجاري."],
-  note_fr:"L'anémie physiologique de dilution est normale en fin de grossesse — à ne pas confondre avec une vraie carence.",
-  note_ar:"فقر الدم الفيزيولوجي بالتخفيف طبيعي في نهاية الحمل — يجب عدم الخلط بينه وبين نقص حقيقي." },
+  note_fr:"L'anémie physiologique de dilution est normale en fin de grossesse - à ne pas confondre avec une vraie carence.",
+  note_ar:"فقر الدم الفيزيولوجي بالتخفيف طبيعي في نهاية الحمل - يجب عدم الخلط بينه وبين نقص حقيقي." },
 
 { id:193, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Dosage de la vitamine A', name_ar:'قياس فيتامين A',
@@ -2598,8 +2598,8 @@ const DB = [
   sampling_ar:["أخذ عينة وريدية، أنبوب معتم أو محمي من الضوء."],
   meds_fr:["Signaler suppléments en vitamine A."],
   meds_ar:["إبلاغ عن مكملات فيتامين A."],
-  note_fr:"Vitamine sensible à la lumière — manipulation rapide requise après prélèvement.",
-  note_ar:"فيتامين حساس للضوء — يتطلب معالجة سريعة بعد أخذ العينة." },
+  note_fr:"Vitamine sensible à la lumière - manipulation rapide requise après prélèvement.",
+  note_ar:"فيتامين حساس للضوء - يتطلب معالجة سريعة بعد أخذ العينة." },
 
 { id:194, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Dosage de la vitamine E', name_ar:'قياس فيتامين E',
@@ -2650,8 +2650,8 @@ const DB = [
   sampling_ar:["جمع كل البول لمدة 24 ساعة، الحفظ في مكان بارد."],
   meds_fr:["Signaler impérativement bêta-bloquants et antidépresseurs."],
   meds_ar:["إبلاغ إلزامياً عن حاصرات بيتا ومضادات الاكتئاب."],
-  note_fr:"Le bidon de recueil contient un conservateur acide — ne pas le jeter ni le diluer.",
-  note_ar:"وعاء الجمع يحتوي على مادة حافظة حمضية — يجب عدم التخلص منها أو تخفيفها." },
+  note_fr:"Le bidon de recueil contient un conservateur acide - ne pas le jeter ni le diluer.",
+  note_ar:"وعاء الجمع يحتوي على مادة حافظة حمضية - يجب عدم التخلص منها أو تخفيفها." },
 
 { id:198, cat:'biochimie', fasting:0, tubes:[{c:'#facc15',n_fr:'Jaune (sec)',n_ar:'أصفر (جاف)'}],
   name_fr:'Test de Zimmermann (17-cétostéroïdes urinaires)', name_ar:'اختبار زيمرمان',
@@ -2702,8 +2702,8 @@ const DB = [
   sampling_ar:["كيس معقم لاصق يضعه الوالد أو الطاقم الطبي."],
   meds_fr:["Signaler tout traitement antibiotique récent chez l'enfant."],
   meds_ar:["إبلاغ عن أي علاج حديث بالمضادات الحيوية عند الطفل."],
-  note_fr:"Technique délicate — un résultat positif doit être confirmé par sondage si doute.",
-  note_ar:"تقنية دقيقة — النتيجة الإيجابية يجب تأكيدها بالقسطرة عند الشك." },
+  note_fr:"Technique délicate - un résultat positif doit être confirmé par sondage si doute.",
+  note_ar:"تقنية دقيقة - النتيجة الإيجابية يجب تأكيدها بالقسطرة عند الشك." },
 
 ];
 window.LABPREP_DB_PART1 = DB;
@@ -2715,7 +2715,7 @@ const UI = {
   fr: {
     tagline: "Guide de Préparation aux Analyses",
     heroTitle: "Préparez-vous<br/><em>correctement</em> avant<br/>votre analyse",
-    heroSub: "Tapez le nom d'une analyse — obtenez immédiatement les instructions de préparation exactes pour votre laboratoire en Algérie.",
+    heroSub: "Tapez le nom d'une analyse - obtenez immédiatement les instructions de préparation exactes pour votre laboratoire en Algérie.",
     searchPlaceholder: "Ex: Glycémie, ECBU, NFS, Bilan lipidique...",
     langBtn: "العربية",
     pillAll: "Tout",
@@ -2738,12 +2738,16 @@ const UI = {
     modalFastingLabel: "Jeûne requis",
     readyBadgeText: "Vous êtes prêt(e) pour ce test !",
     footerDisclaimer: "Ces informations sont fournies à titre indicatif. Consultez toujours votre médecin ou le personnel de votre laboratoire pour des instructions personnalisées.",
-    unit: "analyses"
+    unit: "analyses",
+    favTitle: "Analyses favorites", favEmpty: "Aucune analyse favorite pour le moment", favEmptySub: "Cliquez sur l'étoile ⭐ sur n'importe quelle fiche pour l'ajouter ici",
+    timerTitle: "Minuterie de jeûne", timerPick: "Choisissez la durée du jeûne", timerStart: "Commencez le jeûne maintenant",
+    timerRemaining: "Temps restant", timerDoneAt: "Se terminera dans", timerCancel: "Annuler le   minuteur ", timerDone: "Le jeûne est terminé ! Vous pouvez maintenant passer à l'analyse",
+    contentNote: "les détails complets sont présentés en français ci-dessous afin de garantir la précision médicale..",
   },
   ar: {
     tagline: "دليل التحضير للتحاليل الطبية",
     heroTitle: "استعد<br/><em>بشكل صحيح</em><br/>قبل تحليلك",
-    heroSub: "اكتب اسم أي تحليل طبي — واحصل فوراً على تعليمات التحضير الدقيقة لمخبرك في الجزائر.",
+    heroSub: "اكتب اسم أي تحليل طبي - واحصل فوراً على تعليمات التحضير الدقيقة لمخبرك في الجزائر.",
     searchPlaceholder: "مثال: سكر الدم، ECBU، تعداد الدم...",
     langBtn: "Français",
     pillAll: "الكل",
@@ -2774,10 +2778,10 @@ const UI = {
   }
 };
 
-/* English names/summaries for all 201 tests — standard medical English terminology */
+/* English names/summaries for all 201 tests - standard medical English terminology */
 const EN_NAMES = {
 1:{n:"Fasting Blood Glucose",s:"Measures blood glucose level after a strict 12-hour fast."},
-2:{n:"Complete Lipid Panel",s:"Total cholesterol, HDL, LDL and triglycerides — requires 12h fasting."},
+2:{n:"Complete Lipid Panel",s:"Total cholesterol, HDL, LDL and triglycerides - requires 12h fasting."},
 3:{n:"Blood Urea",s:"Assesses kidney function. Strict fasting not required."},
 4:{n:"Serum Creatinine",s:"Essential marker of kidney function, used to calculate GFR."},
 5:{n:"Liver Enzymes (AST/ALT)",s:"Liver enzymes, indicators of liver stress or damage."},
@@ -2800,12 +2804,12 @@ const EN_NAMES = {
 22:{n:"Ferritin",s:"Best marker of the body's iron reserves."},
 23:{n:"Transferrin",s:"Iron transport protein, completes the iron panel."},
 24:{n:"CPK (Creatine Phosphokinase)",s:"Marker of muscle damage (heart or skeletal muscles)."},
-25:{n:"Troponin (I or T)",s:"Specific marker of heart attack — cardiac emergency."},
+25:{n:"Troponin (I or T)",s:"Specific marker of heart attack - cardiac emergency."},
 26:{n:"LDH (Lactate Dehydrogenase)",s:"Non-specific marker of cell destruction (heart, liver, muscle, blood)."},
 27:{n:"Arterial Blood Gas",s:"Measures blood oxygenation and acid-base balance."},
 28:{n:"Blood Lactate",s:"Marker of tissue hypoxia and intense muscular effort."},
 29:{n:"Total Cholesterol",s:"Can be requested alone, outside the complete lipid panel."},
-30:{n:"Triglycerides",s:"Very sensitive to recent food intake — requires strict fasting."},
+30:{n:"Triglycerides",s:"Very sensitive to recent food intake - requires strict fasting."},
 31:{n:"CBC (Complete Blood Count)",s:"Overall analysis of red cells, white cells and platelets."},
 32:{n:"ESR (Erythrocyte Sedimentation Rate)",s:"Non-specific marker of inflammation or infection."},
 33:{n:"Blood Typing ABO/Rh",s:"Determines blood group, required before transfusion or surgery."},
@@ -2816,9 +2820,9 @@ const EN_NAMES = {
 38:{n:"Fibrinogen",s:"Coagulation protein, inflammatory marker."},
 39:{n:"D-Dimers",s:"Screening for deep vein thrombosis or pulmonary embolism."},
 40:{n:"Hemoglobin Electrophoresis",s:"Screening for hemoglobinopathies (sickle cell, thalassemia)."},
-41:{n:"Urine Culture (UTI test)",s:"Detects urinary infection — requires rigorous intimate hygiene."},
+41:{n:"Urine Culture (UTI test)",s:"Detects urinary infection - requires rigorous intimate hygiene."},
 42:{n:"Throat Swab (Strep test)",s:"Detects group A beta-hemolytic streptococcus."},
-43:{n:"Blood Culture",s:"Detects bacteria in the blood — ideally taken during a fever spike."},
+43:{n:"Blood Culture",s:"Detects bacteria in the blood - ideally taken during a fever spike."},
 44:{n:"Vaginal Swab",s:"Detects vaginal infections (yeast, vaginosis, STIs)."},
 45:{n:"Stool Culture",s:"Detects intestinal pathogenic bacteria (Salmonella, Shigella...)."},
 46:{n:"Wound / Pus Swab",s:"Identifies the bacteria responsible for a skin infection."},
@@ -2860,7 +2864,7 @@ const EN_NAMES = {
 82:{n:"Hydatid Cyst Test",s:"Detects hydatid cyst, common in Algeria (dog/sheep contact)."},
 83:{n:"Vitamin B12",s:"Deficiency screening, common cause of anemia and neurological issues."},
 84:{n:"Folic Acid (Vitamin B9)",s:"Essential during pregnancy, prevents fetal malformations."},
-85:{n:"Vitamin D (25-OH)",s:"Very common deficiency in Algeria despite sunshine — lifestyle-related."},
+85:{n:"Vitamin D (25-OH)",s:"Very common deficiency in Algeria despite sunshine - lifestyle-related."},
 86:{n:"Complete Iron Panel",s:"Full assessment of the body's iron status."},
 87:{n:"Complete Liver Panel",s:"Combines liver enzymes, bilirubin, GGT, ALP to assess the liver."},
 88:{n:"Complete Kidney Panel",s:"Fully assesses kidney function."},
@@ -2941,7 +2945,7 @@ const EN_NAMES = {
 163:{n:"First Trimester Combined Screening",s:"Screening for trisomy 21, combined with ultrasound."},
 164:{n:"1st Trimester Prenatal Panel",s:"Set of mandatory tests in early pregnancy in Algeria."},
 165:{n:"6th Month Prenatal Panel",s:"Mandatory check-up in the 3rd trimester of pregnancy in Algeria."},
-166:{n:"Throat Swab — Candida Test",s:"Detects oral thrush, common in infants."},
+166:{n:"Throat Swab - Candida Test",s:"Detects oral thrush, common in infants."},
 167:{n:"Peri-anal Swab (Streptococcus)",s:"Detects group A strep infection in children."},
 168:{n:"Joint Aspiration (Synovial Fluid)",s:"Analysis of joint fluid, screens for infection or crystals."},
 169:{n:"Digoxin Level",s:"Therapeutic monitoring of a narrow-margin heart medication."},
@@ -2981,7 +2985,7 @@ const EN_NAMES = {
 
 /* ═══════════════════════════════════════════════════════════════
    ENGLISH DETAIL TRANSLATIONS (prep/sampling/meds/note)
-   Keyed by test id. Populated incrementally — any id not yet listed
+   Keyed by test id. Populated incrementally - any id not yet listed
    here falls back to the French detail text in English mode, with a
    note shown to the user explaining that. Coverage is tracked
    honestly rather than silently claiming completeness.
@@ -4270,7 +4274,7 @@ const RELATED_TESTS = {
   102:[103, 156],               // Antithrombine III → Protéine C/S, Facteur V Leiden
   103:[102, 156, 155],          // Protéine C/S → Antithrombine III, Facteur V Leiden, Anticoagulant circulant
 
-  // ── Hormones — reproductive ──
+  // ── Hormones - reproductive ──
   54: [55, 56, 57, 62],         // FSH/LH → Œstradiol, Progestérone, Testostérone, AMH
   55: [54, 56, 62],             // Œstradiol → FSH/LH, Progestérone, AMH
   56: [54, 55, 61],             // Progestérone → FSH/LH, Œstradiol, Beta-hCG
@@ -4338,44 +4342,44 @@ const RELATED_TESTS = {
 };
 
 /* ═══════════════════════════════════════════════════════════════
-   "EXPLAIN LIKE I'M SCARED" — CALM MODE
+   "EXPLAIN LIKE I'M SCARED" - CALM MODE
    Curated, gentler framing for the tests most likely to worry an
    anxious patient (needles, biopsy-adjacent procedures, lumbar
    puncture, etc). Only the tests listed here have a hand-written
-   calm version — for any other test, calm mode shows a generic
+   calm version - for any other test, calm mode shows a generic
    reassurance banner instead of a fake personalized one.
    ═══════════════════════════════════════════════════════════════ */
 const CALM_MODE_CONTENT = {
   // Blood draws in general (very common anxiety trigger)
-  1:  { fr: "C'est juste une petite piqûre au bras, comme un pincement bref — ça dure quelques secondes et c'est fini. Le personnel du laboratoire fait ça toute la journée, en toute sécurité.",
-        ar: "الأمر مجرد وخزة صغيرة في الذراع، مثل قرصة خفيفة — تستغرق ثوانٍ معدودة وتنتهي بسرعة. طاقم المخبر يقوم بهذا يومياً وبأمان تام.",
-        en: "It's just a small pinch in your arm, like a brief poke — it lasts a few seconds and it's over. The lab staff does this safely, all day, every day." },
-  // Lumbar puncture — one of the most feared procedures
+  1:  { fr: "C'est juste une petite piqûre au bras, comme un pincement bref - ça dure quelques secondes et c'est fini. Le personnel du laboratoire fait ça toute la journée, en toute sécurité.",
+        ar: "الأمر مجرد وخزة صغيرة في الذراع، مثل قرصة خفيفة - تستغرق ثوانٍ معدودة وتنتهي بسرعة. طاقم المخبر يقوم بهذا يومياً وبأمان تام.",
+        en: "It's just a small pinch in your arm, like a brief poke - it lasts a few seconds and it's over. The lab staff does this safely, all day, every day." },
+  // Lumbar puncture - one of the most feared procedures
   151:{ fr: "Cet examen fait souvent peur mais il est réalisé avec une anesthésie locale, donc vous ne sentirez qu'une légère pression, pas de douleur vive. Le médecin vous expliquera chaque étape avant de commencer, et vous pouvez toujours demander une pause.",
         ar: "هذا الفحص يخيف الكثيرين لكنه يُجرى بتخدير موضعي، لذا ستشعر فقط بضغط خفيف وليس ألماً حاداً. سيشرح لك الطبيب كل خطوة قبل البدء، ويمكنك دائماً طلب توقف مؤقت.",
-        en: "This test often sounds scary, but it's done with local anesthesia — you'll only feel light pressure, not sharp pain. The doctor will explain each step before starting, and you can always ask for a pause." },
+        en: "This test often sounds scary, but it's done with local anesthesia - you'll only feel light pressure, not sharp pain. The doctor will explain each step before starting, and you can always ask for a pause." },
   // Bone marrow aspiration
-  99: { fr: "Vous recevrez une anesthésie locale avant le geste, donc la douleur est très limitée — souvent juste une sensation de pression pendant quelques secondes. L'équipe médicale est habituée à accompagner les patients anxieux, n'hésitez pas à leur en parler.",
-        ar: "ستحصل على تخدير موضعي قبل الإجراء، لذا الألم محدود جداً — غالباً مجرد شعور بالضغط لثوانٍ معدودة. الطاقم الطبي معتاد على مرافقة المرضى القلقين، لا تتردد في إخبارهم.",
-        en: "You'll get local anesthesia before the procedure, so the pain is very limited — often just a feeling of pressure for a few seconds. The medical team is used to supporting anxious patients, so feel free to tell them how you're feeling." },
-  // Arterial blood gas — known to be more uncomfortable than a regular draw
-  27: { fr: "Cette prise de sang est un peu plus sensible qu'une prise de sang classique, mais elle est très rapide — quelques secondes seulement. Respirer lentement pendant le geste aide beaucoup à se détendre.",
-        ar: "أخذ عينة الدم هذه أكثر حساسية قليلاً من أخذ الدم العادي، لكنها سريعة جداً — ثوانٍ معدودة فقط. التنفس ببطء أثناء الإجراء يساعد كثيراً على الاسترخاء.",
-        en: "This blood draw is a bit more sensitive than a regular one, but it's very quick — just a few seconds. Breathing slowly during the procedure really helps you relax." },
+  99: { fr: "Vous recevrez une anesthésie locale avant le geste, donc la douleur est très limitée - souvent juste une sensation de pression pendant quelques secondes. L'équipe médicale est habituée à accompagner les patients anxieux, n'hésitez pas à leur en parler.",
+        ar: "ستحصل على تخدير موضعي قبل الإجراء، لذا الألم محدود جداً - غالباً مجرد شعور بالضغط لثوانٍ معدودة. الطاقم الطبي معتاد على مرافقة المرضى القلقين، لا تتردد في إخبارهم.",
+        en: "You'll get local anesthesia before the procedure, so the pain is very limited - often just a feeling of pressure for a few seconds. The medical team is used to supporting anxious patients, so feel free to tell them how you're feeling." },
+  // Arterial blood gas - known to be more uncomfortable than a regular draw
+  27: { fr: "Cette prise de sang est un peu plus sensible qu'une prise de sang classique, mais elle est très rapide - quelques secondes seulement. Respirer lentement pendant le geste aide beaucoup à se détendre.",
+        ar: "أخذ عينة الدم هذه أكثر حساسية قليلاً من أخذ الدم العادي، لكنها سريعة جداً - ثوانٍ معدودة فقط. التنفس ببطء أثناء الإجراء يساعد كثيراً على الاسترخاء.",
+        en: "This blood draw is a bit more sensitive than a regular one, but it's very quick - just a few seconds. Breathing slowly during the procedure really helps you relax." },
   // Joint aspiration
   168:{ fr: "Le médecin désinfecte et parfois anesthésie localement la zone avant de piquer, donc l'inconfort est généralement bref. Beaucoup de patients disent que l'appréhension est pire que la sensation réelle.",
         ar: "يقوم الطبيب بتعقيم المنطقة وأحياناً تخديرها موضعياً قبل الوخز، لذا الانزعاج يكون عادة قصيراً. يقول الكثير من المرضى إن القلق أسوأ من الشعور الفعلي.",
         en: "The doctor cleans and sometimes locally numbs the area before the needle, so the discomfort is usually brief. Many patients say the anticipation is worse than the actual sensation." },
   // Endoscopy-adjacent / breath tests (claustrophobia-adjacent anxiety)
-  138:{ fr: "Pas d'aiguille ni d'inconfort ici — il suffit de souffler dans un petit sachet, comme gonfler un ballon doucement. C'est l'un des tests les plus simples et les moins stressants du laboratoire.",
-        ar: "لا إبرة ولا انزعاج هنا — كل ما عليك فعله هو النفخ في كيس صغير، مثل نفخ بالون بلطف. إنه من أبسط وأقل الفحوصات إثارة للتوتر في المخبر.",
-        en: "No needle, no discomfort here — you just breathe into a small bag, like gently blowing up a balloon. It's one of the simplest, least stressful tests in the whole lab." },
+  138:{ fr: "Pas d'aiguille ni d'inconfort ici - il suffit de souffler dans un petit sachet, comme gonfler un ballon doucement. C'est l'un des tests les plus simples et les moins stressants du laboratoire.",
+        ar: "لا إبرة ولا انزعاج هنا - كل ما عليك فعله هو النفخ في كيس صغير، مثل نفخ بالون بلطف. إنه من أبسط وأقل الفحوصات إثارة للتوتر في المخبر.",
+        en: "No needle, no discomfort here - you just breathe into a small bag, like gently blowing up a balloon. It's one of the simplest, least stressful tests in the whole lab." },
 };
 
 const CALM_MODE_GENERIC = {
-  fr: "Cette analyse peut sembler impressionnante en la lisant, mais le personnel du laboratoire réalise ce geste très régulièrement, en toute sécurité. N'hésitez pas à leur poser vos questions ou à leur dire si vous êtes anxieux(se) — ils sont là pour vous rassurer.",
-  ar: "قد يبدو هذا التحليل مقلقاً عند قراءته، لكن طاقم المخبر يقوم بهذا الإجراء بانتظام وبأمان تام. لا تتردد في طرح أسئلتك أو إخبارهم إذا كنت قلقاً — فهم هنا لطمأنتك.",
-  en: "This test might sound intimidating when you read about it, but lab staff perform this procedure very routinely and safely. Don't hesitate to ask questions or tell them if you're feeling anxious — they're there to help put you at ease."
+  fr: "Cette analyse peut sembler impressionnante en la lisant, mais le personnel du laboratoire réalise ce geste très régulièrement, en toute sécurité. N'hésitez pas à leur poser vos questions ou à leur dire si vous êtes anxieux(se) - ils sont là pour vous rassurer.",
+  ar: "قد يبدو هذا التحليل مقلقاً عند قراءته، لكن طاقم المخبر يقوم بهذا الإجراء بانتظام وبأمان تام. لا تتردد في طرح أسئلتك أو إخبارهم إذا كنت قلقاً - فهم هنا لطمأنتك.",
+  en: "This test might sound intimidating when you read about it, but lab staff perform this procedure very routinely and safely. Don't hesitate to ask questions or tell them if you're feeling anxious - they're there to help put you at ease."
 };
 
 const CALM_TEXT = {
@@ -4408,7 +4412,7 @@ function toggleCalmMode(testId) {
 UI.en = {
   tagline: "Medical Test Preparation Guide",
   heroTitle: "Get<br/><em>properly</em> prepared<br/>for your test",
-  heroSub: "Type the name of any medical test — get instant, accurate preparation instructions for your lab in Algeria.",
+  heroSub: "Type the name of any medical test - get instant, accurate preparation instructions for your lab in Algeria.",
   searchPlaceholder: "E.g: Fasting glucose, Urine culture, CBC...",
   langBtn: "FR",
   pillAll: "All",
@@ -4690,7 +4694,7 @@ renderRecentStrip();
     urologie:'#0369a1', serologie:'#9333ea', coagulation:'#b45309'
   }[item.cat] || '#0d9488';
 
-  // "Similar tests" block — computed here as a plain string,
+  // "Similar tests" block - computed here as a plain string,
   // then referenced via ${relatedHTML} inside the modal template below.
   const related = RELATED_TESTS[item.id] || [];
   const relatedLabel = currentLang==='ar' ? 'تحاليل مشابهة' : (currentLang==='en' ? 'Similar tests' : 'Analyses similaires');
@@ -4822,9 +4826,9 @@ const REMINDER_TEXT = {
     copyBtn: 'Copier le message',
     copied: 'Copié !',
     msgReminder: (name, test, date, time) => `📋 Rappel de rendez-vous${name ? ' pour ' + name : ''}\n\n🧪 Analyse : ${test}\n📅 Date : ${date}\n🕐 Heure : ${time}`,
-    msgFasting: (fh, fdate, ftime) => `\n\n⏱ Jeûne de ${fh}h à respecter — commencer le jeûne le ${fdate} à ${ftime} au plus tard.`,
+    msgFasting: (fh, fdate, ftime) => `\n\n⏱ Jeûne de ${fh}h à respecter - commencer le jeûne le ${fdate} à ${ftime} au plus tard.`,
     msgNoFasting: `\n\n✅ Aucun jeûne requis pour cette analyse.`,
-    msgFooter: `\n\n— Généré via LabPrep DZ`,
+    msgFooter: `\n\n- Généré via LabPrep DZ`,
   },
   ar: {
     title: 'إنشاء تذكير',
@@ -4838,9 +4842,9 @@ const REMINDER_TEXT = {
     copyBtn: 'نسخ الرسالة',
     copied: 'تم النسخ!',
     msgReminder: (name, test, date, time) => `📋 تذكير بموعد${name ? ' لـ ' + name : ''}\n\n🧪 التحليل: ${test}\n📅 التاريخ: ${date}\n🕐 الوقت: ${time}`,
-    msgFasting: (fh, fdate, ftime) => `\n\n⏱ يجب الصيام ${fh} ساعات — ابدأ الصيام يوم ${fdate} الساعة ${ftime} على أبعد تقدير.`,
+    msgFasting: (fh, fdate, ftime) => `\n\n⏱ يجب الصيام ${fh} ساعات - ابدأ الصيام يوم ${fdate} الساعة ${ftime} على أبعد تقدير.`,
     msgNoFasting: `\n\n✅ لا يتطلب هذا التحليل الصيام.`,
-    msgFooter: `\n\n— تم الإنشاء عبر LabPrep DZ`,
+    msgFooter: `\n\n- تم الإنشاء عبر LabPrep DZ`,
   },
   en: {
     title: 'Create a reminder',
@@ -4854,9 +4858,9 @@ const REMINDER_TEXT = {
     copyBtn: 'Copy message',
     copied: 'Copied!',
     msgReminder: (name, test, date, time) => `📋 Appointment reminder${name ? ' for ' + name : ''}\n\n🧪 Test: ${test}\n📅 Date: ${date}\n🕐 Time: ${time}`,
-    msgFasting: (fh, fdate, ftime) => `\n\n⏱ ${fh}h fasting required — start fasting by ${fdate} at ${ftime} at the latest.`,
+    msgFasting: (fh, fdate, ftime) => `\n\n⏱ ${fh}h fasting required - start fasting by ${fdate} at ${ftime} at the latest.`,
     msgNoFasting: `\n\n✅ No fasting required for this test.`,
-    msgFooter: `\n\n— Generated via LabPrep DZ`,
+    msgFooter: `\n\n- Generated via LabPrep DZ`,
   }
 };
 
@@ -4866,7 +4870,7 @@ function openReminderModal(testId) {
   const t = REMINDER_TEXT[currentLang];
   const body = document.getElementById('reminder-modal-body');
 
-  // Default to tomorrow, 08:00 — a sensible default for most lab visits.
+  // Default to tomorrow, 08:00 - a sensible default for most lab visits.
   const tomorrow = new Date(Date.now() + 24 * 3600 * 1000);
   const defaultDate = tomorrow.toISOString().split('T')[0];
 
@@ -4956,7 +4960,7 @@ function closeReminderModal() {
 /* ═══════════════════════════════════════════════════════════════
    NEARBY LAB FINDER (OpenStreetMap Overpass API)
    Free, no API key required. Coverage depends entirely on how much
-   OpenStreetMap data exists for the user's area — dense in Algiers/
+   OpenStreetMap data exists for the user's area - dense in Algiers/
    Oran, sparser elsewhere. This is stated honestly in the UI rather
    than implying complete national coverage.
    ═══════════════════════════════════════════════════════════════ */
@@ -5090,7 +5094,7 @@ function fetchNearbyLabs(lat, lon) {
   const radiusMeters = 8000; // 8km search radius
 
   // Overpass QL query: medical labs, pharmacies, hospitals/clinics within radius.
-  // Private analysis labs in Algeria are tagged inconsistently on OpenStreetMap —
+  // Private analysis labs in Algeria are tagged inconsistently on OpenStreetMap -
   // this query covers every realistic variant we know of (healthcare=laboratory,
   // the common non-standard amenity=laboratory, doctors/offices whose name
   // contains "laboratoire"/"analyses", and blood_bank as a related facility).
@@ -5192,7 +5196,7 @@ function renderLabResults(results) {
    Since this is a static site with no server, there is no way to
    collect this centrally without the visitor's own action. This
    feature lets them send the report themselves, via their own email
-   client or WhatsApp — genuinely anonymous (nothing is stored about
+   client or WhatsApp - genuinely anonymous (nothing is stored about
    who sent it), and requires zero setup on their end.
    ═══════════════════════════════════════════════════════════════ */
 
@@ -5369,7 +5373,7 @@ function applyLang() {
   const body = document.body;
 
   // IMPORTANT: don't overwrite the whole className (that would wipe
-  // dark-mode on every language switch) — toggle only the lang-* class.
+  // dark-mode on every language switch) - toggle only the lang-* class.
   body.classList.remove('lang-fr', 'lang-ar', 'lang-en');
   body.classList.add('lang-' + currentLang);
   document.documentElement.setAttribute('lang', currentLang);
@@ -5584,9 +5588,9 @@ function closeFavorites() {
 
 /* ── FAVORITES EXPORT ─────────────────────────────────────────── */
 const EXPORT_TEXT = {
-  fr: { exportBtn: 'Télécharger ma liste (.txt)', header: 'MES ANALYSES FAVORITES — LabPrep DZ', fasting: 'Jeûne', noFasting: 'Aucun jeûne requis' },
-  ar: { exportBtn: 'تحميل قائمتي (.txt)', header: 'تحاليلي المفضلة — LabPrep DZ', fasting: 'الصيام', noFasting: 'لا يتطلب صيام' },
-  en: { exportBtn: 'Download my list (.txt)', header: 'MY FAVORITE TESTS — LabPrep DZ', fasting: 'Fasting', noFasting: 'No fasting required' }
+  fr: { exportBtn: 'Télécharger ma liste (.txt)', header: 'MES ANALYSES FAVORITES - LabPrep DZ', fasting: 'Jeûne', noFasting: 'Aucun jeûne requis' },
+  ar: { exportBtn: 'تحميل قائمتي (.txt)', header: 'تحاليلي المفضلة - LabPrep DZ', fasting: 'الصيام', noFasting: 'لا يتطلب صيام' },
+  en: { exportBtn: 'Download my list (.txt)', header: 'MY FAVORITE TESTS - LabPrep DZ', fasting: 'Fasting', noFasting: 'No fasting required' }
 };
 
 function exportFavorites() {
@@ -5611,7 +5615,7 @@ function exportFavorites() {
     out += `\n${divider}\n\n`;
   });
 
-  out += `LabPrep DZ — All rights reserved to Zekraoui Rabah Allaa Eddine 🦑\n`;
+  out += `LabPrep DZ - All rights reserved to Zekraoui Rabah Allaa Eddine 🦑\n`;
 
   const blob = new Blob([out], { type: 'text/plain;charset=utf-8' });
   const url = URL.createObjectURL(blob);
@@ -5639,9 +5643,9 @@ const CHECKLIST_TEXT = {
     intro: "Cochez toutes les analyses de votre ordonnance pour obtenir un plan de préparation unique et cohérent.",
     empty: "Aucune analyse sélectionnée. Appuyez sur le ✓ sur une carte pour l'ajouter ici.",
     fastingSummaryTitle: "TEMPS DE JEÛNE À RESPECTER",
-    fastingSummaryText: (h) => `Jeûnez <strong>${h} heures</strong> avant votre prélèvement — cela couvre l'exigence la plus stricte parmi toutes les analyses sélectionnées.`,
+    fastingSummaryText: (h) => `Jeûnez <strong>${h} heures</strong> avant votre prélèvement - cela couvre l'exigence la plus stricte parmi toutes les analyses sélectionnées.`,
     noFastingNeeded: "Aucune de vos analyses sélectionnées ne nécessite de jeûne.",
-    conflictTitle: "⚠️ ATTENTION — CONFLIT DÉTECTÉ",
+    conflictTitle: "⚠️ ATTENTION - CONFLIT DÉTECTÉ",
     conflictText: (names) => `Un jeûne prolongé peut altérer le résultat de : <strong>${names}</strong>. Parlez-en à votre médecin ou au laboratoire avant le prélèvement.`,
     listTitle: "ANALYSES DE CETTE LISTE",
     removeAll: "Tout effacer",
@@ -5656,9 +5660,9 @@ const CHECKLIST_TEXT = {
     intro: "حدد كل تحاليل وصفتك الطبية للحصول على خطة تحضير واحدة ومتناسقة.",
     empty: "لا توجد تحاليل محددة. اضغط على ✓ في أي بطاقة لإضافتها هنا.",
     fastingSummaryTitle: "مدة الصيام الواجب احترامها",
-    fastingSummaryText: (h) => `صُم <strong>${h} ساعات</strong> قبل أخذ العينة — هذا يغطي أصرم شرط بين جميع التحاليل المحددة.`,
+    fastingSummaryText: (h) => `صُم <strong>${h} ساعات</strong> قبل أخذ العينة - هذا يغطي أصرم شرط بين جميع التحاليل المحددة.`,
     noFastingNeeded: "لا يتطلب أي من التحاليل المحددة الصيام.",
-    conflictTitle: "⚠️ تنبيه — تعارض مكتشف",
+    conflictTitle: "⚠️ تنبيه - تعارض مكتشف",
     conflictText: (names) => `الصيام لفترة طويلة قد يؤثر على نتيجة: <strong>${names}</strong>. تحدث مع طبيبك أو المخبر قبل أخذ العينة.`,
     listTitle: "تحاليل هذه القائمة",
     removeAll: "مسح الكل",
@@ -5673,9 +5677,9 @@ const CHECKLIST_TEXT = {
     intro: "Check off every test from your prescription to get one combined, consistent preparation plan.",
     empty: "No tests selected yet. Tap the ✓ on any card to add it here.",
     fastingSummaryTitle: "FASTING TIME TO FOLLOW",
-    fastingSummaryText: (h) => `Fast for <strong>${h} hours</strong> before your sample collection — this covers the strictest requirement among all selected tests.`,
+    fastingSummaryText: (h) => `Fast for <strong>${h} hours</strong> before your sample collection - this covers the strictest requirement among all selected tests.`,
     noFastingNeeded: "None of your selected tests require fasting.",
-    conflictTitle: "⚠️ WARNING — CONFLICT DETECTED",
+    conflictTitle: "⚠️ WARNING - CONFLICT DETECTED",
     conflictText: (names) => `Prolonged fasting may alter the result of: <strong>${names}</strong>. Talk to your doctor or the lab before your sample is taken.`,
     listTitle: "TESTS IN THIS LIST",
     removeAll: "Clear all",
@@ -5687,7 +5691,7 @@ const CHECKLIST_TEXT = {
 };
 
 // Tests where over-fasting can actually distort the result (not just
-// "not required" — genuinely counter-productive). Used to flag real
+// "not required" - genuinely counter-productive). Used to flag real
 // conflicts in the reconciler, based on the "note" fields already
 // written for these tests in the DB.
 const OVER_FASTING_RISK_IDS = [11, 21, 58, 6]; // Calcémie, Fer sérique, Cortisol, Bilirubine
@@ -5832,7 +5836,7 @@ function shareChecklist() {
   const fastingLine = maxFasting > 0
     ? `\n⏱ ${CHECKLIST_TEXT[currentLang].fastingSummaryText(maxFasting).replace(/<\/?strong>/g, '')}`
     : '';
-  const text = `${CHECKLIST_TEXT[currentLang].title}\n\n${lines.join('\n')}${fastingLine}\n\n— LabPrep DZ`;
+  const text = `${CHECKLIST_TEXT[currentLang].title}\n\n${lines.join('\n')}${fastingLine}\n\n- LabPrep DZ`;
 
   if (navigator.share) {
     navigator.share({ title: CHECKLIST_TEXT[currentLang].title, text }).catch(() => {});
@@ -5973,13 +5977,13 @@ function resetFastingTimer() {
 
 /* ═══════════════════════════════════════════════════════════════
    SOCIAL LINKS
-   Fill in your links below — leave as '#' to hide that icon.
+   Fill in your links below - leave as '#' to hide that icon.
    ═══════════════════════════════════════════════════════════════ */
 
 const SOCIAL_LINKS = {
   linkedin:  'https://www.linkedin.com/in/zekraouirabahallaaeddine',   // e.g. 'https://www.linkedin.com/in/your-profile'
-  instagram: 'https://www.instagram.com/thismf3ya?igsh=OG1vYTNzOXNwanBq',   // e.g. 'https://www.instagram.com/your-handle'
-  telegram:  'https://t.me/Itzjust_me'    // e.g. 'https://t.me/your-channel'
+  instagram: '#',   // e.g. 'https://www.instagram.com/your-handle'
+  telegram:  '#'    // e.g. 'https://t.me/your-channel'
 };
 
 function initSocialLinks() {
@@ -6127,7 +6131,7 @@ function registerServiceWorker() {
 
   navigator.serviceWorker.register('sw.js').then((reg) => {
     // Detect when a new version has been installed in the background
-    // and is waiting to take over — show a small "update available" toast.
+    // and is waiting to take over - show a small "update available" toast.
     reg.addEventListener('updatefound', () => {
       const newWorker = reg.installing;
       if (!newWorker) return;
@@ -6145,9 +6149,9 @@ function showUpdateToast() {
   const toast = document.createElement('div');
   toast.id = 'update-toast';
   toast.className = 'update-toast';
-  const label = currentLang === 'ar' ? 'تتوفر نسخة جديدة — اضغط للتحديث'
-              : currentLang === 'en' ? 'New version available — tap to update'
-              : 'Nouvelle version disponible — appuyez pour mettre à jour';
+  const label = currentLang === 'ar' ? 'تتوفر نسخة جديدة - اضغط للتحديث'
+              : currentLang === 'en' ? 'New version available - tap to update'
+              : 'Nouvelle version disponible - appuyez pour mettre à jour';
   toast.innerHTML = `<i class="fa-solid fa-rotate"></i> <span>${label}</span>`;
   toast.addEventListener('click', () => window.location.reload());
   document.body.appendChild(toast);
